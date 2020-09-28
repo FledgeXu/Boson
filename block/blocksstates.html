@@ -160,6 +160,89 @@
                 <div id="content" class="content">
                     <main>
                         <h1><a class="header" href="#方块状态" id="方块状态">方块状态</a></h1>
+<p>在之前我们已经稍微地提及了BlockState，但是我们的第一个方块显然是没有状态的，这一节我们将以黑曜石魔方举例来创建一个带有状态的方块。</p>
+<p>首先创建一个叫做<code>ObsidianRubikCube</code>的类，内容如下:</p>
+<pre><code class="language-java">public class ObsidianRubikCube extends Block {
+    private static IntegerProperty STATE = IntegerProperty.create(&quot;face&quot;, 0, 1);
+
+    public ObsidianRubikCube() {
+        super(Properties.create(Material.ROCK).hardnessAndResistance(5));
+        this.setDefaultState(this.stateContainer.getBaseState().with(STATE, 1));
+    }
+
+    @Override
+    protected void fillStateContainer(StateContainer.Builder&lt;Block, BlockState&gt; builder) {
+        builder.add(STATE);
+        super.fillStateContainer(builder);
+    }
+}
+</code></pre>
+<p>这里有三个和之前我创建方块不一样的地方，首先就是：</p>
+<pre><code class="language-java">private static IntegerProperty STATE = IntegerProperty.create(&quot;face&quot;, 0, 1);
+</code></pre>
+<p>在这句话里，我们创建了一个新的方块状态，正如<code>IntegerProperty</code>这个名字暗示的那样，这个是一个整数类型的方块状态，除了<code>IntegerProperty</code>原版还实现了<code>BooleanProperty</code>和<code>EnumProperty</code>，并且原版还在<code>BlockStateProperties</code>类下实现了很多预设的方块状态，可以按需使用。如果这些类型都不满足你的需求，你还可以继承<code>Property</code>自己创建一个新的种类的方块状态。</p>
+<pre><code class="language-java">IntegerProperty.create(&quot;face&quot;, 0, 1)
+</code></pre>
+<p>的意思是，这个方块状态的名字叫做<code>face</code>，最小值是<code>0</code>，最大值是<code>1</code>。</p>
+<pre><code class="language-java">@Override
+protected void fillStateContainer(StateContainer.Builder&lt;Block, BlockState&gt; builder) {
+  builder.add(STATE);
+  super.fillStateContainer(builder);
+}
+</code></pre>
+<p>然后我们在<code>fillStateContainer</code>里调用传入的<code>builder</code>变量中的<code>add</code>方法给我的方块添加了一个状态。</p>
+<p>最后，我们在构造方法里设置了默认状态（可以不用设置）。</p>
+<pre><code class="language-java">this.setDefaultState(this.stateContainer.getBaseState().with(STATE, 1));
+</code></pre>
+<p>注册方块</p>
+<pre><code class="language-java">public static final RegistryObject&lt;Block&gt; obsidianRubikCube = BLOCKS.register(&quot;obsidian_rubik_cube&quot;, ObsidianRubikCube::new);
+</code></pre>
+<p>注册物品</p>
+<pre><code class="language-java">public static final RegistryObject&lt;Item&gt; obsidianRubikCube = ITEMS.register(&quot;obsidian_rubik_cube&quot;, () -&gt; new BlockItem(BlockRegistry.obsidianRubikCube.get(), new Item.Properties().group(ModGroup.itemGroup)));
+</code></pre>
+<p>接下来在<code>blockstates</code>文件夹下创建你和方块注册名相同的json文件，我们创建<code>obsidian_rubik_cube.json</code>，内容如下:</p>
+<pre><code class="language-json">{
+  &quot;variants&quot;: {
+    &quot;face=0&quot;: { &quot;model&quot;: &quot;boson:block/obsidian_rubik_cube_model_0&quot; },
+    &quot;face=1&quot;: { &quot;model&quot;: &quot;boson:block/obsidian_rubik_cube_model_1&quot; }
+  }
+}
+</code></pre>
+<p>可以看到，我们在这里为不同的<code>face</code>值指定了不同的模型，分别是<code>obsidian_rubik_cube_model_0</code>和<code>obsidian_rubik_cube_model_1</code>。请注意，如果你要定义多个blockstate的值，请用半角逗号隔开，中间不要有空格。具体的要求也请参考Wiki中关于<a href="https://minecraft-zh.gamepedia.com/index.php?title=%E6%A8%A1%E5%9E%8B&amp;variant=zh">模型</a>的章节。</p>
+<p>然后我们在<code>models/block</code>下创建<code>obsidian_rubik_cube_model_0.json</code>和<code>obsidian_rubik_cube_model_1.json</code>这两个模型文件。</p>
+<p><code>obsidian_rubik_cube_model_0.json</code>:</p>
+<pre><code class="language-json">{
+  &quot;parent&quot;: &quot;block/cube_all&quot;,
+  &quot;textures&quot;: {
+    &quot;all&quot;: &quot;boson:block/obsidian_rubik_cube_texture_0&quot;
+  }
+}
+</code></pre>
+<p><code>obsidian_rubik_cube_model_1.json</code>:</p>
+<pre><code class="language-json">{
+  &quot;parent&quot;: &quot;block/cube_all&quot;,
+  &quot;textures&quot;: {
+    &quot;all&quot;: &quot;boson:block/obsidian_rubik_cube_texture_1&quot;
+  }
+}
+</code></pre>
+<p>可以看见它分别加载了两个不同的材质。</p>
+<p>然后添加材质。</p>
+<p><code>obsidian_rubik_cube_texture_0.png</code></p>
+<img src="blocksstates.assets/obsidian_rubik_cube_texture_0.png" alt="obsidian_rubik_cube_texture_0" style="zoom:300%;" />
+<p><code>obsidian_rubik_cube_texture_1.png</code></p>
+<img src="blocksstates.assets/obsidian_rubik_cube_texture_1.png" alt="obsidian_rubik_cube_texture_1" style="zoom:300%;" />
+<p>最后给我们的物品模型<code>obsidian_rubik_cube</code>添加内容：</p>
+<pre><code class="language-json">{
+  &quot;parent&quot;: &quot;boson:block/obsidian_rubik_cube_model_1&quot;
+}
+</code></pre>
+<p><img src="blocksstates.assets/D2627490-F744-4BD9-B06C-09FC7CCB166B.jpeg" alt="D2627490-F744-4BD9-B06C-09FC7CCB166B" /></p>
+<p><img src="blocksstates.assets/7B934D2C-8596-49FA-A5FE-05709ABFFBF2.jpeg" alt="7B934D2C-8596-49FA-A5FE-05709ABFFBF2" /></p>
+<p>可以看到，随着我们用debug stick改变了方块的状态，方块的模型和材质也发生了改变。</p>
+<p><img src="blocksstates.assets/2020-09-28_19.51.12.png" alt="2020-09-28_19.51.12" /></p>
+<p><img src="blocksstates.assets/2020-09-28_19.52.32.png" alt="2020-09-28_19.52.32" /></p>
+<p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/blockstate">源代码</a></p>
 
                     </main>
 

@@ -160,6 +160,55 @@
                 <div id="content" class="content">
                     <main>
                         <h1><a class="header" href="#方块模型和材质" id="方块模型和材质">方块模型和材质</a></h1>
+<p>我们已经成功地创建了一个方块，但是这个方块还很丑，就是一个紫黑块而已。在这一节中，我们就要来为这个方块添加模型和材质。</p>
+<p>首先我们创建一些文件夹，创建成功后的目录如下显示:</p>
+<pre><code>resources
+├── META-INF
+│   └── mods.toml
+├── assets
+│   └── boson
+│       ├── blockstates
+│       ├── lang
+│       ├── models
+│       │   ├── block
+│       │   └── item
+│       └── textures
+│           ├── block
+│           └── item
+└── pack.mcmeta
+</code></pre>
+<p>然后我们在<code>blockstates</code>文件夹下，创建一个和你物品注册名同名的json文件，这里我们要创建<code>obsidian_block.json</code></p>
+<p>内容如下:</p>
+<pre><code class="language-json">{
+  &quot;variants&quot;: {
+    &quot;&quot;: { &quot;model&quot;: &quot;boson:block/obsidian_block_model&quot; }
+  }
+}
+</code></pre>
+<p>这个文件其实就是方块状态和具体要使用的模型的映射表，如果你还不清楚什么是方块状态，请向前翻阅。</p>
+<p>这里我们没有方块状态，所以写了<code>&quot;&quot;: { &quot;model&quot;: &quot;boson:block/obsidian_block_model” }</code>，将默认模型设置成了<code>obsidian_block_model.json</code>。</p>
+<p>接下来我们在<code>models/block</code>下创建<code>obsidian_block_model.json</code>，内容如下:</p>
+<pre><code class="language-json">{
+  &quot;parent&quot;: &quot;block/cube_all&quot;,
+  &quot;textures&quot;: {
+    &quot;all&quot;: &quot;boson:block/obsidian_block_texture&quot;
+  }
+}
+</code></pre>
+<p>可以看到，和物品模型相比，只是继承的东西不太一样，至于具体模型文件的格式请参考<a href="https://minecraft-zh.gamepedia.com/index.php?title=%E6%A8%A1%E5%9E%8B&amp;variant=zh">Wiki</a>。在模型里，我们调用了<code>obsidian_block_texture.png</code>作为我们的材质。</p>
+<p>接下来让我们在<code>textures/block</code>下添加我们的材质，同样地请注意材质文件的比例是1:1，并且最好不要大于32x32像素。</p>
+<img src="modelandtextures.assets/obsdian_block.png" alt="obsdian_block" style="zoom:300%;" />
+<p>这时启动游戏，你应该就可看见我们的方块有对应的材质和模型了。</p>
+<p><img src="modelandtextures.assets/image-20200428181816541.png" alt="image-20200428181816541" /></p>
+<p><strong>整个加载过程为：获取游戏中方块的状态，在Blockstates相对应的映射表里获取模型，根据模型加载材质。</strong></p>
+<p>但这时你会发现我们方块相对应的物品还没有材质，接下来我们就要解决这个问题。</p>
+<p>在<code>models/item</code>下创建和我们BlockItem注册名同名的json文件，这里是<code>obsidian_block.json</code></p>
+<pre><code class="language-json">{
+  &quot;parent&quot;: &quot;boson:block/obsidian_block_model&quot;
+}
+</code></pre>
+<p>对，你没看错，就一句话，我们直接继承相对应的方块模型就行了。</p>
+<p><img src="modelandtextures.assets/image-20200428182406212.png" alt="image-20200428182406212" /></p>
 
                     </main>
 

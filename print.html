@@ -816,12 +816,378 @@ public static final RegistryObject&lt;Item&gt; obsidianBoots = ITEMS.register(&q
 <p>然后启动游戏，调成简体中文，你应该就可以看见我们的物品有了翻译。<img src="i18n/i18n.assets/image-20200427220407913.png" alt="image-20200427220407913" /></p>
 <p>作为一个简体中文的使用者，你的mod里至少应该有<code>zh_cn.json</code>，<code>en_us.json</code>和<code>zh_tw.json</code>这三个语言文件，所有可用的语言文件列表请在Wiki的<a href="https://minecraft-zh.gamepedia.com/index.php?title=%E8%AF%AD%E8%A8%80&amp;variant=zh#%E5%8F%AF%E7%94%A8%E8%AF%AD%E8%A8%80">语言#可用语言</a>内查看。</p>
 <h1><a class="header" href="#方块" id="方块">方块</a></h1>
+<p>我们在这节中终于要进入Minecraft中最为迷人的其中一部分：方块。当然我们会从最为简单的方块开始学起。</p>
 <h1><a class="header" href="#第一个方块" id="第一个方块">第一个方块</a></h1>
+<p>在这一节中，我们将会创建一个最简单的方块，一个什么功能也没有的方块，甚至连模型和材质也没有。在开始之前我必须做一个概念上的区分，关于物品和方块概念上的区分。任何你可在拿在手中的东西都是「物品」，只有放置在世界中才成为了「方块」。</p>
+<p><img src="block/firstblock.assets/image-20200428155404000.png" alt="image-20200428155404000" /></p>
+<p>这个是一个物品</p>
+<p><img src="block/firstblock.assets/image-20200428155435757.png" alt="image-20200428155435757" /></p>
+<p>这个才是一个方块。</p>
+<p>好的，我们已经把物品和方块之间的区别说清楚了。接下来就开始创建第一个方块吧，这里我们以黑曜石块为例。</p>
+<p>首先创建一个类，叫做<code>ObsidianBlock</code>，就和所有的自定义物品需要继承<code>Item</code>类一样，所有的自定义方法都需要继承<code>Block</code>类，请确保你的<code>Block</code>类是<code>net.minecraft.block.Block</code>这个类。</p>
+<p>具体内容如下:</p>
+<pre><code class="language-java">public class ObsidianBlock extends Block {
+    public ObsidianBlock() {
+        super(Properties.create(Material.ROCK).hardnessAndResistance(5));
+    }
+}
+</code></pre>
+<p>内容非常简单，就和<code>Item</code>有<code>Properties</code>一样，方块也需要一个<code>Properties</code>，和物品的<code>Properties</code>不太一样的是，方块的<code>Propeteis</code>需要调用<code>create</code>方法创建。请注意虽然这两个<code>Properties</code>名字相同，但是它们不在同一个包内，这其实是两个不同的类，<code>create</code>方法需要一个参数，这个参数是一个<code>Material</code>（材料），<code>Material</code>帮你预设了一些方块的特质，比如是否是实心的，是否是流体等，你可以通过调用<code>Properties</code>的方法来覆盖<code>Material</code>带来的特征，这里我们用的是原版的<code>Material.ROCK</code>，如果你想自己创建一个<code>Material</code>也非常简单，请参考原版的实现。最后我们调用<code>hardnessAndResistance</code>方法来为我的方块设置硬度。</p>
+<p>至此我们的黑曜石方块类已经创建完毕。就如物品需要注册一样，我的方块也需要注册。</p>
+<p>创建一个新的注册类<code>BlockRegistry</code>，内容如下:</p>
+<pre><code class="language-java">public class BlockRegistry {
+    public static final DeferredRegister&lt;Block&gt; BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, Utils.MOD_ID);
+    public static final RegistryObject&lt;Block&gt; obsidianBlock = BLOCKS.register(&quot;obsidian_block&quot;, ObsidianBlock::new);
+}
+</code></pre>
+<p>相信之前已经写过注册类的你对这些内容应该相对熟悉了。我们把<code>DeferredRegister&lt;Item&gt; </code>换成了<code>DeferredRegister&lt;Block&gt;</code>（当然后面的实例化参数也需要修改），这样我们就创建了一个方块的注册器。注册方式也和物品注册如出一辙，这里就不多加阐述了。</p>
+<p>你还需要在你的主类构造方法里，将这个注册器注册到<code>mod</code>总线中。</p>
+<pre><code class="language-java">@Mod(Utils.MOD_ID)
+public class Neutrino {
+    public Neutrino() {
+        ItemRegistry.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        BlockRegistry.BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
+    }
+}
+</code></pre>
+<p>到此，我们就已经完成了我们的方块，现在启动游戏，输入如下命令，你就可以放置你自己的方块了。</p>
+<pre><code>/setblock ~ ~ ~ &lt;你的modID&gt;:&lt;你的方块的注册名&gt;
+以我们的例子来说
+/setblock ~ ~ ~ neutriono:obsidian_block
+</code></pre>
+<p><img src="block/firstblock.assets/image-20200428162256286.png" alt="image-20200428162256286" /></p>
+<p>但是，只能通过命令放置的方块显然不符合我们的胃口，我们希望有一个物品可以和方块相对应，这样我们就不需要使用命令放置方块了，对于这个常见的需求，Minecraft 也提供了一个方便的类来满足，这个类就是<code>BlockItem</code>，我们只需要创建并实例化这个类就行了。</p>
+<p>我们回到我们的<code>ItemRegistry</code>，添加如下一行</p>
+<pre><code class="language-java">public static final RegistryObject&lt;Item&gt; obsidianBlock = ITEMS.register(&quot;obsidian_block&quot;, () -&gt; new BlockItem(BlockRegistry.obsidianBlock.get(), new Item.Properties().group(ModGroup.itemGroup)));
+</code></pre>
+<p>可以看见我们创建了一个BlockItem的实例，它的构造方法需要两个参数，第一个参数是你注册好的方块的实例，我们可以通过<code>BlockRegistry.obsidianBlock.get()</code>获取到之前注册好的方块实例，第二个参数是一个Item的<code>Properties</code>，这里的<code>Properties</code>非常简单，我们将其添加到我们之前创建的创造模式物品栏里。</p>
+<p>此时打开游戏，你就可以在我们的创造模式物品栏里看见我们的方块了。</p>
+<p><img src="block/firstblock.assets/image-20200428164024589.png" alt="image-20200428164024589" /></p>
+<p><img src="block/firstblock.assets/image-20200428164037088.png" alt="image-20200428164037088" /></p>
+<p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/first_block">源代码</a></p>
 <h1><a class="header" href="#block和blockstate" id="block和blockstate">Block和BlockState</a></h1>
+<p>在开始我们接下来的讲解之前，我想先来讲一下<code>BlockState</code>这个概念，相信已经对<code>ItemStack</code>有所了解到你，应该也能很快理解这个概念。</p>
+<p>就和在游戏中的所有物品其实是<code>Itemstack</code>一样，在游戏中的所有方块其实是<code>BlockState</code>，而<code>BlockState</code>相比起<code>Block</code>除了多出的XYZ位置信息之外，最为重要的就是<code>state</code>信息，也就是状态信息。状态信息乍一看很难以理解，但是其实非常好懂。我们以原版的栅栏举例，当你把原版的栅栏放在地上，栅栏会根据周围方块的不同自动地改变形状，这其实是栅栏自动地改变了状态，我们可以在F3调试模式下查看方块的状态。</p>
+<p><img src="block/blockandblockstate.assets/A31FDCB0-F8AC-43BC-BD70-801476111C97.jpeg" alt="A31FDCB0-F8AC-43BC-BD70-801476111C97" /></p>
+<p>这是在默认方块状态下的栅栏模型。</p>
+<p><img src="block/blockandblockstate.assets/EDC215E2-DF26-4764-AE2D-2640C7184482.jpeg" alt="EDC215E2-DF26-4764-AE2D-2640C7184482" /></p>
+<p>可以看到我们使用Debug Stick修改了栅栏的方块状态之后，方块的模型也相应地发生了改变。</p>
+<p>当然，不是所有的方块都有状态属性的，比如石头就没有，但是位置属性是每个方块都有的。</p>
 <h1><a class="header" href="#方块模型和材质" id="方块模型和材质">方块模型和材质</a></h1>
+<p>我们已经成功地创建了一个方块，但是这个方块还很丑，就是一个紫黑块而已。在这一节中，我们就要来为这个方块添加模型和材质。</p>
+<p>首先我们创建一些文件夹，创建成功后的目录如下显示:</p>
+<pre><code>resources
+├── META-INF
+│   └── mods.toml
+├── assets
+│   └── boson
+│       ├── blockstates
+│       ├── lang
+│       ├── models
+│       │   ├── block
+│       │   └── item
+│       └── textures
+│           ├── block
+│           └── item
+└── pack.mcmeta
+</code></pre>
+<p>然后我们在<code>blockstates</code>文件夹下，创建一个和你物品注册名同名的json文件，这里我们要创建<code>obsidian_block.json</code></p>
+<p>内容如下:</p>
+<pre><code class="language-json">{
+  &quot;variants&quot;: {
+    &quot;&quot;: { &quot;model&quot;: &quot;boson:block/obsidian_block_model&quot; }
+  }
+}
+</code></pre>
+<p>这个文件其实就是方块状态和具体要使用的模型的映射表，如果你还不清楚什么是方块状态，请向前翻阅。</p>
+<p>这里我们没有方块状态，所以写了<code>&quot;&quot;: { &quot;model&quot;: &quot;boson:block/obsidian_block_model” }</code>，将默认模型设置成了<code>obsidian_block_model.json</code>。</p>
+<p>接下来我们在<code>models/block</code>下创建<code>obsidian_block_model.json</code>，内容如下:</p>
+<pre><code class="language-json">{
+  &quot;parent&quot;: &quot;block/cube_all&quot;,
+  &quot;textures&quot;: {
+    &quot;all&quot;: &quot;boson:block/obsidian_block_texture&quot;
+  }
+}
+</code></pre>
+<p>可以看到，和物品模型相比，只是继承的东西不太一样，至于具体模型文件的格式请参考<a href="https://minecraft-zh.gamepedia.com/index.php?title=%E6%A8%A1%E5%9E%8B&amp;variant=zh">Wiki</a>。在模型里，我们调用了<code>obsidian_block_texture.png</code>作为我们的材质。</p>
+<p>接下来让我们在<code>textures/block</code>下添加我们的材质，同样地请注意材质文件的比例是1:1，并且最好不要大于32x32像素。</p>
+<img src="block/modelandtextures.assets/obsdian_block.png" alt="obsdian_block" style="zoom:300%;" />
+<p>这时启动游戏，你应该就可看见我们的方块有对应的材质和模型了。</p>
+<p><img src="block/modelandtextures.assets/image-20200428181816541.png" alt="image-20200428181816541" /></p>
+<p><strong>整个加载过程为：获取游戏中方块的状态，在Blockstates相对应的映射表里获取模型，根据模型加载材质。</strong></p>
+<p>但这时你会发现我们方块相对应的物品还没有材质，接下来我们就要解决这个问题。</p>
+<p>在<code>models/item</code>下创建和我们BlockItem注册名同名的json文件，这里是<code>obsidian_block.json</code></p>
+<pre><code class="language-json">{
+  &quot;parent&quot;: &quot;boson:block/obsidian_block_model&quot;
+}
+</code></pre>
+<p>对，你没看错，就一句话，我们直接继承相对应的方块模型就行了。</p>
+<p><img src="block/modelandtextures.assets/image-20200428182406212.png" alt="image-20200428182406212" /></p>
 <h1><a class="header" href="#方块状态" id="方块状态">方块状态</a></h1>
+<p>在之前我们已经稍微地提及了BlockState，但是我们的第一个方块显然是没有状态的，这一节我们将以黑曜石魔方举例来创建一个带有状态的方块。</p>
+<p>首先创建一个叫做<code>ObsidianRubikCube</code>的类，内容如下:</p>
+<pre><code class="language-java">public class ObsidianRubikCube extends Block {
+    private static IntegerProperty STATE = IntegerProperty.create(&quot;face&quot;, 0, 1);
+
+    public ObsidianRubikCube() {
+        super(Properties.create(Material.ROCK).hardnessAndResistance(5));
+        this.setDefaultState(this.stateContainer.getBaseState().with(STATE, 1));
+    }
+
+    @Override
+    protected void fillStateContainer(StateContainer.Builder&lt;Block, BlockState&gt; builder) {
+        builder.add(STATE);
+        super.fillStateContainer(builder);
+    }
+}
+</code></pre>
+<p>这里有三个和之前我创建方块不一样的地方，首先就是：</p>
+<pre><code class="language-java">private static IntegerProperty STATE = IntegerProperty.create(&quot;face&quot;, 0, 1);
+</code></pre>
+<p>在这句话里，我们创建了一个新的方块状态，正如<code>IntegerProperty</code>这个名字暗示的那样，这个是一个整数类型的方块状态，除了<code>IntegerProperty</code>原版还实现了<code>BooleanProperty</code>和<code>EnumProperty</code>，并且原版还在<code>BlockStateProperties</code>类下实现了很多预设的方块状态，可以按需使用。如果这些类型都不满足你的需求，你还可以继承<code>Property</code>自己创建一个新的种类的方块状态。</p>
+<pre><code class="language-java">IntegerProperty.create(&quot;face&quot;, 0, 1)
+</code></pre>
+<p>的意思是，这个方块状态的名字叫做<code>face</code>，最小值是<code>0</code>，最大值是<code>1</code>。</p>
+<pre><code class="language-java">@Override
+protected void fillStateContainer(StateContainer.Builder&lt;Block, BlockState&gt; builder) {
+  builder.add(STATE);
+  super.fillStateContainer(builder);
+}
+</code></pre>
+<p>然后我们在<code>fillStateContainer</code>里调用传入的<code>builder</code>变量中的<code>add</code>方法给我的方块添加了一个状态。</p>
+<p>最后，我们在构造方法里设置了默认状态（可以不用设置）。</p>
+<pre><code class="language-java">this.setDefaultState(this.stateContainer.getBaseState().with(STATE, 1));
+</code></pre>
+<p>注册方块</p>
+<pre><code class="language-java">public static final RegistryObject&lt;Block&gt; obsidianRubikCube = BLOCKS.register(&quot;obsidian_rubik_cube&quot;, ObsidianRubikCube::new);
+</code></pre>
+<p>注册物品</p>
+<pre><code class="language-java">public static final RegistryObject&lt;Item&gt; obsidianRubikCube = ITEMS.register(&quot;obsidian_rubik_cube&quot;, () -&gt; new BlockItem(BlockRegistry.obsidianRubikCube.get(), new Item.Properties().group(ModGroup.itemGroup)));
+</code></pre>
+<p>接下来在<code>blockstates</code>文件夹下创建你和方块注册名相同的json文件，我们创建<code>obsidian_rubik_cube.json</code>，内容如下:</p>
+<pre><code class="language-json">{
+  &quot;variants&quot;: {
+    &quot;face=0&quot;: { &quot;model&quot;: &quot;boson:block/obsidian_rubik_cube_model_0&quot; },
+    &quot;face=1&quot;: { &quot;model&quot;: &quot;boson:block/obsidian_rubik_cube_model_1&quot; }
+  }
+}
+</code></pre>
+<p>可以看到，我们在这里为不同的<code>face</code>值指定了不同的模型，分别是<code>obsidian_rubik_cube_model_0</code>和<code>obsidian_rubik_cube_model_1</code>。请注意，如果你要定义多个blockstate的值，请用半角逗号隔开，中间不要有空格。具体的要求也请参考Wiki中关于<a href="https://minecraft-zh.gamepedia.com/index.php?title=%E6%A8%A1%E5%9E%8B&amp;variant=zh">模型</a>的章节。</p>
+<p>然后我们在<code>models/block</code>下创建<code>obsidian_rubik_cube_model_0.json</code>和<code>obsidian_rubik_cube_model_1.json</code>这两个模型文件。</p>
+<p><code>obsidian_rubik_cube_model_0.json</code>:</p>
+<pre><code class="language-json">{
+  &quot;parent&quot;: &quot;block/cube_all&quot;,
+  &quot;textures&quot;: {
+    &quot;all&quot;: &quot;boson:block/obsidian_rubik_cube_texture_0&quot;
+  }
+}
+</code></pre>
+<p><code>obsidian_rubik_cube_model_1.json</code>:</p>
+<pre><code class="language-json">{
+  &quot;parent&quot;: &quot;block/cube_all&quot;,
+  &quot;textures&quot;: {
+    &quot;all&quot;: &quot;boson:block/obsidian_rubik_cube_texture_1&quot;
+  }
+}
+</code></pre>
+<p>可以看见它分别加载了两个不同的材质。</p>
+<p>然后添加材质。</p>
+<p><code>obsidian_rubik_cube_texture_0.png</code></p>
+<img src="block/blocksstates.assets/obsidian_rubik_cube_texture_0.png" alt="obsidian_rubik_cube_texture_0" style="zoom:300%;" />
+<p><code>obsidian_rubik_cube_texture_1.png</code></p>
+<img src="block/blocksstates.assets/obsidian_rubik_cube_texture_1.png" alt="obsidian_rubik_cube_texture_1" style="zoom:300%;" />
+<p>最后给我们的物品模型<code>obsidian_rubik_cube</code>添加内容：</p>
+<pre><code class="language-json">{
+  &quot;parent&quot;: &quot;boson:block/obsidian_rubik_cube_model_1&quot;
+}
+</code></pre>
+<p><img src="block/blocksstates.assets/D2627490-F744-4BD9-B06C-09FC7CCB166B.jpeg" alt="D2627490-F744-4BD9-B06C-09FC7CCB166B" /></p>
+<p><img src="block/blocksstates.assets/7B934D2C-8596-49FA-A5FE-05709ABFFBF2.jpeg" alt="7B934D2C-8596-49FA-A5FE-05709ABFFBF2" /></p>
+<p>可以看到，随着我们用debug stick改变了方块的状态，方块的模型和材质也发生了改变。</p>
+<p><img src="block/blocksstates.assets/2020-09-28_19.51.12.png" alt="2020-09-28_19.51.12" /></p>
+<p><img src="block/blocksstates.assets/2020-09-28_19.52.32.png" alt="2020-09-28_19.52.32" /></p>
+<p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/blockstate">源代码</a></p>
 <h1><a class="header" href="#非实心方块与自定义模型" id="非实心方块与自定义模型">非实心方块与自定义模型</a></h1>
+<p>在这一节中，我们将创建一个有着特殊外形且是透明的方块，这里我们以黑曜石框架举例。</p>
+<p>首先我们创建一个叫做<code>ObsidianFrame</code>的类，内容如下：</p>
+<pre><code class="language-java">public class ObsidianFrame extends Block {
+    private static final VoxelShape shape;
+
+    static {
+        VoxelShape base = Block.makeCuboidShape(0, 0, 0, 16, 1, 16);
+        VoxelShape column1 = Block.makeCuboidShape(0, 1, 0, 1, 15, 1);
+        VoxelShape column2 = Block.makeCuboidShape(15, 1, 0, 16, 15, 1);
+        VoxelShape column3 = Block.makeCuboidShape(0, 1, 15, 1, 15, 16);
+        VoxelShape column4 = Block.makeCuboidShape(15, 1, 15, 16, 15, 16);
+        VoxelShape top = Block.makeCuboidShape(0, 15, 0, 16, 16, 16);
+        shape = VoxelShapes.or(base, column1, column2, column3, column4, top);
+    }
+
+    public ObsidianFrame() {
+        super(Properties.create(Material.ROCK).hardnessAndResistance(5).notSolid());
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
+        return shape;
+    }
+}
+</code></pre>
+<p>在最上方我们创建了一个<code>VoxelShape</code>，我们将在<code>getShape</code>方法中返回这个形状，这个<code>VoxelShape</code>就是我们方块的碰撞箱，很不幸的是Minecraft的碰撞箱子只能由方块组成，这个方块的大小是<code>16*16*16</code>，所以我们在静态代码块中自己创建了一系列的长方体和立方体，拼成了我们方块的碰撞箱，其中<code>Block.makeCuboidShape</code>的6个参数分别是起始点的XYZ和结束点的XYZ。最后我们用<code>VoxelShapes</code>的<code>or</code>方法将这些东西拼在了一起。<code>VoxelShapes</code> 下还有很多好用的空间操作方法，请自行选用。如果你不给你的方块设置合适的的碰撞箱的话，你的方块内部空间会显得非常的暗。</p>
+<p>可以看见这里最为特别的是调用了<code>notSoild</code>方法，这个方法是告知Minecraft我们的方块不是一个「实心」方块，需要进行特殊的对待。之所以这么做，是因为Minecraft的世界里有非常多的方块，如果方块的每一个面都要渲染，包括那些被遮挡的面和遮挡起来的方块，那么会非常地耗费性能，所以出于优化的考虑，Minecraft只会渲染那些没有被遮挡起来的面。而<code>noSoild</code>的作用就是告诉Minecraft，要渲染这个方块遮挡的那些面。</p>
+<p>如果不开启这个就会出现这样效果。</p>
+<p><img src="block/nonesoildblock.assets/image-20200428204119348.png" alt="image-20200428204119348" /></p>
+<p>如果对Minecraft方块渲染相关的内容感兴趣，可以阅读这篇博客<a href="https://greyminecraftcoder.blogspot.com/2020/04/block-rendering-1144.html">文章</a>，以及这个博客下其他文章（如果你打不开这个页面，说明你所在的国家或地区封锁了这个网站）。</p>
+<p>注册方块:</p>
+<pre><code class="language-java">public static final RegistryObject&lt;Block&gt; obsidianFrame = BLOCKS.register(&quot;obsidian_frame&quot;, ObsidianFrame::new);
+</code></pre>
+<p>注册物品:</p>
+<pre><code class="language-java">public static RegistryObject&lt;Item&gt; obsidianFrame = ITEMS.register(&quot;obsidian_frame&quot;, () -&gt; new BlockItem(BlockRegistry.obsidianFrame.get(), new Item.Properties().group(ModGroup.itemGroup)));
+</code></pre>
+<p>然后是方块状态文件<code>obsidian_frame.json</code>:</p>
+<pre><code class="language-json">{
+  &quot;variants&quot;: {
+    &quot;&quot;: { &quot;model&quot;: &quot;bosons:block/obsidian_frame&quot; }
+  }
+}
+</code></pre>
+<p>模型文件<code>obsidian_frame.json</code>:</p>
+<pre><code class="language-json">{
+	&quot;texture_size&quot;: [64, 64],
+	&quot;textures&quot;: {
+		&quot;0&quot;: &quot;boson:block/obsidian_frame&quot;,
+		&quot;particle&quot;: &quot;boson:block/obsidian_frame&quot;
+	},
+	&quot;elements&quot;: [
+		{
+			&quot;from&quot;: [0, 0, 0],
+			&quot;to&quot;: [16, 1, 16],
+			&quot;faces&quot;: {
+				&quot;north&quot;: {&quot;uv&quot;: [4, 8.25, 8, 8.5], &quot;texture&quot;: &quot;#0&quot;},
+				&quot;east&quot;: {&quot;uv&quot;: [0, 8.25, 4, 8.5], &quot;texture&quot;: &quot;#0&quot;},
+				&quot;south&quot;: {&quot;uv&quot;: [12, 8.25, 16, 8.5], &quot;texture&quot;: &quot;#0&quot;},
+				&quot;west&quot;: {&quot;uv&quot;: [8, 8.25, 12, 8.5], &quot;texture&quot;: &quot;#0&quot;},
+				&quot;up&quot;: {&quot;uv&quot;: [8, 8.25, 4, 4.25], &quot;texture&quot;: &quot;#0&quot;},
+				&quot;down&quot;: {&quot;uv&quot;: [12, 4.25, 8, 8.25], &quot;texture&quot;: &quot;#0&quot;}
+			}
+		},
+		{
+			&quot;from&quot;: [0, 15, 0],
+			&quot;to&quot;: [16, 16, 16],
+			&quot;faces&quot;: {
+				&quot;north&quot;: {&quot;uv&quot;: [4, 4, 8, 4.25], &quot;texture&quot;: &quot;#0&quot;},
+				&quot;east&quot;: {&quot;uv&quot;: [0, 4, 4, 4.25], &quot;texture&quot;: &quot;#0&quot;},
+				&quot;south&quot;: {&quot;uv&quot;: [12, 4, 16, 4.25], &quot;texture&quot;: &quot;#0&quot;},
+				&quot;west&quot;: {&quot;uv&quot;: [8, 4, 12, 4.25], &quot;texture&quot;: &quot;#0&quot;},
+				&quot;up&quot;: {&quot;uv&quot;: [8, 4, 4, 0], &quot;texture&quot;: &quot;#0&quot;},
+				&quot;down&quot;: {&quot;uv&quot;: [12, 0, 8, 4], &quot;texture&quot;: &quot;#0&quot;}
+			}
+		},
+		{
+			&quot;from&quot;: [0, 1, 0],
+			&quot;to&quot;: [1, 15, 1],
+			&quot;faces&quot;: {
+				&quot;north&quot;: {&quot;uv&quot;: [2.25, 0.25, 2.5, 3.75], &quot;texture&quot;: &quot;#0&quot;},
+				&quot;east&quot;: {&quot;uv&quot;: [2, 0.25, 2.25, 3.75], &quot;texture&quot;: &quot;#0&quot;},
+				&quot;south&quot;: {&quot;uv&quot;: [2.75, 0.25, 3, 3.75], &quot;texture&quot;: &quot;#0&quot;},
+				&quot;west&quot;: {&quot;uv&quot;: [2.5, 0.25, 2.75, 3.75], &quot;texture&quot;: &quot;#0&quot;},
+				&quot;up&quot;: {&quot;uv&quot;: [2.5, 0.25, 2.25, 0], &quot;texture&quot;: &quot;#0&quot;},
+				&quot;down&quot;: {&quot;uv&quot;: [2.75, 0, 2.5, 0.25], &quot;texture&quot;: &quot;#0&quot;}
+			}
+		},
+		{
+			&quot;from&quot;: [15, 1, 0],
+			&quot;to&quot;: [16, 15, 1],
+			&quot;faces&quot;: {
+				&quot;north&quot;: {&quot;uv&quot;: [1.25, 0.25, 1.5, 3.75], &quot;texture&quot;: &quot;#0&quot;},
+				&quot;east&quot;: {&quot;uv&quot;: [1, 0.25, 1.25, 3.75], &quot;texture&quot;: &quot;#0&quot;},
+				&quot;south&quot;: {&quot;uv&quot;: [1.75, 0.25, 2, 3.75], &quot;texture&quot;: &quot;#0&quot;},
+				&quot;west&quot;: {&quot;uv&quot;: [1.5, 0.25, 1.75, 3.75], &quot;texture&quot;: &quot;#0&quot;},
+				&quot;up&quot;: {&quot;uv&quot;: [1.5, 0.25, 1.25, 0], &quot;texture&quot;: &quot;#0&quot;},
+				&quot;down&quot;: {&quot;uv&quot;: [1.75, 0, 1.5, 0.25], &quot;texture&quot;: &quot;#0&quot;}
+			}
+		},
+		{
+			&quot;from&quot;: [0, 1, 15],
+			&quot;to&quot;: [1, 15, 16],
+			&quot;faces&quot;: {
+				&quot;north&quot;: {&quot;uv&quot;: [0.25, 0.25, 0.5, 3.75], &quot;texture&quot;: &quot;#0&quot;},
+				&quot;east&quot;: {&quot;uv&quot;: [0, 0.25, 0.25, 3.75], &quot;texture&quot;: &quot;#0&quot;},
+				&quot;south&quot;: {&quot;uv&quot;: [0.75, 0.25, 1, 3.75], &quot;texture&quot;: &quot;#0&quot;},
+				&quot;west&quot;: {&quot;uv&quot;: [0.5, 0.25, 0.75, 3.75], &quot;texture&quot;: &quot;#0&quot;},
+				&quot;up&quot;: {&quot;uv&quot;: [0.5, 0.25, 0.25, 0], &quot;texture&quot;: &quot;#0&quot;},
+				&quot;down&quot;: {&quot;uv&quot;: [0.75, 0, 0.5, 0.25], &quot;texture&quot;: &quot;#0&quot;}
+			}
+		},
+		{
+			&quot;from&quot;: [15, 1, 15],
+			&quot;to&quot;: [16, 15, 16],
+			&quot;faces&quot;: {
+				&quot;north&quot;: {&quot;uv&quot;: [3.25, 0.25, 3.5, 3.75], &quot;texture&quot;: &quot;#0&quot;},
+				&quot;east&quot;: {&quot;uv&quot;: [3, 0.25, 3.25, 3.75], &quot;texture&quot;: &quot;#0&quot;},
+				&quot;south&quot;: {&quot;uv&quot;: [3.75, 0.25, 4, 3.75], &quot;texture&quot;: &quot;#0&quot;},
+				&quot;west&quot;: {&quot;uv&quot;: [3.5, 0.25, 3.75, 3.75], &quot;texture&quot;: &quot;#0&quot;},
+				&quot;up&quot;: {&quot;uv&quot;: [3.5, 0.25, 3.25, 0], &quot;texture&quot;: &quot;#0&quot;},
+				&quot;down&quot;: {&quot;uv&quot;: [3.75, 0, 3.5, 0.25], &quot;texture&quot;: &quot;#0&quot;}
+			}
+		}
+	]
+}
+</code></pre>
+<p>材质文件<code>obsidian_frame.png</code>：</p>
+<img src="block/nonesoildblock.assets/obsidian_frame.png" alt="obsidian_frame" style="zoom:300%;" />
+<p>这里我的模型和材质都是用BlockBench制作的。</p>
+<p>物品模型<code>obsidian_frame.json</code>:</p>
+<pre><code class="language-json">{
+  &quot;parent&quot;: &quot;boson:block/obsidian_frame&quot;
+}
+</code></pre>
+<p>打开游戏，你应该就能看见我们的黑曜石框架了。</p>
+<p><img src="block/nonesoildblock.assets/image-20200428214022814.png" alt="image-20200428214022814" /></p>
+<p><a href="https://github.com/FledgeXu/NeutrinoSourceCode/tree/master/src/main/java/com/tutorial/neutrino/nonesoildblock">源代码</a></p>
 <h1><a class="header" href="#方块的渲染类型" id="方块的渲染类型">方块的渲染类型</a></h1>
+<p>在这一节中，我们将会聊一下渲染类型（RenderType)。</p>
+<p><img src="block/./rendertype.assets/blockrenderlayers.png" alt="img" /></p>
+<blockquote>
+<p>图片出自<a href="https://greyminecraftcoder.blogspot.com/2020/04/block-rendering-1144.html">TheGreyGhost博客</a></p>
+</blockquote>
+<p>在Minecraft中，方块的渲染模型有四种，分别是<code>translucent</code>、<code>solid</code>、<code>cutout</code>和<code>cutout_mipped</code>。</p>
+<p>大概的区别大家一样就能看出来。这里我们要详细讲一下<code>translucent</code>和<code>cutout*</code>之间的区别。它们的区别其实很简单，<code>translucent</code>是半透明，而<code>cutout*</code>是要不全透明，要不不透明。大家可以注意看这玻璃上的白色部分和冰块上白色部分的区别。</p>
+<p>而<code>cutout</code>和<code>cutout_mipped</code>直接的区别涉及到游戏优化的地方，<code>cutout_mipped</code>是开启了Mipmapping的<code>cutout</code>。</p>
+<blockquote>
+<p>在三维计算机图形的贴图渲染中有一个常用的技术被称为<strong>Mipmapping</strong>。为了加快渲染速度和减少图像锯齿，贴图被处理成由一系列被预先计算和优化过的图片组成的文件,这样的贴图被称为 MIP map 或者 mipmap。这个技术在三维游戏中被非常广泛的使用。“MIP”来自于拉丁语 <em>multum in parvo</em> 的首字母，意思是“放置很多东西的小空间”。Mipmap 需要占用一定的内存空间，同时也遵循<a href="https://zh.wikipedia.org/w/index.php?title=%E5%B0%8F%E6%B3%A2%E5%8E%8B%E7%BC%A9%E8%A7%84%E5%88%99&amp;action=edit&amp;redlink=1">小波压缩规则</a> （wavelet compression）。</p>
+<p>——<a href="https://zh.wikipedia.org/wiki/Mipmap">Wikipedia</a></p>
+</blockquote>
+<p>我们将以玻璃罐为例，来教大家如何设置方块的RenderType。</p>
+<p>首先我们来创建方块，<code>GlassJar.java</code>:</p>
+<pre><code class="language-java">public class GlassJar extends Block {
+    public GlassJar() {
+        super(Properties.create(Material.ROCK).hardnessAndResistance(5).notSolid());
+    }
+}
+</code></pre>
+<p>当然别忘了注册。</p>
+<pre><code class="language-java">public static final RegistryObject&lt;GlassJar&gt; glassJar = BLOCKS.register(&quot;glass_jar&quot;, GlassJar::new);
+</code></pre>
+<p>接下来就是设置我们方块的RenderType的地方，<code>RenderTypeRegistry</code>：</p>
+<pre><code class="language-java">@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+public class RenderTypeRegistry {
+    @SubscribeEvent
+    public static void onRenderTypeSetup(FMLClientSetupEvent event) {
+        RenderTypeLookup.setRenderLayer(BlockRegistry.glassJar.get(), RenderType.getTranslucent());
+    }
+}
+</code></pre>
+<p>因为渲染相关的内容都是在客户端发生，所以我们在<code>FMLClientSetupEvent</code>事件下注册我们的RenderType。</p>
+<p>物理服务器是没发设置<code>RenderType</code>的，为了物理服务器的兼容性，在这里我们添加了<code>value = Dist.CLIENT</code>使它只会在物理客户端上监听事件。Forge提供了很多和物理端打交道的东西，除了我们看到的<code>value = Dist.CLIENT</code>，还有<code>@OnlyIn</code>注释，这个加了这个注释之后你就可以指定一个类只存在于物理客户端，或者物理服务端。当然还有<code>DistExecutor</code>，这里类下面有很多方法用来在在不同的物理端来执行不同的代码。</p>
+<p>一个非常常见的问题就是，在物理服务端调用了只有在物理客户端存在的类，比如加了<code>@OnlyIn(Dist.CLIENT)</code>的类或者方法，当你在物理服务端调用它时，它相当于是不存在的，这时就是出现错误。</p>
+<p>你在注意你调用的代码究竟是处于哪一个「逻辑端」的同时，你也得注意你的代码就行执行在哪一个「物理端」。</p>
+<p>这一切的努力都是为了在服务器上和在本地游戏中能共用一个jar文件。</p>
+<p>这里我们调用了<code>RenderTypeLookup.setRenderLayer</code>来设置我们方块的RenderType，<code>RenderType.getTranslucent()</code>指定了我们的RenderType是<code>translucent</code>，在<code>RenderType</code>类下有着原版所有的RenderType，你也可以自定义RenderType从而使用自定义shader等高级功能。</p>
+<p>具体的模型和材质请看Github。</p>
+<p>打开游戏你就能看见我们的玻璃罐了。</p>
+<p><img src="block/rendertype.assets/image-20200625163139129.png" alt="image-20200625163139129" /></p>
+<p><a href="https://github.com/FledgeXu/NeutrinoSourceCode/tree/master/src/main/java/com/tutorial/neutrino/special_render_type">源代码</a></p>
 <h1><a class="header" href="#特殊模型" id="特殊模型">特殊模型</a></h1>
 <h1><a class="header" href="#obj-模型" id="obj-模型">OBJ 模型</a></h1>
 <h1><a class="header" href="#b3d-模型" id="b3d-模型">B3D 模型</a></h1>
