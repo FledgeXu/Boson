@@ -1623,9 +1623,484 @@ public void tick() {
 <p><img src="tileentity/datasync.assets/image-20200429215140877.png" alt="image-20200429215140877" /></p>
 <p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/tileentitydatasync">源代码</a></p>
 <h1><a class="header" href="#特殊渲染" id="特殊渲染">特殊渲染</a></h1>
-<h1><a class="header" href="#ibakedmodel烘培模型" id="ibakedmodel烘培模型">IBakedModel(烘培模型)</a></h1>
+<p>在这一节中，我们将来学习一些常见的特殊渲染。</p>
+<h1><a class="header" href="#ibakedmodel烘焙模型" id="ibakedmodel烘焙模型">IBakedModel(烘焙模型)</a></h1>
+<p>首先我们从IBakedModel开始讲起。在开始正式写代码之前，我们先要了解如何一个方块是如何渲染出来的</p>
+<p>Minecraft本身会读取<code>json</code>和材质文件将其转换成<code>IModel</code>接口的实例，然后<code>IModel</code>进行了「Bake（烘焙）」处理，变成了<code>IBakedModel</code>，这个<code>IBakedModel</code>会被放入<code>BlockRendererDispatcher</code>中，当游戏需要时会直接从<code>BlockRendererDispatcher</code>取出<code>IBakedModel</code>进行渲染。至于什么是「Bake」，Bake基本上是对模型的材质进行光照计算等操作，让它变成可以直接被GPU渲染的东西。</p>
+<p>在这节中我们将来研究如何为我们的方块自定义<code>IBakedModel</code>。这节我们将要制作一个「隐藏方块」，这个方块会自动的显示它下方方块的模型的材质（虽然有些Bug，但是为了演示这已经足够了）。</p>
+<p>首先是方块<code>ObsidianHiddenBlock</code>：</p>
+<pre><code class="language-java">public class ObsidianHiddenBlock extends Block {
+    public ObsidianHiddenBlock() {
+        super(Properties.create(Material.ROCK).hardnessAndResistance(5).notSolid());
+    }
+}
+</code></pre>
+<p>内容非常的简单，相信大家都看得懂。</p>
+<p>然后就是关键所在:<code>ObsidianHiddenBlockModel</code>:</p>
+<pre><code class="language-java">public class ObsidianHiddenBlockModel implements IBakedModel {
+    IBakedModel defaultModel;
+    public static ModelProperty&lt;BlockState&gt; COPIED_BLOCK = new ModelProperty&lt;&gt;();
+
+    public ObsidianHiddenBlockModel(IBakedModel existingModel) {
+        defaultModel = existingModel;
+    }
+
+    @Nonnull
+    @Override
+    public List&lt;BakedQuad&gt; getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData extraData) {
+        IBakedModel renderModel = defaultModel;
+        if (extraData.hasProperty(COPIED_BLOCK)) {
+            BlockState copiedBlock = extraData.getData(COPIED_BLOCK);
+            if (copiedBlock != null) {
+                Minecraft mc = Minecraft.getInstance();
+                BlockRendererDispatcher blockRendererDispatcher = mc.getBlockRendererDispatcher();
+                renderModel = blockRendererDispatcher.getModelForState(copiedBlock);
+            }
+        }
+        return renderModel.getQuads(state, side, rand, extraData);
+    }
+
+    @Override
+    public IModelData getModelData(IBlockDisplayReader world, BlockPos pos, BlockState state, IModelData tileData) {
+        BlockState downBlockState = world.getBlockState(pos.down());
+        ModelDataMap modelDataMap = new ModelDataMap.Builder().withInitial(COPIED_BLOCK, null).build();
+
+        if (downBlockState.getBlock() == Blocks.AIR || downBlockState.getBlock() == BlockRegistry.obsidianHidden.get()) {
+            return modelDataMap;
+        }
+        modelDataMap.setData(COPIED_BLOCK, downBlockState);
+        return modelDataMap;
+    }
+
+    @Override
+    public List&lt;BakedQuad&gt; getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand) {
+        throw new AssertionError(&quot;IBakedModel::getQuads should never be called, only IForgeBakedModel::getQuads&quot;);
+    }
+
+    @Override
+    public boolean isAmbientOcclusion() {
+        return defaultModel.isAmbientOcclusion();
+    }
+
+    @Override
+    public boolean isGui3d() {
+        return defaultModel.isGui3d();
+    }
+
+    @Override
+    public boolean isSideLit() {
+        return defaultModel.isSideLit();
+    }
+
+    @Override
+    public boolean isBuiltInRenderer() {
+        return defaultModel.isBuiltInRenderer();
+    }
+
+    @Override
+    public TextureAtlasSprite getParticleTexture() {
+        return defaultModel.getParticleTexture();
+    }
+
+    @Override
+    public ItemCameraTransforms getItemCameraTransforms() {
+        return null;
+    }
+
+    @Override
+    public ItemOverrideList getOverrides() {
+        return defaultModel.getOverrides();
+    }
+}
+</code></pre>
+<p>首先是构造函数:</p>
+<pre><code class="language-java">public ObsidianHiddenBlockModel(IBakedModel existingModel) {
+  defaultModel = existingModel;
+}
+</code></pre>
+<p>可以看到，这部分的代码非常的长，但是其实没有你想象的那么复杂，我们一一来讲解。</p>
+<p>可以看到这个构造函数传入了一个<code>IBakedModel</code>，这个传入的<code>IBakedModel</code>就是我们方块默认的模型，因为我们希望我们的方法当放置在半空中时，可以显示默认的模型，所以我们需要保留一份默认的模型。</p>
+<p>然后就是最后面的六个方法，作用如下。</p>
+<table><thead><tr><th>函数名</th><th>作用</th></tr></thead><tbody>
+<tr><td><code>isAmbientOcclusion</code></td><td>控制是否开启环境光遮蔽</td></tr>
+<tr><td><code>isGui3d</code></td><td>控制掉落物是否是3D的</td></tr>
+<tr><td><code>isSideLit()</code></td><td>暂不明，应该和物品的渲染光有关</td></tr>
+<tr><td><code>isBuiltInRenderer</code></td><td>是否使用内置的渲染，返回<code>Ture</code>会使用ISTR渲染</td></tr>
+<tr><td><code>getParticleTexture</code></td><td>粒子效果材质</td></tr>
+<tr><td><code>getOverrides</code></td><td>获取模型的复写列表</td></tr>
+</tbody></table>
+<p>在这里我们直接调用了默认模型的相关方法，就不需要自己设置了。</p>
+<p>接下了我们来讲解最为重要的两个方法<code>getQuads</code>和<code>getModelData</code>，请注意这里面有两个同名的<code>getQuads</code>方法，但是参数值不同，其中有3个参数的<code>getQuads</code>，是必须要实现的，但是我们不会调用它，因为它没法传入来提供渲染，所以我们直接写了一个异常，来告知我们这个方法被错误的调用。</p>
+<p>其中<code>getQuads</code>和<code>getModelData</code>的关系和作用是，<code>getQuads</code>是<code>IBakedModel</code>的核心方法，它将返回一堆<code>Quads</code>，正如<code>Quad</code>这个词就如同它的字面意义那样，一个由四条边组成的形状。如果你对建模有所了解，你应该知道，任何和3D图形其实都是可以用三角形拼成的，在Minecraft里，任何的模型都是用<code>Quad</code>拼成的。对于一个普通的方块来说，它需要6个<code>Quads</code>，对于一些有着特殊模型的方块，需要的<code>Quad</code>数会更多。</p>
+<p>当Minecraft开始渲染<code>IBakedModel</code>里，它就会调用这个方法获取<code>Quads</code>，然后渲染这些<code>Quads</code>。</p>
+<p>接下来是<code>getModelData</code>方法，它的作用是给<code>getQuads</code>方法传入额外的数据，<code>getQuads</code>方法有一个<code>IModelData extraData</code>参数，这里的<code>extraData</code>就是通过<code>getModelData</code>传入的。<code>IModelData</code>的数值也是以「键值对」对信息储存的。</p>
+<pre><code class="language-java">public static ModelProperty&lt;BlockState&gt; COPIED_BLOCK = new ModelProperty&lt;&gt;();
+</code></pre>
+<p><code>COPIED_BLOCK</code>就是我们声明的一个「键」，可以看到他的类型是<code>ModelProperty&lt;BlockState&gt;</code>，这意味着，相对应「键值对」里「值」对类型是<code>BlockState</code>。</p>
+<p>然后我们来看<code>getModelData</code>方法的具体内容:</p>
+<pre><code class="language-java">@Override
+public IModelData getModelData(IBlockDisplayReader world, BlockPos pos, BlockState state, IModelData tileData) {
+  BlockState downBlockState = world.getBlockState(pos.down());
+  ModelDataMap modelDataMap = new ModelDataMap.Builder().withInitial(COPIED_BLOCK, null).build();
+
+  if (downBlockState.getBlock() == Blocks.AIR || downBlockState.getBlock() == BlockRegistry.obsidianHidden.get()) {
+    return modelDataMap;
+  }
+  modelDataMap.setData(COPIED_BLOCK, downBlockState);
+  return modelDataMap;
+}
+</code></pre>
+<pre><code class="language-java"> BlockState downBlockState = world.getBlockState(pos.down());
+</code></pre>
+<p>首先我们获取了「隐藏方块」下方方块的<code>BlockState</code>。</p>
+<pre><code class="language-java">ModelDataMap modelDataMap = new ModelDataMap.Builder().withInitial(COPIED_BLOCK, null).build()
+</code></pre>
+<p><code>ModelDataMap</code>是<code>IModelData</code>接口的唯二两个实现类中的一个，我们这里创建了一个键值对，并且通过<code>withInitial</code>设置了初始值：「键：<code>COPIED_BLOCK</code>，值：<code>null</code>」。</p>
+<pre><code class="language-java">if (downBlockState.getBlock() == Blocks.AIR || downBlockState.getBlock() == BlockRegistry.obsidianHidden.get()) {
+    return modelDataMap;
+}
+</code></pre>
+<p>然后我们判断这个<code>BlockState</code>是不是空气，以及是不是又是一个相同的「隐藏方块」，如是就直接返回<code>ModelDataMap</code>。</p>
+<p>如果不是</p>
+<pre><code class="language-java">modelDataMap.setData(COPIED_BLOCK, downBlockState);
+</code></pre>
+<p>通过调用<code>setData</code>方法设置了具体的「值」，然后返回。</p>
+<p>怎么样这个逻辑不是很难理解吧。</p>
+<p>接下去就是核心方法<code>getQuads</code>:</p>
+<pre><code class="language-java">@Nonnull
+@Override
+public List&lt;BakedQuad&gt; getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData extraData) {
+  IBakedModel renderModel = defaultModel;
+  if (extraData.hasProperty(COPIED_BLOCK)) {
+    BlockState copiedBlock = extraData.getData(COPIED_BLOCK);
+    if (copiedBlock != null) {
+      Minecraft mc = Minecraft.getInstance();
+      BlockRendererDispatcher blockRendererDispatcher = mc.getBlockRendererDispatcher();
+      renderModel = blockRendererDispatcher.getModelForState(copiedBlock);
+    }
+  }
+  return renderModel.getQuads(state, side, rand, extraData);
+}
+</code></pre>
+<p>这里的逻辑其实也非常简单。</p>
+<pre><code class="language-java">IBakedModel renderModel = defaultModel;
+</code></pre>
+<p>首先设置了默认的渲染模型。</p>
+<pre><code class="language-java">if (extraData.hasProperty(COPIED_BLOCK))
+</code></pre>
+<p>然后判断传入的数据有没有<code>COPIED_BLOCK</code>这个键。</p>
+<pre><code class="language-java">BlockState copiedBlock = extraData.getData(COPIED_BLOCK);
+</code></pre>
+<p>获取<code>COPIED_BLOCK</code>这个键，相对应的值。</p>
+<pre><code class="language-java">if (copiedBlock != null)
+</code></pre>
+<p>如果值不为<code>null</code>。</p>
+<pre><code class="language-java">Minecraft mc = Minecraft.getInstance();
+BlockRendererDispatcher blockRendererDispatcher = mc.getBlockRendererDispatcher();
+renderModel = blockRendererDispatcher.getModelForState(copiedBlock);
+</code></pre>
+<p>就从Minecraft的<code>getBlockRendererDispatcher</code>，取出对应<code>BlockState</code>的模型，放入<code>renderModel</code>中。</p>
+<pre><code class="language-java">return renderModel.getQuads(state, side, rand, extraData);
+</code></pre>
+<p>最后向下调用<code>renderModel</code>进行渲染，因为调用的<code>IBakedModel</code>是Minecraft实现的，所以我们不必去思考到底是怎么渲染的，有兴趣的同学可以自行研究。</p>
+<p>以上如此，我们自定义的<code>IBakedMode</code>已经创建完毕。</p>
+<p>Minecraft 在默认情况下会给方块自动创建一个<code>IBakeModel</code>，我们需要替换自动创建的<code>IBakeModel</code>，幸运的是Forge提供给我们了一个事件来实现这个功能。</p>
+<p><code>ModBusEventHandler.java</code>:</p>
+<pre><code class="language-java">@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD,value = Dist.CLIENT)
+public class ModBusEventHandler {
+    @SubscribeEvent
+    public static void onModelBaked(ModelBakeEvent event) {
+        for (BlockState blockstate : BlockRegistry.obsidianHidden.get().getStateContainer().getValidStates()) {
+            ModelResourceLocation modelResourceLocation = BlockModelShapes.getModelLocation(blockstate);
+            IBakedModel existingModel = event.getModelRegistry().get(modelResourceLocation);
+            if (existingModel == null) {
+                throw new RuntimeException(&quot;Did not find Obsidian Hidden in registry&quot;);
+            } else if (existingModel instanceof ObsidianHiddenBlockModel) {
+                throw new RuntimeException(&quot;Tried to replaceObsidian Hidden twice&quot;);
+            } else {
+                ObsidianHiddenBlockModel obsidianHiddenBlockModel = new ObsidianHiddenBlockModel(existingModel);
+                event.getModelRegistry().put(modelResourceLocation, obsidianHiddenBlockModel);
+            }
+        }
+    }
+}
+</code></pre>
+<p>请注意替换<code>IBakedModel</code>是在游戏启动过程替换的，所以我们这里使用的是<code>Mod.EventBusSubscriber.Bus.MOD</code>，还有请注意，我们同样不希望它在物理服务器上加载，所以加上了<code>value = Dist.CLIENT</code>来确保他只在物理客户端上加载。</p>
+<pre><code class="language-java">@SubscribeEvent
+public static void onModelBaked(ModelBakeEvent event)
+</code></pre>
+<p>我们监听了<code>ModelBakeEvent</code>事件。</p>
+<p>接下去的逻辑基本上就是获取我们方块对应的所有<code>State</code>，因为每一个不同的方块状态都可能对应着一个不同的模型（虽然我们的方块没有方块状态，但是这个还是要做的）。然后通过<code>event.getModelRegistry().get</code>方法从方块状态中获取默认的<code>IBakedModel</code>，创建了一个我们自己的<code>ObsidianHiddenBlockModel</code>，然后用<code>event.getModelRegistry().put</code>替换了进去。</p>
+<p>接下了就是常规的注册方块和物品了。</p>
+<p>另外我们的方块的状态文件如下:</p>
+<pre><code class="language-json">{
+  &quot;variants&quot;: {
+    &quot;&quot;: { &quot;model&quot;: &quot;boson:block/obsidian_hidden&quot; }
+  }
+}
+</code></pre>
+<p>可以看到并没有额外的方块状态，所以上面的循环只会运行一次。</p>
+<p>打开游戏，你就可以看到我们创建的「隐藏方块」了。</p>
+<p><img src="specialrender/ibakedmodel.assets/image-20200430173122813.png" alt="image-20200430173122813" /></p>
+<p>在这张图片里上面的方块都是同一种方块。</p>
+<p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/ibakedmodel">源代码地址</a></p>
 <h1><a class="header" href="#tileentityrenderer方块实体渲染器" id="tileentityrenderer方块实体渲染器">TileEntityRenderer(方块实体渲染器)</a></h1>
+<p>在这节中，我们将来学习一个非常重要的渲染方式<code>TileEntityRenderer</code>简称<code>TER</code>。在开始之前我们首先需要知道<code>TER</code>的作用是什么。让我回想一下原版中的箱子、附魔台。它们都有特殊的动画，而<code>TER</code>的作用就是让你也可以实现这些动画。</p>
+<p>首先我们从方块开始</p>
+<pre><code class="language-java">public class ObsidianTERBlock extends Block {
+
+    private static VoxelShape shape;
+
+    static {
+        VoxelShape base = Block.makeCuboidShape(0, 0, 0, 16, 1, 16);
+        VoxelShape column1 = Block.makeCuboidShape(0, 1, 0, 1, 15, 1);
+        VoxelShape column2 = Block.makeCuboidShape(15, 1, 0, 16, 15, 1);
+        VoxelShape column3 = Block.makeCuboidShape(0, 1, 15, 1, 15, 16);
+        VoxelShape column4 = Block.makeCuboidShape(15, 1, 15, 16, 15, 16);
+        VoxelShape top = Block.makeCuboidShape(0, 15, 0, 16, 16, 16);
+        shape = VoxelShapes.or(base, column1, column2, column3, column4, top);
+    }
+
+    public ObsidianTERBlock() {
+        super(Properties.create(Material.ROCK).notSolid().hardnessAndResistance(5));
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
+        return shape;
+    }
+
+    @Override
+    public boolean hasTileEntity(BlockState state) {
+        return true;
+    }
+
+    @Nullable
+    @Override
+    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
+        return new ObsidianTERTileEntity();
+    }
+
+}
+</code></pre>
+<p>方块的内容非常简单，基本上就是抄了我们之前写好的黑曜石框架，然后给它添加了一个方块实体。</p>
+<p>接下来我们来看方块实体的具体内容。</p>
+<pre><code class="language-java">public class ObsidianTERTileEntity extends TileEntity {
+   public ObsidianTERTileEntity() {
+       super(TileEntityTypeRegistry.obsidianTERTileEntity.get());
+   }
+}
+</code></pre>
+<p>因为我们用不到任何东西，所以这个方块实体是空的，仅仅用来和我们之后创建的<code>TileEntityRenderer</code>作关联。</p>
+<p>接下来就是最为关键的<code>TER</code>部分了</p>
+<pre><code class="language-java">public class ObsidianTER extends TileEntityRenderer&lt;ObsidianTERTileEntity&gt; {
+
+    public ObsidianTER(TileEntityRendererDispatcher rendererDispatcherIn) {
+        super(rendererDispatcherIn);
+    }
+
+    @Override
+    public void render(ObsidianTERTileEntity tileEntityIn, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
+        matrixStackIn.push();
+        matrixStackIn.translate(1, 0, 0);
+        BlockRendererDispatcher blockRenderer = Minecraft.getInstance().getBlockRendererDispatcher();
+        BlockState state = Blocks.CHEST.getDefaultState();
+        blockRenderer.renderBlock(state, matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, EmptyModelData.INSTANCE);
+        matrixStackIn.pop();
+
+        matrixStackIn.push();
+        matrixStackIn.translate(0, 1, 0);
+        ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
+        ItemStack stack = new ItemStack(Items.DIAMOND);
+        IBakedModel ibakedmodel = itemRenderer.getItemModelWithOverrides(stack, tileEntityIn.getWorld(), null);
+        itemRenderer.renderItem(stack, ItemCameraTransforms.TransformType.FIXED, true, matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, ibakedmodel);
+        matrixStackIn.pop();
+    }
+}
+</code></pre>
+<p>可以看到我们的<code>ObsidianTER</code>直接继承了<code>TileEntityRenderer</code>，其中泛型填的是你之前创建好的方块实体，</p>
+<p>而其中的<code>render</code>方法，就是你的渲染方法。</p>
+<p>因为这一块涉及到很多的计算机图形学相关的知识，这里我就不演示如何自定义渲染了，有兴趣的读者可以查看Mcjty做的相关的<a href="https://www.bilibili.com/video/BV1QE41137P9?p=14">教程</a>和<a href="https://github.com/McJty/YouTubeModding14/blob/master/src/main/java/com/mcjty/mytutorial/blocks/MagicRenderer.java">代码</a>。</p>
+<p>这里我们只演示如何额外的渲染出物品和方块。</p>
+<p>首先你应该用<code> matrixStackIn.push()</code>和<code>matrixStackIn.pop()</code>包裹起你的渲染代码。因为你对渲染做的所有移动、旋转和放大操作都会储存在<code>matrixStackIn</code>中，而<code>push</code>和<code>pop</code>的作用就是保存和恢复之前渲染的状态。如果你不进行这些操作有可能会污染其他的渲染器。</p>
+<pre><code class="language-java">matrixStackIn.translate(1, 0, 0);
+</code></pre>
+<p>这个设置了你要渲染对象的移动</p>
+<p>与此相对应的还有</p>
+<pre><code class="language-java">matrixStackIn.rotate();
+matrixStackIn.scale();
+</code></pre>
+<p>分别用于旋转和缩放。</p>
+<pre><code class="language-java">BlockRendererDispatcher blockRenderer = Minecraft.getInstance().getBlockRendererDispatcher();
+ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
+</code></pre>
+<p>这两句都是用来获取物品和方块的渲染器。</p>
+<pre><code class="language-java">BlockState state = Blocks.CHEST.getDefaultState();
+ItemStack stack = new ItemStack(Items.DIAMOND);
+</code></pre>
+<p>这两个变量的作用是用来指定你要渲染的方块和物品，我们这里将要渲染箱子的方块模型和钻石的物品模型。</p>
+<pre><code class="language-java">IBakedModel ibakedmodel = itemRenderer.getItemModelWithOverrides(stack, tileEntityIn.getWorld(), null);
+</code></pre>
+<p>这句的作用是获取能物品的<code>IBakedModel</code>，之后用于渲染。</p>
+<pre><code class="language-java">blockRenderer.renderBlock(state, matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, EmptyModelData.INSTANCE);
+itemRenderer.renderItem(stack, ItemCameraTransforms.TransformType.FIXED, true, matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, ibakedmodel);
+</code></pre>
+<p>在这里就是渲染指令，我们可以通过这两句话调用物品和方块默认的渲染方法。具体怎么渲染我们不用关心。</p>
+<p>然后我们需要绑定我们的<code>TER</code></p>
+<pre><code class="language-java">@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+public class ClientEventHandler {
+    @SubscribeEvent
+    public static void onClientEvent(FMLClientSetupEvent event) {
+        ClientRegistry.bindTileEntityRenderer(TileEntityTypeRegistry.obsidianTERTileEntity.get(), (ObsidianTER::new));
+    }
+}
+</code></pre>
+<p>可以看见我们在Mod总线中的<code>FMLClientSetupEvent</code>（客户端配置）事件中，调用<code>ClientRegistry.bindTileEntityRenderer</code>方法把我们的<code>TER</code>绑定到我们的方块实体上。</p>
+<p>当然别忘了注册你的方块实体</p>
+<pre><code class="language-java">public static final RegistryObject&lt;TileEntityType&lt;ObsidianTERTileEntity&gt;&gt; obsidianTERTileEntity = TILE_ENTITIES.register(&quot;obsidian_ter_tileentity&quot;, () -&gt; TileEntityType.Builder.create(ObsidianTERTileEntity::new, BlockRegistry.obsidianTERBlock.get()).build(null));
+
+</code></pre>
+<p>打开游戏放下方块，你应该就能看见一个特殊的方块了。</p>
+<p><img src="specialrender/ter.assets/image-20200509093429490.png" alt="image-20200509093429490" /></p>
+<p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/ter">源代码</a></p>
 <h1><a class="header" href="#itemstacktileentityrenderer物品特殊渲染" id="itemstacktileentityrenderer物品特殊渲染">ItemStackTileEntityRenderer(物品特殊渲染)</a></h1>
+<p>这一节中，我们将要来学习Item的特殊渲染：<code>ItemStackTileEntityRenderer</code>简称<code>ISTER</code>，它的作用和<code>TileEntityRenderer</code>非常类似，在以前<code>ItemStackTileEntityRenderer</code>甚至就是靠<code>TileEntityRenderer</code>实现的。</p>
+<p>利用<code>ISTER</code>你可以实现一些非常酷的渲染效果，举例来说Create（机械动力）中的扳手，它会自动旋转的齿轮就是利用<code>ISTER</code>实现的。</p>
+<p>首先我们先来看物品的代码</p>
+<pre><code class="language-java">public class ObsidianWrench extends Item {
+    public ObsidianWrench() {
+        super(new Properties().group(ModGroup.itemGroup).setISTER(() -&gt; ObsidianWrenchItemStackTileEntityRenderer::new));
+    }
+}
+</code></pre>
+<p>可以看到物品的代码其实很简单，这里唯一特别的地方就是我们调用了<code>setISTER</code>方法，为我们的物品绑定了一个<code>setISTER</code>。但是这样绑定还不能直接用，我还得替换物品原本的<code>IBakedModel</code>，并在其中启用<code>ISTER</code>。</p>
+<p>接下来我们来看替换物品<code>IBakedModel</code>的代码</p>
+<pre><code class="language-java">@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+public class ModBusEventHandler {
+    @SubscribeEvent
+    public static void onModelBaked(ModelBakeEvent event) {
+        Map&lt;ResourceLocation, IBakedModel&gt; modelRegistry = event.getModelRegistry();
+        ModelResourceLocation location = new ModelResourceLocation(ItemRegistry.obsidianWrench.get().getRegistryName(), &quot;inventory&quot;);
+        IBakedModel existingModel = modelRegistry.get(location);
+        if (existingModel == null) {
+            throw new RuntimeException(&quot;Did not find Obsidian Hidden in registry&quot;);
+        } else if (existingModel instanceof ObsidianWrenchBakedModel) {
+            throw new RuntimeException(&quot;Tried to replaceObsidian Hidden twice&quot;);
+        } else {
+            ObsidianWrenchBakedModel obsidianWrenchBakedModel = new ObsidianWrenchBakedModel(existingModel);
+            event.getModelRegistry().put(location, obsidianWrenchBakedModel);
+        }
+    }
+}
+</code></pre>
+<p>可以看到，我们同样监听了<code>ModelBakeEvent</code>，然后通过<code>modelRegistry.get</code>获取了默认的<code>IBakedModel</code>并将它传入我们新的<code>IBakedModel</code>中，然后调用<code>event.getModelRegistry().put</code>替换了原版的<code>IBakedModel</code>，这里也别忘了<code>value = Dist.CLIENT</code>。</p>
+<p>接下来看我们的<code>IBakedModel</code>：</p>
+<pre><code class="language-java">public class ObsidianWrenchBakedModel implements IBakedModel {
+    private IBakedModel existingModel;
+
+    public ObsidianWrenchBakedModel(IBakedModel existingModel) {
+        this.existingModel = existingModel;
+    }
+
+    @Nonnull
+    @Override
+    public List&lt;BakedQuad&gt; getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData extraData) {
+        throw new AssertionError(&quot;IForgeBakedModel::getQuads should never be called, only IForgeBakedModel::getQuads&quot;);
+    }
+
+    @Override
+    public List&lt;BakedQuad&gt; getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand) {
+        return this.existingModel.getQuads(state, side, rand);
+    }
+
+    @Override
+    public boolean isAmbientOcclusion() {
+        return this.existingModel.isAmbientOcclusion();
+    }
+
+    @Override
+    public boolean isGui3d() {
+        return this.existingModel.isGui3d();
+    }
+
+    @Override
+    public boolean isSideLit() {
+        return this.existingModel.isSideLit();
+    }
+
+    @Override
+    public boolean isBuiltInRenderer() {
+        return true;
+    }
+
+    @Override
+    public TextureAtlasSprite getParticleTexture() {
+        return this.existingModel.getParticleTexture();
+    }
+
+    @Override
+    public ItemOverrideList getOverrides() {
+        return this.existingModel.getOverrides();
+    }
+
+    @Override
+    public IBakedModel handlePerspective(ItemCameraTransforms.TransformType cameraTransformType, MatrixStack mat) {
+        if (cameraTransformType == ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND || cameraTransformType == ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND) {
+            return this;
+        }
+        return this.existingModel.handlePerspective(cameraTransformType, mat);
+    }
+}
+</code></pre>
+<p>可以看到，这里和之前创建的<code>IBakedModel</code>并无太大差别。同样是保存了一个原本的<code>IBakedModel</code>。</p>
+<p>这里我们来说说他们区别：</p>
+<p>第一，对于物品的<code>IBakedModel</code>来说，只会调用<code>IBakedModel#getQuads</code>而不会调用<code>IForgeBakedModel::getQuads</code>，你可以和之前方块的<code>IBakedModel</code>做对比，可以发现刚好是相反的。</p>
+<p>第二，对于物品，你可以通过<code> handlePerspective</code>这个方块来选择不同<code>TransformType</code>下的<code>IBakedModel</code>，具体的<code>TransformType</code>请自行翻阅模型相关的Wiki，这里我们希望在第一人称的视角下用<code>ISTER</code>渲染我们的模型，所以在<code>if</code>语句中返回了<code>this</code>，注意只有当你这里返回了<code>this</code>的<code>TransformType</code>，才会启用<code>ISTER</code>渲染。</p>
+<p>第三，你可以在<code>getOverrides</code>处理物品<code>json</code>文件中的<code>Override</code>，什么是<code>Overrides</code>请执行翻阅wiki。</p>
+<p>第四，也是最重要的，如果你希望你的<code>IBakedModel</code>被<code>ISTER</code>渲染，你必须在<code>isBuiltInRenderer</code>返回<code>true</code>，如果你没有给你的物品中调用<code>setISTER</code>指定自定义的<code>ISTER</code>，默认会使用<code>ItemStackTileEntityRenderer.instance</code>渲染。</p>
+<p>接下就是最为关键的部分，我们的<code>ISTER</code></p>
+<pre><code class="language-java">public class ObsidianWrenchItemStackTileEntityRenderer extends ItemStackTileEntityRenderer {
+    private int degree = 0;
+
+    @Override
+    public void func_239207_a_(ItemStack stack, ItemCameraTransforms.TransformType transformType, MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay) {
+        if (degree == 360) {
+            degree = 0;
+        }
+        degree++;
+        ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
+        IBakedModel ibakedmodel = itemRenderer.getItemModelWithOverrides(stack, null, null);
+        matrixStack.push();
+        matrixStack.translate(0.5F, 0.5F, 0.5F);
+        float xOffset = -1 / 32f;
+        float zOffset = 0;
+        matrixStack.translate(-xOffset, 0, -zOffset);
+        matrixStack.rotate(Vector3f.YP.rotationDegrees(degree));
+        matrixStack.translate(xOffset, 0, zOffset);
+        itemRenderer.renderItem(stack, ItemCameraTransforms.TransformType.NONE, false, matrixStack, buffer, combinedLight, combinedOverlay, ibakedmodel.getBakedModel());
+        matrixStack.pop();
+    }
+}
+</code></pre>
+<p>可以看到我们的<code>ISTER</code>类直接继承了<code>ItemStackTileEntityRenderer</code>，<code>ItemStackTileEntityRenderer</code>只有一个方法需要复写，即<code>func_239207_a_</code>方法，这里的<code>func_239207_a_</code>方法和之前我们学习过的<code>TER</code>里的<code>render</code>方法作用类似。你可以在这里渲染，你想要渲染的东西。</p>
+<p>我只在这里渲染了，我们的物品模型然后在调整完位置之后。让模型旋转起来。</p>
+<pre><code class="language-java">float xOffset = -1 / 32f;
+float zOffset = 0;
+matrixStackIn.translate(-xOffset, 0, -zOffset);
+matrixStackIn.rotate(Vector3f.YP.rotationDegrees(degree));
+matrixStackIn.translate(xOffset, 0, zOffset);
+</code></pre>
+<p>这段就是让模型能按其中轴线旋转的代码，来源是Create Mod 的<code>WrenchItemRenderer</code>。</p>
+<p>因为<code>render</code>每一帧都会被调用一次。</p>
+<pre><code class="language-java">if (degree == 360) {
+  degree = 0;
+}
+degree++;
+</code></pre>
+<p>所以你可以利用这样写出平滑的旋转动画。</p>
+<p>到此，我们的物品特殊渲染就完成了。</p>
+<p>打开游戏看看，你应该就能看到一个会自动旋转的物品了。</p>
+<p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/ister">源代码</a></p>
 <h1><a class="header" href="#事件系统" id="事件系统">事件系统</a></h1>
 <h1><a class="header" href="#网络包" id="网络包">网络包</a></h1>
 <h1><a class="header" href="#自定义网络包" id="自定义网络包">自定义网络包</a></h1>

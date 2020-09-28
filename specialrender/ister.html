@@ -160,6 +160,143 @@
                 <div id="content" class="content">
                     <main>
                         <h1><a class="header" href="#itemstacktileentityrenderer物品特殊渲染" id="itemstacktileentityrenderer物品特殊渲染">ItemStackTileEntityRenderer(物品特殊渲染)</a></h1>
+<p>这一节中，我们将要来学习Item的特殊渲染：<code>ItemStackTileEntityRenderer</code>简称<code>ISTER</code>，它的作用和<code>TileEntityRenderer</code>非常类似，在以前<code>ItemStackTileEntityRenderer</code>甚至就是靠<code>TileEntityRenderer</code>实现的。</p>
+<p>利用<code>ISTER</code>你可以实现一些非常酷的渲染效果，举例来说Create（机械动力）中的扳手，它会自动旋转的齿轮就是利用<code>ISTER</code>实现的。</p>
+<p>首先我们先来看物品的代码</p>
+<pre><code class="language-java">public class ObsidianWrench extends Item {
+    public ObsidianWrench() {
+        super(new Properties().group(ModGroup.itemGroup).setISTER(() -&gt; ObsidianWrenchItemStackTileEntityRenderer::new));
+    }
+}
+</code></pre>
+<p>可以看到物品的代码其实很简单，这里唯一特别的地方就是我们调用了<code>setISTER</code>方法，为我们的物品绑定了一个<code>setISTER</code>。但是这样绑定还不能直接用，我还得替换物品原本的<code>IBakedModel</code>，并在其中启用<code>ISTER</code>。</p>
+<p>接下来我们来看替换物品<code>IBakedModel</code>的代码</p>
+<pre><code class="language-java">@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+public class ModBusEventHandler {
+    @SubscribeEvent
+    public static void onModelBaked(ModelBakeEvent event) {
+        Map&lt;ResourceLocation, IBakedModel&gt; modelRegistry = event.getModelRegistry();
+        ModelResourceLocation location = new ModelResourceLocation(ItemRegistry.obsidianWrench.get().getRegistryName(), &quot;inventory&quot;);
+        IBakedModel existingModel = modelRegistry.get(location);
+        if (existingModel == null) {
+            throw new RuntimeException(&quot;Did not find Obsidian Hidden in registry&quot;);
+        } else if (existingModel instanceof ObsidianWrenchBakedModel) {
+            throw new RuntimeException(&quot;Tried to replaceObsidian Hidden twice&quot;);
+        } else {
+            ObsidianWrenchBakedModel obsidianWrenchBakedModel = new ObsidianWrenchBakedModel(existingModel);
+            event.getModelRegistry().put(location, obsidianWrenchBakedModel);
+        }
+    }
+}
+</code></pre>
+<p>可以看到，我们同样监听了<code>ModelBakeEvent</code>，然后通过<code>modelRegistry.get</code>获取了默认的<code>IBakedModel</code>并将它传入我们新的<code>IBakedModel</code>中，然后调用<code>event.getModelRegistry().put</code>替换了原版的<code>IBakedModel</code>，这里也别忘了<code>value = Dist.CLIENT</code>。</p>
+<p>接下来看我们的<code>IBakedModel</code>：</p>
+<pre><code class="language-java">public class ObsidianWrenchBakedModel implements IBakedModel {
+    private IBakedModel existingModel;
+
+    public ObsidianWrenchBakedModel(IBakedModel existingModel) {
+        this.existingModel = existingModel;
+    }
+
+    @Nonnull
+    @Override
+    public List&lt;BakedQuad&gt; getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData extraData) {
+        throw new AssertionError(&quot;IForgeBakedModel::getQuads should never be called, only IForgeBakedModel::getQuads&quot;);
+    }
+
+    @Override
+    public List&lt;BakedQuad&gt; getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand) {
+        return this.existingModel.getQuads(state, side, rand);
+    }
+
+    @Override
+    public boolean isAmbientOcclusion() {
+        return this.existingModel.isAmbientOcclusion();
+    }
+
+    @Override
+    public boolean isGui3d() {
+        return this.existingModel.isGui3d();
+    }
+
+    @Override
+    public boolean isSideLit() {
+        return this.existingModel.isSideLit();
+    }
+
+    @Override
+    public boolean isBuiltInRenderer() {
+        return true;
+    }
+
+    @Override
+    public TextureAtlasSprite getParticleTexture() {
+        return this.existingModel.getParticleTexture();
+    }
+
+    @Override
+    public ItemOverrideList getOverrides() {
+        return this.existingModel.getOverrides();
+    }
+
+    @Override
+    public IBakedModel handlePerspective(ItemCameraTransforms.TransformType cameraTransformType, MatrixStack mat) {
+        if (cameraTransformType == ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND || cameraTransformType == ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND) {
+            return this;
+        }
+        return this.existingModel.handlePerspective(cameraTransformType, mat);
+    }
+}
+</code></pre>
+<p>可以看到，这里和之前创建的<code>IBakedModel</code>并无太大差别。同样是保存了一个原本的<code>IBakedModel</code>。</p>
+<p>这里我们来说说他们区别：</p>
+<p>第一，对于物品的<code>IBakedModel</code>来说，只会调用<code>IBakedModel#getQuads</code>而不会调用<code>IForgeBakedModel::getQuads</code>，你可以和之前方块的<code>IBakedModel</code>做对比，可以发现刚好是相反的。</p>
+<p>第二，对于物品，你可以通过<code> handlePerspective</code>这个方块来选择不同<code>TransformType</code>下的<code>IBakedModel</code>，具体的<code>TransformType</code>请自行翻阅模型相关的Wiki，这里我们希望在第一人称的视角下用<code>ISTER</code>渲染我们的模型，所以在<code>if</code>语句中返回了<code>this</code>，注意只有当你这里返回了<code>this</code>的<code>TransformType</code>，才会启用<code>ISTER</code>渲染。</p>
+<p>第三，你可以在<code>getOverrides</code>处理物品<code>json</code>文件中的<code>Override</code>，什么是<code>Overrides</code>请执行翻阅wiki。</p>
+<p>第四，也是最重要的，如果你希望你的<code>IBakedModel</code>被<code>ISTER</code>渲染，你必须在<code>isBuiltInRenderer</code>返回<code>true</code>，如果你没有给你的物品中调用<code>setISTER</code>指定自定义的<code>ISTER</code>，默认会使用<code>ItemStackTileEntityRenderer.instance</code>渲染。</p>
+<p>接下就是最为关键的部分，我们的<code>ISTER</code></p>
+<pre><code class="language-java">public class ObsidianWrenchItemStackTileEntityRenderer extends ItemStackTileEntityRenderer {
+    private int degree = 0;
+
+    @Override
+    public void func_239207_a_(ItemStack stack, ItemCameraTransforms.TransformType transformType, MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay) {
+        if (degree == 360) {
+            degree = 0;
+        }
+        degree++;
+        ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
+        IBakedModel ibakedmodel = itemRenderer.getItemModelWithOverrides(stack, null, null);
+        matrixStack.push();
+        matrixStack.translate(0.5F, 0.5F, 0.5F);
+        float xOffset = -1 / 32f;
+        float zOffset = 0;
+        matrixStack.translate(-xOffset, 0, -zOffset);
+        matrixStack.rotate(Vector3f.YP.rotationDegrees(degree));
+        matrixStack.translate(xOffset, 0, zOffset);
+        itemRenderer.renderItem(stack, ItemCameraTransforms.TransformType.NONE, false, matrixStack, buffer, combinedLight, combinedOverlay, ibakedmodel.getBakedModel());
+        matrixStack.pop();
+    }
+}
+</code></pre>
+<p>可以看到我们的<code>ISTER</code>类直接继承了<code>ItemStackTileEntityRenderer</code>，<code>ItemStackTileEntityRenderer</code>只有一个方法需要复写，即<code>func_239207_a_</code>方法，这里的<code>func_239207_a_</code>方法和之前我们学习过的<code>TER</code>里的<code>render</code>方法作用类似。你可以在这里渲染，你想要渲染的东西。</p>
+<p>我只在这里渲染了，我们的物品模型然后在调整完位置之后。让模型旋转起来。</p>
+<pre><code class="language-java">float xOffset = -1 / 32f;
+float zOffset = 0;
+matrixStackIn.translate(-xOffset, 0, -zOffset);
+matrixStackIn.rotate(Vector3f.YP.rotationDegrees(degree));
+matrixStackIn.translate(xOffset, 0, zOffset);
+</code></pre>
+<p>这段就是让模型能按其中轴线旋转的代码，来源是Create Mod 的<code>WrenchItemRenderer</code>。</p>
+<p>因为<code>render</code>每一帧都会被调用一次。</p>
+<pre><code class="language-java">if (degree == 360) {
+  degree = 0;
+}
+degree++;
+</code></pre>
+<p>所以你可以利用这样写出平滑的旋转动画。</p>
+<p>到此，我们的物品特殊渲染就完成了。</p>
+<p>打开游戏看看，你应该就能看到一个会自动旋转的物品了。</p>
+<p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/ister">源代码</a></p>
 
                     </main>
 

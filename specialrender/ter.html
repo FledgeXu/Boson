@@ -160,6 +160,124 @@
                 <div id="content" class="content">
                     <main>
                         <h1><a class="header" href="#tileentityrenderer方块实体渲染器" id="tileentityrenderer方块实体渲染器">TileEntityRenderer(方块实体渲染器)</a></h1>
+<p>在这节中，我们将来学习一个非常重要的渲染方式<code>TileEntityRenderer</code>简称<code>TER</code>。在开始之前我们首先需要知道<code>TER</code>的作用是什么。让我回想一下原版中的箱子、附魔台。它们都有特殊的动画，而<code>TER</code>的作用就是让你也可以实现这些动画。</p>
+<p>首先我们从方块开始</p>
+<pre><code class="language-java">public class ObsidianTERBlock extends Block {
+
+    private static VoxelShape shape;
+
+    static {
+        VoxelShape base = Block.makeCuboidShape(0, 0, 0, 16, 1, 16);
+        VoxelShape column1 = Block.makeCuboidShape(0, 1, 0, 1, 15, 1);
+        VoxelShape column2 = Block.makeCuboidShape(15, 1, 0, 16, 15, 1);
+        VoxelShape column3 = Block.makeCuboidShape(0, 1, 15, 1, 15, 16);
+        VoxelShape column4 = Block.makeCuboidShape(15, 1, 15, 16, 15, 16);
+        VoxelShape top = Block.makeCuboidShape(0, 15, 0, 16, 16, 16);
+        shape = VoxelShapes.or(base, column1, column2, column3, column4, top);
+    }
+
+    public ObsidianTERBlock() {
+        super(Properties.create(Material.ROCK).notSolid().hardnessAndResistance(5));
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
+        return shape;
+    }
+
+    @Override
+    public boolean hasTileEntity(BlockState state) {
+        return true;
+    }
+
+    @Nullable
+    @Override
+    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
+        return new ObsidianTERTileEntity();
+    }
+
+}
+</code></pre>
+<p>方块的内容非常简单，基本上就是抄了我们之前写好的黑曜石框架，然后给它添加了一个方块实体。</p>
+<p>接下来我们来看方块实体的具体内容。</p>
+<pre><code class="language-java">public class ObsidianTERTileEntity extends TileEntity {
+   public ObsidianTERTileEntity() {
+       super(TileEntityTypeRegistry.obsidianTERTileEntity.get());
+   }
+}
+</code></pre>
+<p>因为我们用不到任何东西，所以这个方块实体是空的，仅仅用来和我们之后创建的<code>TileEntityRenderer</code>作关联。</p>
+<p>接下来就是最为关键的<code>TER</code>部分了</p>
+<pre><code class="language-java">public class ObsidianTER extends TileEntityRenderer&lt;ObsidianTERTileEntity&gt; {
+
+    public ObsidianTER(TileEntityRendererDispatcher rendererDispatcherIn) {
+        super(rendererDispatcherIn);
+    }
+
+    @Override
+    public void render(ObsidianTERTileEntity tileEntityIn, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
+        matrixStackIn.push();
+        matrixStackIn.translate(1, 0, 0);
+        BlockRendererDispatcher blockRenderer = Minecraft.getInstance().getBlockRendererDispatcher();
+        BlockState state = Blocks.CHEST.getDefaultState();
+        blockRenderer.renderBlock(state, matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, EmptyModelData.INSTANCE);
+        matrixStackIn.pop();
+
+        matrixStackIn.push();
+        matrixStackIn.translate(0, 1, 0);
+        ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
+        ItemStack stack = new ItemStack(Items.DIAMOND);
+        IBakedModel ibakedmodel = itemRenderer.getItemModelWithOverrides(stack, tileEntityIn.getWorld(), null);
+        itemRenderer.renderItem(stack, ItemCameraTransforms.TransformType.FIXED, true, matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, ibakedmodel);
+        matrixStackIn.pop();
+    }
+}
+</code></pre>
+<p>可以看到我们的<code>ObsidianTER</code>直接继承了<code>TileEntityRenderer</code>，其中泛型填的是你之前创建好的方块实体，</p>
+<p>而其中的<code>render</code>方法，就是你的渲染方法。</p>
+<p>因为这一块涉及到很多的计算机图形学相关的知识，这里我就不演示如何自定义渲染了，有兴趣的读者可以查看Mcjty做的相关的<a href="https://www.bilibili.com/video/BV1QE41137P9?p=14">教程</a>和<a href="https://github.com/McJty/YouTubeModding14/blob/master/src/main/java/com/mcjty/mytutorial/blocks/MagicRenderer.java">代码</a>。</p>
+<p>这里我们只演示如何额外的渲染出物品和方块。</p>
+<p>首先你应该用<code> matrixStackIn.push()</code>和<code>matrixStackIn.pop()</code>包裹起你的渲染代码。因为你对渲染做的所有移动、旋转和放大操作都会储存在<code>matrixStackIn</code>中，而<code>push</code>和<code>pop</code>的作用就是保存和恢复之前渲染的状态。如果你不进行这些操作有可能会污染其他的渲染器。</p>
+<pre><code class="language-java">matrixStackIn.translate(1, 0, 0);
+</code></pre>
+<p>这个设置了你要渲染对象的移动</p>
+<p>与此相对应的还有</p>
+<pre><code class="language-java">matrixStackIn.rotate();
+matrixStackIn.scale();
+</code></pre>
+<p>分别用于旋转和缩放。</p>
+<pre><code class="language-java">BlockRendererDispatcher blockRenderer = Minecraft.getInstance().getBlockRendererDispatcher();
+ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
+</code></pre>
+<p>这两句都是用来获取物品和方块的渲染器。</p>
+<pre><code class="language-java">BlockState state = Blocks.CHEST.getDefaultState();
+ItemStack stack = new ItemStack(Items.DIAMOND);
+</code></pre>
+<p>这两个变量的作用是用来指定你要渲染的方块和物品，我们这里将要渲染箱子的方块模型和钻石的物品模型。</p>
+<pre><code class="language-java">IBakedModel ibakedmodel = itemRenderer.getItemModelWithOverrides(stack, tileEntityIn.getWorld(), null);
+</code></pre>
+<p>这句的作用是获取能物品的<code>IBakedModel</code>，之后用于渲染。</p>
+<pre><code class="language-java">blockRenderer.renderBlock(state, matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, EmptyModelData.INSTANCE);
+itemRenderer.renderItem(stack, ItemCameraTransforms.TransformType.FIXED, true, matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, ibakedmodel);
+</code></pre>
+<p>在这里就是渲染指令，我们可以通过这两句话调用物品和方块默认的渲染方法。具体怎么渲染我们不用关心。</p>
+<p>然后我们需要绑定我们的<code>TER</code></p>
+<pre><code class="language-java">@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+public class ClientEventHandler {
+    @SubscribeEvent
+    public static void onClientEvent(FMLClientSetupEvent event) {
+        ClientRegistry.bindTileEntityRenderer(TileEntityTypeRegistry.obsidianTERTileEntity.get(), (ObsidianTER::new));
+    }
+}
+</code></pre>
+<p>可以看见我们在Mod总线中的<code>FMLClientSetupEvent</code>（客户端配置）事件中，调用<code>ClientRegistry.bindTileEntityRenderer</code>方法把我们的<code>TER</code>绑定到我们的方块实体上。</p>
+<p>当然别忘了注册你的方块实体</p>
+<pre><code class="language-java">public static final RegistryObject&lt;TileEntityType&lt;ObsidianTERTileEntity&gt;&gt; obsidianTERTileEntity = TILE_ENTITIES.register(&quot;obsidian_ter_tileentity&quot;, () -&gt; TileEntityType.Builder.create(ObsidianTERTileEntity::new, BlockRegistry.obsidianTERBlock.get()).build(null));
+
+</code></pre>
+<p>打开游戏放下方块，你应该就能看见一个特殊的方块了。</p>
+<p><img src="ter.assets/image-20200509093429490.png" alt="image-20200509093429490" /></p>
+<p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/ter">源代码</a></p>
 
                     </main>
 
