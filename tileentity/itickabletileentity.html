@@ -160,6 +160,64 @@
                 <div id="content" class="content">
                     <main>
                         <h1><a class="header" href="#itickabletileentity" id="itickabletileentity">ITickableTileEntity</a></h1>
+<p>在这一节中，我们来学习TileEntity中最为重要的一个接口：<code>ITickableTileEntity</code>。</p>
+<p>这一节我们将以制作一个会自动打招呼的方块为例，来体现这个接口的功能。</p>
+<p><code>ObsidianHelloBlock</code>:</p>
+<pre><code class="language-java">public class ObsidianHelloBlock extends Block {
+    public ObsidianHelloBlock() {
+        super(Properties.create(Material.ROCK).hardnessAndResistance(5));
+    }
+
+    @Override
+    public boolean hasTileEntity(BlockState state) {
+        return true;
+    }
+
+    @Nullable
+    @Override
+    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
+        return new ObsidianHelloTileEntity();
+    }
+}
+</code></pre>
+<p><code>ObsidianHelloTileEntity</code>:</p>
+<pre><code class="language-java">public class ObsidianHelloTileEntity extends TileEntity implements ITickableTileEntity {
+    private static final int MAX_TIME = 5 * 20;
+    private int timer = 0;
+
+    public ObsidianHelloTileEntity() {
+        super(TileEntityTypeRegistry.obsidianHelloTileEntity.get());
+    }
+
+    @Override
+    public void tick() {
+        if (world != null &amp;&amp; !world.isRemote) {
+            if (timer == MAX_TIME) {
+                PlayerEntity player = world.getClosestPlayer(pos.getX(), pos.getY(), pos.getZ(), 10, false);
+                TranslationTextComponent translationTextComponent = new TranslationTextComponent(&quot;message.hello_block.hello&quot;);
+                if (player != null) {
+                    player.sendStatusMessage(translationTextComponent, false);
+                }
+                timer = 0;
+            }
+            timer++;
+        }
+    }
+}
+
+</code></pre>
+<p>实际上这个方块实体的代码要比我们做的第一个方块实体的代码简单许多。可以看到我们在这里实现了<code>ITickableTileEntity</code>接口，这个接口只有一个方法需要实现，就是<code>tick</code>方法，故名思义，这个会在每个游戏tick执行一次，我们这里做了一计数器，然后通过<code>world.getClosestPlayer</code>方法获取到了这个方块位置周围10格内最近的玩家，然后创建了<code>TranslationTextComponent</code>消息（，最后调用了<code>player.sendStatusMessage</code>将消息发送给了玩家，<code>sendStatusMessage</code> 接受的是<code>ITextComponent</code>接口。</p>
+<p>注册<code>TileEntityType</code>：</p>
+<pre><code class="language-java">public static RegistryObject&lt;TileEntityType&lt;ObsidianHelloTileEntity&gt;&gt; obsidianHelloTileEntity = TILE_ENTITIES.register(&quot;obsidian_hello_tileentity&quot;, () -&gt; TileEntityType.Builder.create(ObsidianHelloTileEntity::new, BlockRegistry.obsidianHelloBlock.get()).build(null));
+
+</code></pre>
+<p>其他的注册和模型文件的创建这里就省略了，相信读者已经有能力自主完成。</p>
+<p>打开游戏，靠近方块:</p>
+<p><img src="itickabletileentity.assets/image-20200429190609373.png" alt="image-20200429190609373" /></p>
+<p>可以看见我们的方块在和我们打招呼呢。</p>
+<p><a href="https://github.com/FledgeXu/NeutrinoSourceCode/tree/master/src/main/java/com/tutorial/neutrino/tickabletileentity">源代码</a></p>
+<h2><a class="header" href="#开发小课堂" id="开发小课堂">开发小课堂</a></h2>
+<p>在很多时候，当函数要求传入的变量的类型是接口时，基本都已经有实现好的类可以使用，大家可以尝试查看这个接口的继承树来寻找可以使用的类。</p>
 
                     </main>
 
