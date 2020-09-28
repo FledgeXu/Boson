@@ -1,0 +1,9 @@
+[book]
+authors = ["FledgeXu"]
+language = "zh_cn"
+multilingual = false
+src = "src"
+title = "Boson 1.16 Modding Tutorial"
+[output.html]
+# mathjax-support = true
+#google-analytics = "UA-80068655-2"
