@@ -1,0 +1,814 @@
+<!DOCTYPE HTML>
+<html lang="zh_cn" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Boson 1.16 Modding Tutorial</title>
+        
+        <meta name="robots" content="noindex" />
+        
+        
+
+
+        <!-- Custom HTML head -->
+        
+
+
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        
+        <link rel="icon" href="favicon.svg">
+        
+        
+        <link rel="shortcut icon" href="favicon.png">
+        
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        
+        <link rel="stylesheet" href="fonts/fonts.css">
+        
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="introducation/intro.html"><strong aria-hidden="true">1.</strong> 导论</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="introducation/forge.html"><strong aria-hidden="true">1.1.</strong> Forge是什么</a></li><li class="chapter-item expanded "><a href="introducation/vanilla.html"><strong aria-hidden="true">1.2.</strong> Minecraft如何运作的</a></li><li class="chapter-item expanded "><a href="introducation/developmentmodel.html"><strong aria-hidden="true">1.3.</strong> 开发模型</a></li><li class="chapter-item expanded "><a href="introducation/coreconception.html"><strong aria-hidden="true">1.4.</strong> 一些核心概念</a></li></ol></li><li class="chapter-item expanded "><a href="devenvironment/intro.html"><strong aria-hidden="true">2.</strong> 环境配置</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="devenvironment/setup.html"><strong aria-hidden="true">2.1.</strong> Forge开发环境的配置</a></li><li class="chapter-item expanded "><a href="devenvironment/folderintro.html"><strong aria-hidden="true">2.2.</strong> 开发环境的介绍</a></li><li class="chapter-item expanded "><a href="devenvironment/modinfo.html"><strong aria-hidden="true">2.3.</strong> 自定义mod信息</a></li></ol></li><li class="chapter-item expanded "><a href="item/intro.html"><strong aria-hidden="true">3.</strong> 物品</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="item/firstitem.html"><strong aria-hidden="true">3.1.</strong> 第一个物品</a></li><li class="chapter-item expanded "><a href="item/modelandtextures.html"><strong aria-hidden="true">3.2.</strong> 物品材质与模型</a></li><li class="chapter-item expanded "><a href="item/itemstack.html"><strong aria-hidden="true">3.3.</strong> Item和ItemStack</a></li><li class="chapter-item expanded "><a href="item/group.html"><strong aria-hidden="true">3.4.</strong> 自定义创造模式物品栏</a></li><li class="chapter-item expanded "><a href="item/food.html"><strong aria-hidden="true">3.5.</strong> 食物</a></li><li class="chapter-item expanded "><a href="item/meleeweapons.html"><strong aria-hidden="true">3.6.</strong> 近战武器</a></li><li class="chapter-item expanded "><a href="item/tool.html"><strong aria-hidden="true">3.7.</strong> 工具</a></li><li class="chapter-item expanded "><a href="item/armor.html"><strong aria-hidden="true">3.8.</strong> 装备</a></li></ol></li><li class="chapter-item expanded "><a href="i18n/i18n.html"><strong aria-hidden="true">4.</strong> 语言文件与本地化</a></li><li class="chapter-item expanded "><a href="block/intro.html"><strong aria-hidden="true">5.</strong> 方块</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="block/firstblock.html"><strong aria-hidden="true">5.1.</strong> 第一个方块</a></li><li class="chapter-item expanded "><a href="block/blockandblockstate.html"><strong aria-hidden="true">5.2.</strong> Block和BlockState</a></li><li class="chapter-item expanded "><a href="block/modelandtextures.html"><strong aria-hidden="true">5.3.</strong> 方块模型和材质</a></li><li class="chapter-item expanded "><a href="block/blocksstates.html"><strong aria-hidden="true">5.4.</strong> 方块状态</a></li><li class="chapter-item expanded "><a href="block/nonesoildblock.html"><strong aria-hidden="true">5.5.</strong> 非实心方块与自定义模型</a></li><li class="chapter-item expanded "><a href="block/rendertype.html"><strong aria-hidden="true">5.6.</strong> 方块的渲染类型</a></li></ol></li><li class="chapter-item expanded "><a href="specialmodel/intro.html"><strong aria-hidden="true">6.</strong> 特殊模型</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="specialmodel/obj.html"><strong aria-hidden="true">6.1.</strong> OBJ 模型</a></li><li class="chapter-item expanded "><a href="specialmodel/b3d.html"><strong aria-hidden="true">6.2.</strong> B3D 模型</a></li><li class="chapter-item expanded "><a href="specialmodel/animation.html"><strong aria-hidden="true">6.3.</strong> 动画</a></li></ol></li><li class="chapter-item expanded "><a href="tileentity/intro.html"><strong aria-hidden="true">7.</strong> 方块实体</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="tileentity/firsttileentity.html"><strong aria-hidden="true">7.1.</strong> 第一个方块实体和其数据保存</a></li><li class="chapter-item expanded "><a href="tileentity/itickabletileentity.html"><strong aria-hidden="true">7.2.</strong> ITickableTileEntity</a></li><li class="chapter-item expanded "><a href="tileentity/datasync.html"><strong aria-hidden="true">7.3.</strong> 方块实体内置的数据同步</a></li></ol></li><li class="chapter-item expanded "><a href="specialrender/intro.html"><strong aria-hidden="true">8.</strong> 特殊渲染</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="specialrender/ibakedmodel.html"><strong aria-hidden="true">8.1.</strong> IBakedModel(烘培模型)</a></li><li class="chapter-item expanded "><a href="specialrender/ter.html"><strong aria-hidden="true">8.2.</strong> TileEntityRenderer(方块实体渲染器)</a></li><li class="chapter-item expanded "><a href="specialrender/ister.html"><strong aria-hidden="true">8.3.</strong> ItemStackTileEntityRenderer(物品特殊渲染)</a></li></ol></li><li class="chapter-item expanded "><a href="event/intro.html"><strong aria-hidden="true">9.</strong> 事件系统</a></li><li class="chapter-item expanded "><a href="networking/intro.html"><strong aria-hidden="true">10.</strong> 网络包</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="networking/custompack.html"><strong aria-hidden="true">10.1.</strong> 自定义网络包</a></li><li class="chapter-item expanded "><a href="networking/secure.html"><strong aria-hidden="true">10.2.</strong> 关于Mod安全</a></li></ol></li><li class="chapter-item expanded "><a href="entity/intro.html"><strong aria-hidden="true">11.</strong> 实体</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="entity/scratchentity.html"><strong aria-hidden="true">11.1.</strong> 从零构建一个实体和数据同步</a></li><li class="chapter-item expanded "><a href="entity/passiveentityandai.html"><strong aria-hidden="true">11.2.</strong> 创建一个动物和AI</a></li></ol></li><li class="chapter-item expanded "><a href="capability/intro.html"><strong aria-hidden="true">12.</strong> 能力系统</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="capability/capabilityfromscratch.html"><strong aria-hidden="true">12.1.</strong> 从零构建与使用能力</a></li><li class="chapter-item expanded "><a href="capability/simpleusage.html"><strong aria-hidden="true">12.2.</strong> 开始使用预定义能力</a></li><li class="chapter-item expanded "><a href="capability/attachcapabilityprovider.html"><strong aria-hidden="true">12.3.</strong> 附加能力提供器</a></li></ol></li><li class="chapter-item expanded "><a href="worldsaveddata/example.html"><strong aria-hidden="true">13.</strong> WorldSavedData(世界数据保存)</a></li><li class="chapter-item expanded "><a href="gui/intro.html"><strong aria-hidden="true">14.</strong> Gui</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="gui/firstgui.html"><strong aria-hidden="true">14.1.</strong> 第一个Gui</a></li><li class="chapter-item expanded "><a href="gui/container.html"><strong aria-hidden="true">14.2.</strong> Container</a></li><li class="chapter-item expanded "><a href="gui/hud.html"><strong aria-hidden="true">14.3.</strong> HUD</a></li></ol></li><li class="chapter-item expanded "><a href="fluid/firstfluid.html"><strong aria-hidden="true">15.</strong> 流体</a></li><li class="chapter-item expanded "><a href="worldgeneration/intro.html"><strong aria-hidden="true">16.</strong> 世界生成</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="worldgeneration/oregeneration.html"><strong aria-hidden="true">16.1.</strong> 矿物生成</a></li><li class="chapter-item expanded "><a href="worldgeneration/structuregeneration.html"><strong aria-hidden="true">16.2.</strong> 结构生成</a></li><li class="chapter-item expanded "><a href="worldgeneration/biomegenerationandworldtype.html"><strong aria-hidden="true">16.3.</strong> 自定义生物群系和世界类型</a></li><li class="chapter-item expanded "><a href="worldgeneration/dimensionenerationandchunkgeneratorandbiomeprovider.html"><strong aria-hidden="true">16.4.</strong> 自定义维度与区块生成器以及生物群系提供器</a></li></ol></li><li class="chapter-item expanded "><a href="datapack/intro.html"><strong aria-hidden="true">17.</strong> 数据包</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="datapack/recipes.html"><strong aria-hidden="true">17.1.</strong> 配方</a></li><li class="chapter-item expanded "><a href="datapack/lootable.html"><strong aria-hidden="true">17.2.</strong> 掉落物配方</a></li></ol></li><li class="chapter-item expanded "><a href="datagnerator/intro.html"><strong aria-hidden="true">18.</strong> Data Generator</a></li><li class="chapter-item expanded "><a href="command/command.html"><strong aria-hidden="true">19.</strong> 命令</a></li><li class="chapter-item expanded "><a href="advancements/intro.html"><strong aria-hidden="true">20.</strong> 进度</a></li><li class="chapter-item expanded "><a href="configure/configure.html"><strong aria-hidden="true">21.</strong> 配置文件</a></li><li class="chapter-item expanded "><a href="potion/intro.html"><strong aria-hidden="true">22.</strong> 药水</a></li><li class="chapter-item expanded "><a href="paticles/intro.html"><strong aria-hidden="true">23.</strong> 粒子效果</a></li><li class="chapter-item expanded "><a href="sounds/intro.html"><strong aria-hidden="true">24.</strong> 音效</a></li><li class="chapter-item expanded "><a href="io/intro.html"><strong aria-hidden="true">25.</strong> 用户输入</a></li><li class="chapter-item expanded "><a href="compatible/intro.html"><strong aria-hidden="true">26.</strong> 与其他mod的兼容</a></li><li class="chapter-item expanded "><a href="at/intro.html"><strong aria-hidden="true">27.</strong> Access Transformer</a></li><li class="chapter-item expanded "><a href="coremode/intro.html"><strong aria-hidden="true">28.</strong> CoreMod</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        
+                    </div>
+
+                    <h1 class="menu-title">Boson 1.16 Modding Tutorial</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1><a class="header" href="#导论" id="导论">导论</a></h1>
+<h1><a class="header" href="#forge是什么" id="forge是什么">Forge是什么</a></h1>
+<h1><a class="header" href="#minecraft如何运作的" id="minecraft如何运作的">Minecraft如何运作的</a></h1>
+<h1><a class="header" href="#开发模型" id="开发模型">开发模型</a></h1>
+<h1><a class="header" href="#一些核心概念" id="一些核心概念">一些核心概念</a></h1>
+<h1><a class="header" href="#环境配置" id="环境配置">环境配置</a></h1>
+<p>在这一节中，我们会讲解如何配置Forge的开发环境。（<del>在这一节会劝退大部分人</del>）</p>
+<h1><a class="header" href="#forge开发环境的配置" id="forge开发环境的配置">Forge开发环境的配置</a></h1>
+<h2><a class="header" href="#需要的工具" id="需要的工具">需要的工具</a></h2>
+<ul>
+<li>
+<p><a href="https://adoptopenjdk.net/?variant=openjdk8&amp;jvmVariant=hotspot">AdoptOpenJDK8-HotSpot</a>，出于兼容性的考虑，<strong>请确保你安装的是JDK8</strong>。</p>
+</li>
+<li>
+<p><a href="https://www.jetbrains.com/zh-cn/idea/download/">IntelliJ IDEA 2020 社区版</a>，下载完成后请自行安装，介于目标读者的水平，这里有个如何给2020.1之后的版本安装官方中文的<a href="https://www.bilibili.com/video/BV1NT4y137nb">教程</a>。</p>
+</li>
+<li>
+<p><a href="https://adfoc.us/serve/sitelinks/?id=271228&amp;url=https://files.minecraftforge.net/maven/net/minecraftforge/forge/1.16.3-34.1.0/forge-1.16.3-34.1.0-mdk.zip">Forge MDK 1.16.3 34.1.0</a>，下载后请解压到你喜欢的文件夹，请注意这里的解压文件夹不要包括任何的中文、空格以及一些特殊符号（比如「！」）。</p>
+</li>
+</ul>
+<p><strong>注意，介于预想读者的水平，配置过程十有八九是会失败的，建议直接使用<a href="https://v2mcdev.com/t/topic/589">ForgeGradleCN(推荐)</a>或者<a href="https://v2mcdev.com/t/topic/249/2">离线包</a>，配置完ForgeGradleCN后继续进行之后的步骤</strong></p>
+<h2><a class="header" href="#总体的介绍" id="总体的介绍">总体的介绍</a></h2>
+<p>Minecraft Forge是一个Gradle项目，Gradle是一个项目构建工具，其主要作用是负责项目的依赖管理、构建等功能。依赖管理指的是帮你自动地下载和配置你开发中使用的库，也就是别人写好的方便你自己开发的代码。构建指的是将你写的mod打包成别人可以安装的jar文件。</p>
+<p>Forge官方写了一个叫做ForgeGradle（以后简称FG）的插件来负责整个mod开发环境的配置（<del>为什么要说这个呢，让你知道当环境配置失败时该骂谁</del>)。</p>
+<h2><a class="header" href="#开始配置" id="开始配置">开始配置</a></h2>
+<p><strong>在开始配置前，非常建议使用官方启动器启动一遍1.16.3版本的游戏，这样可以减少配置环境过程中的网络下载，加速环境配置的速度和成功率</strong></p>
+<p>首先选择启动页面的<code>Open or Import</code>。</p>
+<p><img src="devenvironment/setup.assets/image-20200928111032977.png" alt="image-20200928111032977" /></p>
+<p>选择你MDK解压目录下的<code>build.gradle</code>打开。</p>
+<p><img src="devenvironment/setup.assets/image-20200928111120002.png" alt="image-20200928111120002" /></p>
+<p>选择作为<code>Open As Project</code></p>
+<p><img src="devenvironment/setup.assets/image-20200928111131905.png" alt="image-20200928111131905" /></p>
+<p>打开之后，根据你网络和自身电脑的情况，会有或长或短的导入时间，这个过程需要下载很多的依赖包，而这些依赖包都存放在海外，介于中国大陆网络封锁，导致海外网络访问不稳定，这个时间将会持续几分钟至几天不等，而且很有可能失败，对于有代理的读者可以自行搜索「Gradle配置代理」来给Gradle加上代理，对于没有代理的读者，可以使用上文提到过的<code>ForgeGradleCN</code>。</p>
+<p>当导入结束，点击下方的<code>build</code>面板，左侧显示绿勾时说明导入成功。</p>
+<p><img src="devenvironment/setup.assets/image-20200928111716782.png" alt="image-20200928111716782" /></p>
+<p>再进行下一步前，我建议先调整一下IntelliJ关于Gradle的设置，用来加快之后的游戏启动速度。</p>
+<p>打开IntelliJ的设置界面，找到<code>Gradle</code>标签页，将<code>Build and using</code>从<code>Gradle</code>改为<code>IntelliJ IDEA</code>，点击<code>Apply</code>保存。</p>
+<p><img src="devenvironment/setup.assets/image-20200928112057176.png" alt="image-20200928112057176" /></p>
+<p>默认情况下MDK设置的日志等级是<code>debug</code>等级，这个日志等级输出内容过于多了，不方便我们开发中查看日志，建议调整成<code>info</code>等级。</p>
+<p>打开你的<code>build.gradle</code>文件，将里面所有的<code>property 'forge.logging.console.level', ‘debug’</code>改成<code>property 'forge.logging.console.level', ‘info’</code>。</p>
+<p>设置完成后，点击运行右侧的<code>Gradle</code>面板，选择其中的<code>Tasks</code>下<code>fg_runs</code>下的<code>genIntelliJRuns</code>。</p>
+<p><img src="devenvironment/setup.assets/image-20200928112244157.png" alt="image-20200928112244157" /></p>
+<p>在这一步中，会自动下载剩余的一些依赖，以及Minecraft的资源文件。如果你之前有用官方启动器启动过对应版本的Minecraft，在这个过程中会自动复制本地的缓存，将大幅度的减少下载时间。如果这个过程中出现了错误，基本上重新运行<code>genIntelliJRuns</code>就能解决。</p>
+<p>同样的当左侧显示「绿勾」时说明配置成功。</p>
+<p><img src="devenvironment/setup.assets/image-20200928112443232.png" alt="image-20200928112443232" /></p>
+<p>点击上方的<code>Run=&gt;Edit Configurations</code>。</p>
+<p><img src="devenvironment/setup.assets/image-20200928112521319.png" alt="image-20200928112521319" /></p>
+<p>选择<code>Application</code>下的三项，删去<code>Before Launch</code>除了<code>Build</code>之外的所有任务</p>
+<p><img src="devenvironment/setup.assets/image-20200928112744599.png" alt="image-20200928112744599" /></p>
+<p><img src="devenvironment/setup.assets/image-20200928112800414.png" alt="image-20200928112800414" /></p>
+<p>然后选择<code>runClient</code>即可启动游戏。</p>
+<p><img src="devenvironment/setup.assets/image-20200928112852625.png" alt="image-20200928112852625" /></p>
+<p>可以看见我们的游戏成功启动了，如果你之前按照教程调整过Gradle的设置，启动速度应该不会很慢。</p>
+<p><img src="devenvironment/setup.assets/image-20200928113626808.png" alt="image-20200928113626808" /></p>
+<p>为了之后创建目录和子包的方便，按照下图将「拼合包」和「压缩空的中间包」取消选择。</p>
+<p><img src="devenvironment/setup.assets/image-20200928113738234.png" alt="image-20200928113738234" /></p>
+<h2><a class="header" href="#jdk常见错误" id="jdk常见错误">JDK常见错误</a></h2>
+<p>如果你的电脑里有多个JDK，有可能IntelliJ自动选择的JDK是错误的，导致无法导入，你需要手动修改项目的JDK和Gradle运行所需要的JDK。</p>
+<p>选择<code>File</code>下的<code>Porject Strucutre</code>。</p>
+<p><img src="devenvironment/setup.assets/image-20200928113803025.png" alt="image-20200928113803025" /></p>
+<p>将项目JDK改成1.8版本</p>
+<p><img src="devenvironment/setup.assets/image-20200928113851675.png" alt="image-20200928113851675" /></p>
+<h1><a class="header" href="#开发环境的介绍" id="开发环境的介绍">开发环境的介绍</a></h1>
+<p>在这一节中，我会介绍一下Mod开发产生的一系列文件和文件夹，以及它们的作用。</p>
+<p>首先最为重要的一个文件便是：<code>build.gradle</code>，这个文件是Gradle的配置文件，它规定了Mod的项目是如何构建，有哪些依赖，如何配置等。</p>
+<p>其中的<code>minecraft </code>闭包下的内容就是关于Forge Gradle的配置。</p>
+<p>其中<code>mappings channel: 'snapshot', version: '20190719-1.14.3'</code>配置项规定了本项目使用的mapping文件版本，这里我强烈建议你经常更新mapping文件，你可以在<a href="http://export.mcpbot.bspk.rs/">这里</a>找到所有的mapping文件。那么什么是mapping文件呢？还记得我们之间提及的<code>srg名</code>和<code>mcp名</code>吗？mapping文件的作用就是提供<code>srg名</code>和<code>mcp名</code>之间的翻译。</p>
+<p><code>channel</code>的意思是mapping文件的分类，在大部分情况下，你都应该使用<code>snapshot</code>（快照版本）来确保你的mcp名字是最新的。而之后的<code>version</code>就是具体的版本了，大部分情况下是高版本游戏兼容低版本mapping的，当然游戏版本号不能相差太远。其中还有两个被注释起来的参数，这里我们暂且不提。</p>
+<p>另外一个你可能会用的就是<code>dependencies</code>配置，如果你的mod需要依赖别的java库或者别的mod，你需要在这里添加内容，具体添加的方式，注释已经给出了详细的例子，这里就不多说了。其中<code>minecraft 'net.minecraftforge:forge:1.15.2-31.1.0'</code>规定了你需要用到的Forge版本，如果你想升级Forge版本可以修改这一行的内容，版本的格式是<code>net.minecraftforge:forge:游戏版本号-Forge版本号</code>。</p>
+<p>这个文件剩余的部分就和一个普通的<code>build.gradle</code>没什么差别了，如果想知道更详细的知识建议去学习Gradle。</p>
+<p>接下去的就是<code>src</code>文件夹，这里是放我们代码和资源文件的地方，其中<code>main</code>文件夹是具体运行代码和文件的地方，<code>test</code>文件夹是放测试代码的地方。<code>main</code>文件夹下的<code>java</code>就是放我们写的java代码的地方，而<code>resources</code>文件夹里放的则是我们的材质模型等一些除了代码之外的属于mod的内容。</p>
+<p>接下去是<code>run</code>文件夹，这个基本上就是一个标准的<code>.minecraft</code>文件夹，值得注意的是，因为开发环境是同时有Minecraft客户端和服务器代码的，它们两个是共用<code>run</code>目录的。</p>
+<p>剩下值得一提的就是<code>build</code>目录，当你在Gradle面板里运行<code>build</code>任务，你的mod就会被打包好放在<code>build=&gt;libs</code>下。</p>
+<p>剩下所有带<code>gradle</code>相关的文件夹和文件都是Gradle所需要的运行和配置文件，请不要随便删除。</p>
+<h1><a class="header" href="#自定义mod信息" id="自定义mod信息">自定义mod信息</a></h1>
+<p>从这节起我们就会开始正式的写我们mod了！</p>
+<h2><a class="header" href="#更新mappings" id="更新mappings">更新Mappings</a></h2>
+<p><strong>Forge的Mapping系统正在迁移的过程中，关于mapping文件的内容等MMS系统发布之后将会更新，我们目前使用的版本是<code>20200916-1.16.2</code></strong></p>
+<p>我们需要将<code>build.gradle</code>下的<code>mappings channel: 'snapshot', version: '20200514-1.16’</code>修改为<code>mappings channel: 'snapshot', version: '20200916-1.16.2’</code>。</p>
+<p><img src="devenvironment/modinfo.assets/image-20200928114420876.png" alt="image-20200928114420876" /></p>
+<p>然后点击右侧Gradle面板的重新导入按钮，重新导入项目，因为<code>build.gradle</code>文件非常的重要，请注意不要改错。</p>
+<p><img src="devenvironment/modinfo.assets/image-20200928114634037.png" alt="image-20200928114634037" /></p>
+<p>这个过程可能会涉及下载文件（但不会很多），有出现错误的可能性，出错了请检查你的<code>build.gradle</code>内容有没有填错，然后多试几次。</p>
+<h2><a class="header" href="#配置" id="配置">配置</a></h2>
+<p>首先我们选中<code>java</code>文件夹下所有的目录和文件，然后右键删除Java包下的默认类。</p>
+<p><img src="devenvironment/modinfo.assets/image-20200928164532729.png" alt="image-20200928164532729" /></p>
+<p>然后再右键新建立一个包</p>
+<p>在默认情况下你的包名应该是你的域名的倒写，因为我不想用自己的域名举例子，所以这里我填入的内容是<code>com.tutorial.boson</code>。</p>
+<p><img src="devenvironment/modinfo.assets/image-20200928164952860.png" alt="image-20200928164952860" /></p>
+<p><img src="devenvironment/modinfo.assets/image-20200928165013147.png" alt="image-20200928165013147" /></p>
+<p><img src="devenvironment/modinfo.assets/image-20200928165047184.png" alt="image-20200928165047184" /></p>
+<p>创建完成以后右击创建一个Java类，名字叫做<code>Boson</code>，请注意大小写，在默认情况下Java的类名遵循「帕斯卡命名法」。</p>
+<p><img src="devenvironment/modinfo.assets/image-20200928165137663.png" alt="image-20200928165137663" /></p>
+<p>这个<code>Boson</code>就是我们Mod的主类。</p>
+<p>接下来创建一个<code>Utils</code>类，用来放置一些全局的常量。</p>
+<p>创建完成后目录树如下：</p>
+<pre><code>java
+└── com
+    └── tutorial
+        └── boson
+            ├── Boson.java
+            └── Utils.java
+</code></pre>
+<p>接下来我们去<code>Utils</code>类里定义一下我们的<code>modid</code>，那么什么是你的<code>modId</code>呢？<code>modId</code>就是你mod名字的唯一标识符，请注意<code>modId</code>和你的mod名字不是同一个东西，它不允许大写字母，也不允许空格等内容。在这里我们选用的<code>modId</code>是<code>boson</code>。</p>
+<pre><code class="language-java">public class Utils {
+    public static final String MOD_ID = &quot;boson&quot;;
+}
+</code></pre>
+<p>然后进入<code>Boson</code>在类名的上方添加一个<code>@Mod()</code>注解，里面加入我们之前定义好的<code>modid</code>。添加完成后内容如下:</p>
+<pre><code class="language-java">import net.minecraftforge.fml.common.Mod;
+
+@Mod(Utils.MOD_ID)
+public class Boson {
+}
+</code></pre>
+<p>接下来我们需要去修改处于<code>resources/META-INF</code>下的<code>mods.toml</code>。在默认情况下IntelliJ是没有对Toml文件语法高亮的，如果你需要像我一样的语法高亮可以去安装一个<code>Toml</code>插件。</p>
+<p><code>mods.toml</code>是我们mod信息的配置文件，在这里我们可以修改我们mod的名字，介绍等内容。其中有许多配置项，如果一个配置项的注释里含有<code>#mandatory</code>说明这个配置项是必须的，如果注射里写的的是<code>#optional</code>，说明这个配置项是可选的，你可以在配置项前面加上<code>#</code>来注释掉这个配置项。</p>
+<table><thead><tr><th align="center">配置项</th><th align="center">作用</th></tr></thead><tbody>
+<tr><td align="center">modLoader</td><td align="center">规定mod的Loader，大部分情况下不需要修改</td></tr>
+<tr><td align="center">loaderVersion</td><td align="center">规定了mod运行的Forge版本，大部分情况下不需要修改</td></tr>
+<tr><td align="center">license</td><td align="center">必填，这里填入的是你的Mod许可证</td></tr>
+<tr><td align="center">issueTrackerURL</td><td align="center">可选，你的Mod Bug提交地址，按需修改</td></tr>
+<tr><td align="center">modId</td><td align="center">必填，这里需要填入你的<code>modId</code>，和代码中的要保持一致</td></tr>
+<tr><td align="center">version</td><td align="center">必填，一般情况下保持默认即可</td></tr>
+<tr><td align="center">displayName</td><td align="center">必填，显示名称，你的mod在Mod界面的显示名称</td></tr>
+<tr><td align="center">updateJSONURL</td><td align="center">可选，你的mod的更新链接</td></tr>
+<tr><td align="center">displayURL</td><td align="center">可选，你的mod介绍网页的链接</td></tr>
+<tr><td align="center">logoFile</td><td align="center">可选，你的Mod的Logo</td></tr>
+<tr><td align="center">credits</td><td align="center">可选，你的Mod的致谢名单</td></tr>
+<tr><td align="center">authors</td><td align="center">可选，你的mod的作者名单</td></tr>
+<tr><td align="center">description</td><td align="center">必填，你的mod在mod界面的介绍</td></tr>
+</tbody></table>
+<p>接下剩下的都是依赖，Forge官方的例子已经写的很清楚了，这里我们不多加说明</p>
+<p>我修改完的<code>mods.toml</code>如下:</p>
+<pre><code class="language-toml">modLoader=&quot;javafml&quot; 
+loaderVersion=&quot;[34,)&quot; 
+license=&quot;GNU GPLv3&quot;
+[[mods]]
+modId=&quot;boson&quot; 
+version=&quot;${file.jarVersion}&quot; 
+displayName=&quot;Boson&quot;
+authors=&quot;FledgeShiu&quot; 
+description='''
+This is Boson, the 1.16 Modding tutorial example mod.
+'''
+</code></pre>
+<p>现在我们已经修改完我们的mod信息了，现在让我打开游戏。</p>
+<p><img src="devenvironment/modinfo.assets/image-20200928170338998.png" alt="image-20200928170338998" /></p>
+<p>可以看见我们的Mod已经出现了！</p>
+<h1><a class="header" href="#物品" id="物品">物品</a></h1>
+<p>物品是Minecraft中的基本元素之一，在这一节中，我将介绍如何创建物品。</p>
+<h1><a class="header" href="#第一个物品" id="第一个物品">第一个物品</a></h1>
+<p>从现在开始我们就要正式开始写代码了。首先有几件事要说明，本项目的代码都会开源，每节的代码链接我都会放在文章的后面，而为了之后修正和查看方便。</p>
+<p>首先我们得明确，创建一个物品需要哪几个步骤。答案是三步：创建自己的物品并继承原版的物品的类，实例化这个物品，最后把这个物品注册进游戏。</p>
+<p>注意上面这些步骤是通用的，很多自定义内容的添加都是遵循着上面的步骤。</p>
+<p>知道了上述步骤之后，我们就开始添加我们的第一个物品吧，在这里我们将添加一个黑曜石碇。</p>
+<p>首先我们需要创建一个物品的类，并且让这个类继承原版的<code>Item</code>类。</p>
+<pre><code class="language-java">public class ObsidianIngot extends Item {
+    public ObsidianIngot() {
+        super(new Properties().group(ItemGroup.MATERIALS));
+    }
+}
+</code></pre>
+<p>这个类的代码非常简单，只有一个构造函数。</p>
+<p>这里唯一值得一说的就是<code>new Properties().group(ItemGroup.MATERIALS)</code>，这个<code>Properties</code>规定了物品的一些属性，比如：是不是食物，或者这个物品在创造模式的哪一个物品栏。</p>
+<p>在这里我们创建了一个<code>Properties</code>并且调用了<code>group</code>方法然后传入了<code>ItemGroup.MATERIALS</code>，这样做是将物品添加进，原版「杂项」创造模式物品栏里。当然你也可以不调用 <code>group</code>方法，如果这样就只能通过<code>/give</code>命令才能获取到物品了。</p>
+<p>接下去我们需要实例化和注册这个物品，在以前这个是分开的两步，但是Forge加入了一个叫做<code>DeferredRegister</code>的机制，使得注册一个物品变得非常的简单。</p>
+<pre><code class="language-java">public class ItemRegistry {
+    public static final DeferredRegister&lt;Item&gt; ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, Utils.MOD_ID);
+    public static final RegistryObject&lt;Item&gt; obsidianIngot = ITEMS.register(&quot;obsidian_ingot&quot;, ObsidianIngot::new);
+}
+
+</code></pre>
+<p>这就是注册的全部内容，首先我们创建了一个类型为<code>DeferredRegister&lt;Item&gt;</code>名字叫做<code>ITEMS</code>的变量，这个泛型表明我们需要注册的东西是物品，然后通过<code>new DeferredRegister&lt;&gt;(ForgeRegistries.ITEMS, Utils.MOD_ID);</code>实例化了这个类，这个类里有两个参数<code>ForgeRegistries.ITEMS</code>代表了我们要注册的是物品，第二个参数填入的应该是你的<code>modId</code>。这样我们就创建好了注册器，接下去就是注册我们的物品。</p>
+<p>还记得我之前说过的吗？注册需要两个东西，一个是「注册名」，还有一个就是你要注册对象的实例，<code>ITEMS.register</code>里的两个参数就是分别对应了这两个东西。</p>
+<pre><code class="language-java">public static final RegistryObject&lt;Item&gt; obsidianIngot = ITEMS.register(&quot;obsidian_ingot&quot;, ObsidianIngot::new);
+</code></pre>
+<p>第一个参数很好理解，<code>”obsidian_ingot”</code>就对应着注册名，请注意这里的注册名也不要用大写字母，因为这里的第二个参数需要的类型是一个<code>Supplier</code>，这里我们直接放上了<code>ObsidianIngot</code>类的构造方法的方法引用上去，如果你对这个语法不熟悉，请先至少弄明白Java8的函数式编程相关的内容。</p>
+<p>你看，虽然我们没有显式声明变量，但是我们还是在注册时实例化了我们物品的类。</p>
+<p>还差最后一步，我们就可以成功添加物品了。</p>
+<pre><code class="language-java">@Mod(Utils.MOD_ID)
+public class Neutrino {
+    public Neutrino() {
+        ItemRegistry.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
+    }
+}
+</code></pre>
+<p>我们在<code>Mod</code>主类的构建方法里添加了一行代码，<code>FMLJavaModLoadingContext.get().getModEventBus()</code>这句话的意思是获取<code>Mod</code>总线，如果你不知什么是<code>Mod</code>总线请向前翻阅。而<code>ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());</code>的意思就是将<code>ITEMS</code>注册进<code>Mod</code>总线里。为什么要注册进<code>Mod</code>总线里呢？原因是，<code>DeferredRegister</code>是基于事件系统实现的。</p>
+<p>到这里，我们要添加的物品所需的代码已经写完了，打开游戏看看吧。</p>
+<p><img src="item/firstitem.assets/image-20200928175346817.png" alt="image-20200928175346817" /></p>
+<p><img src="item/firstitem.assets/image-20200928175414243.png" alt="image-20200928175414243" /></p>
+<p>虽然这个物品还是很丑，但这就是我们第一个物品了。</p>
+<p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/first_item">源码链接</a></p>
+<h1><a class="header" href="#物品材质与模型" id="物品材质与模型">物品材质与模型</a></h1>
+<p>在上一节中我们已经成功添加了第一个物品，当然那个物品还很丑，在这一节中我们将会为它添加模型和材质。</p>
+<p>首先按照如下目录在<code>resources</code>下创建文件夹。</p>
+<pre><code>resources
+├── META-INF
+│   └── mods.toml
+├── assets
+│   └── boson
+│       ├── models
+│       │   └── item
+│       └── textures
+│           └── item
+└── pack.mcmeta
+</code></pre>
+<p>其实<code>assets</code>下就是一个属于Mod的材质包，具体的目录结构等，读者可以自行寻找当前游戏版本的材质包制作教程学习。</p>
+<p>接下来我们来添加模型文件，首先在在<code>models</code>下的<code>item</code>里，创建一个和你添加的物品，有着相同注册名的JSON文件，在我们的例子里就是<code>obsidian_ingot.json</code>。</p>
+<p>内容如下:</p>
+<pre><code class="language-json">{
+  &quot;parent&quot;: &quot;item/generated&quot;,
+  &quot;textures&quot;: {
+    &quot;layer0&quot;: &quot;boson:item/obsidian_ingot&quot;
+  }
+}
+</code></pre>
+<p>这里的内容非常简单：<code>&quot;parent&quot;: &quot;item/generated”</code>指定了这个模型的「父模型」是什么，而<code>&quot;layer0&quot;: &quot;boson:item/obsidian_ingot”</code>指定了具体的材质。<code>boson:</code>代表这个是在我们自己的<code>assets</code>文件下，<code>item/obsidian_ingot</code>代表了是<code>textures/item/obsidian_ingot.png</code>这张图片。</p>
+<p>模型文件的详细格式大家可以自行阅读<a href="item/%5Bhttps://minecraft-zh.gamepedia.com/index.php?title=%E6%A8%A1%E5%9E%8B&amp;variant=zh%5D(https://minecraft-zh.gamepedia.com/index.php?title=%E6%A8%A1%E5%9E%8B&amp;variant=zh)">Wiki</a>。</p>
+<p>接下来我们在<code>textures/item/obsidian_ingot.png</code>下放入我们制作好的材质文件，请注意材质文件的比例是1:1，并且最好不要大于32x32像素。</p>
+<img src="item/./modelandtextures.assets/obsidian_ingot.png" style="zoom:300%;" />
+<p><strong>这里的加载流程是：游戏先根据的你注册名获取相对应的模型文件，然后通过模型文件中的<code>textures</code>加载对应的材质文件。</strong></p>
+<p>创建完成的目录树如下：</p>
+<pre><code>resources
+├── META-INF
+│   └── mods.toml
+├── assets
+│   └── boson
+│       ├── models
+│       │   └── item
+│       │       └── obsidian_ingot.json
+│       └── textures
+│           └── item
+│               └── obsidian_ingot.png
+└── pack.mcmeta
+
+</code></pre>
+<p>启动游戏之后你就可以看见我们有了模型和材质的物品了。</p>
+<p><img src="item/modelandtextures.assets/image-20200427113433338.png" alt="image-20200427113433338" /></p>
+<h2><a class="header" href="#开发小课堂" id="开发小课堂">开发小课堂</a></h2>
+<p>一个方便的工具用来制作方块和物品等模型：<a href="https://blockbench.net/">BlockBench</a>。</p>
+<h1><a class="header" href="#item和itemstack" id="item和itemstack">Item和ItemStack</a></h1>
+<p>在这里，我想讲一下<code>Item</code>和<code>ItemStack</code>的区分。我们先从<code>ItemStack</code>开始一步一步思考为什么它们需要区分开。</p>
+<p><code>ItemStack</code>顾名思义就是「物品堆」。实际上在游戏中，所有物品槽里放着的物品都是单独的<code>ItemStack</code>。</p>
+<p><img src="item/itemstack.assets/image-20200428080226198.png" alt="image-20200428080226198" /></p>
+<p>比如在这种情况下，就有三个<code>ItemStack</code>。</p>
+<p>但是这就引出了一个问题，虽然一组苹果和第二组苹果数量不同，但是这个数量其实并不影响他们的实际表现。它们同样可以被吃，吃了以后回复的效果也是相同的。</p>
+<p>这些相当于「属性」或者「默认行为」是相同的，这些相同的逻辑就应该被抽出来，这就是<code>Item</code>。</p>
+<p>还是以上图举例，这里就只有两种<code>Item</code>：苹果和铁剑。</p>
+<p>你可以想象<code>ItemStack</code>就是<code>Item</code>的一个包装，它比起<code>Item</code>额外提供了数量，NBT标签等属性。</p>
+<p>这里值得注意的是，<code>ItemStack</code>的数量为0，虽然代表是空了，这不代表它就变成<code>null</code>了，所以在你必须得用<code>ItemStack</code>下的<code>isEmpty()</code>方法来判断是否为空。</p>
+<p><code>ItemStack</code>中所包含的<code>Item</code>其实是同一个实例，原因非常简单，如果不是同一个实例，会无意义地产生非常多相同的实例，出于优化的考虑，当然是共用一个实例合适，这同时意味着你可通过<code>result.getItem() == Items.AIR</code>来判断<code>ItemStack</code>存放了哪一个<code>Item</code>。</p>
+<p>至于更加详细的解释，<a href="https://harbinger.covertdragon.team/chapter-04/item-stack.html">harbinger</a>已经写的很清楚了。</p>
+<h1><a class="header" href="#自定义创造模式物品栏" id="自定义创造模式物品栏">自定义创造模式物品栏</a></h1>
+<p>在这一节中，我们将研究如何创建一个属于自己的创造模式物品栏，非常简单。</p>
+<p>首先创建一个类，让它继承<code>ItemGroup</code>，<code>ItemGroup</code>代表的就是创造模式物品栏，因为我们需要创建一个属于自己的创造模式物品栏，自然需要继承它。</p>
+<p>内容如下:</p>
+<pre><code class="language-java">public class ObsidianGroup extends ItemGroup {
+    public ObsidianGroup() {
+        super(&quot;obsidian_group&quot;);
+    }
+
+    @Override
+    public ItemStack createIcon() {
+        return new ItemStack(ItemRegistry.obsidianIngot.get());
+    }
+}
+</code></pre>
+<p>第一个方法用于设置创造模式物品栏的标题名，第二个提供了创造模式物品栏的图标，这里我们用了黑曜石碇作为图标，请注意这个函数的返回值类型是<code>ItemStack</code>，而不是<code>Item</code>。</p>
+<p>然后我们需要在实例化这个类，创建<code>ModGroup</code></p>
+<pre><code class="language-java">public class ModGroup {
+    public static final ItemGroup itemGroup = new ObsidianGroup();
+}
+</code></pre>
+<p>在这里我们用来存放<code>ItemGroup</code>以及它的子类（比如我们之前创建好<code>ObsidianGroup</code>）的实例，这里的每一个实例都代表了游戏中的一个标签栏。</p>
+<p>创建完成以后想要调用这个物品栏也非常简单，我们以黑曜石碇举例。</p>
+<pre><code class="language-java">public class ObsidianIngot extends Item {
+    public ObsidianIngot() {
+        super(new Properties().group(ModGroup.itemGroup));
+    }
+}
+</code></pre>
+<p>此时打开游戏我们的黑曜石碇应该就在指定的物品栏里了。</p>
+<p><img src="item/group.assets/image-20200427211358242.png" alt="image-20200427211358242" /></p>
+<p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/group">源代码</a></p>
+<h1><a class="header" href="#食物" id="食物">食物</a></h1>
+<p>在这一节中我们将会在Minecraft世界中添加一个新的食物：黑曜石苹果，吃了这个苹果以后你可以回复饥饿，但是会中毒。和很多人想象的不一样，食物并不是单独的一个东西，对于Minecraft来说，食物只是一种特殊的物品而已。</p>
+<p>同样的我们先来创建一个类，让这个类继承<code>Item</code></p>
+<pre><code class="language-java">public class ObsidianApple extends Item {
+    private static final Food food = (new Food.Builder())
+            .saturation(10)
+            .hunger(20)
+            .effect(() -&gt; new EffectInstance(Effects.POISON, 3 * 20, 1), 1)
+            .build();
+
+    public ObsidianApple() {
+        super(new Properties().food(food).group(ItemGroup.FOOD));
+    }
+}
+</code></pre>
+<p>我们一行一行的解释。</p>
+<p>我们创建了一个<code>Food</code>类型的变量，这个变量规定了这个这个食物的一些属性，比如：<code>saturation</code>方法设置了饱食度，<code>hunger</code>设置了回复的饥饿度，<code>effect</code>方法设置了吃食物时可能会有的药水效果，这里我们设置的效果是「中毒」，持续时间是60个Tick，药水等级一级。其中第二个参数代表触发效果的可能性（想想原版的生鸡肉），这里我们设置成<code>1</code>代表100%触发。</p>
+<p>接下去就是构造方法，想必大家已经很熟悉了，唯一新的一点就是<code>.food(food)</code>，这个方法表明了物品是一个食物，最后我们把这个物品放在了「食物」创造模式物品栏里。</p>
+<p>然后我们注册我们的食物，注册名是<code>obsidian_apple</code>:</p>
+<pre><code class="language-java">public class ItemRegistry {
+    public static final DeferredRegister&lt;Item&gt; ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, Utils.MOD_ID);
+    public static final RegistryObject&lt;Item&gt; obsidianApple = ITEMS.register(&quot;obsidian_apple&quot;, ObsidianApple::new);
+}
+</code></pre>
+<p>然后添加模型<code>obsdian_ingot.json</code>:</p>
+<pre><code class="language-json">{
+  &quot;parent&quot;: &quot;item/generated&quot;,
+  &quot;textures&quot;: {
+    &quot;layer0&quot;: &quot;boson:item/obsidian_apple&quot;
+  }
+}
+</code></pre>
+<p>然后是材质<code>obsidian_apple.png</code></p>
+<img src="item/food.assets/obsidian_apple.png" alt="obsidian_apple" style="zoom:300%;" />
+<p>拿出你的苹果试着吃吃看吧。</p>
+<p><img src="item/food.assets/image-20200427165949417.png" alt="image-20200427165949417" /></p>
+<p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/food">源代码</a></p>
+<h1><a class="header" href="#近战武器" id="近战武器">近战武器</a></h1>
+<p>在这一节中，我们将讲解如何创建一个新的剑，这里我们以黑曜石剑举例。</p>
+<p>首先我们得创建一个<code>ItemTier</code>。<code>ItemTier</code>就是我们日常说的工具等级，比如「钻石等级」，「铁等级」以及「下届合金等级」。</p>
+<pre><code class="language-java">public enum ModItemTier implements IItemTier {
+
+    OBSIDIAN(3, 2000, 10.0F, 4.0F, 30, () -&gt; {
+        return Ingredient.fromItems(ItemRegistry.obsidianIngot.get());
+    });
+
+    private final int harvestLevel;
+    private final int maxUses;
+    private final float efficiency;
+    private final float attackDamage;
+    private final int enchantability;
+    private final LazyValue&lt;Ingredient&gt; repairMaterial;
+
+     ModItemTier(int harvestLevelIn, int maxUsesIn, float efficiencyIn, float attackDamageIn, int enchantabilityIn, Supplier&lt;Ingredient&gt; repairMaterialIn) {
+        this.harvestLevel = harvestLevelIn;
+        this.maxUses = maxUsesIn;
+        this.efficiency = efficiencyIn;
+        this.attackDamage = attackDamageIn;
+        this.enchantability = enchantabilityIn;
+        this.repairMaterial = new LazyValue&lt;&gt;(repairMaterialIn);
+    }
+
+    @Override
+    public int getMaxUses() {
+        return this.maxUses;
+    }
+
+    @Override
+    public float getEfficiency() {
+        return this.efficiency;
+    }
+
+    @Override
+    public float getAttackDamage() {
+        return this.attackDamage;
+    }
+
+    @Override
+    public int getHarvestLevel() {
+        return this.harvestLevel;
+    }
+
+    @Override
+    public int getEnchantability() {
+        return this.enchantability;
+    }
+
+    @Override
+    public Ingredient getRepairMaterial() {
+        return this.repairMaterial.getValue();
+    }
+
+}
+</code></pre>
+<p>同样的，这个内容看上去非常地多，但其实并没有你想象得那么复杂。</p>
+<p>在这里我们创建了一个<code>ModItemTier</code>类并且继承了<code>IItemTier</code>接口，这么做的原因是原版的<code>net.minecraft.item.ItemTier</code>是用enum实现的，我们没法自己向里面添加内容，所以只能自己实现了，我们在这里基本上就是复制了原版的实现，原版的所有属性也都在这个类里，大家可以参考。</p>
+<p>至于这个enum里的各种方法，我在这里就不多加解释了，有了之前几个物品的经验，相信读者阅读到这里时已经有了通过函数名猜测函数功能的能力了。</p>
+<p>同样的，我们先创建一个<code>ObsidianSword</code>，但是这次的继承的类有些不一样，这次我们直接继承原版的<code>SwordItem</code>类，如果你查看继承关系图，你就可以发现，<code>SwordItem</code>是<code>Item</code>的子类。</p>
+<p><img src="item/meleeweapons.assets/image-20200928181500005.png" alt="image-20200928181500005" /></p>
+<p>具体实现：</p>
+<pre><code class="language-java">public class ObsidianSword extends SwordItem {
+    public ObsidianSword() {
+        super(ModItemTier.OBSIDIAN, 3, -2.4F, new Item.Properties().group(ItemGroup.COMBAT));
+    }
+}
+</code></pre>
+<p>这里的<code>3</code>和<code>-2.4F</code>也请参考原版的实现，原版的所有物品注册都在<code>net.minecraft.item.Items</code>中。</p>
+<p>接下去注册物品</p>
+<pre><code class="language-java">public static RegistryObject&lt;Item&gt; obsidianSword = ITEMS.register(&quot;obsidian_sword&quot;, ObsidianSword::new);
+</code></pre>
+<p>添加模型文件：</p>
+<pre><code class="language-json">{
+  &quot;parent&quot;: &quot;item/generated&quot;,
+  &quot;textures&quot;: {
+    &quot;layer0&quot;: &quot;boson:item/obsidian_sword&quot;
+  }
+}
+</code></pre>
+<p>以及材质</p>
+<img src="item/meleeweapons.assets/obsidian_sword.png" alt="obsidian_sword" style="zoom:300%;" />
+<p>创建完成之后打开游戏看看吧。</p>
+<p><img src="item/meleeweapons.assets/image-20200427184918516.png" alt="image-20200427184918516" /></p>
+<p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/melee_weapons">源代码地址</a></p>
+<h1><a class="header" href="#工具" id="工具">工具</a></h1>
+<p>在这节中，我们将学习如何添加一个新的工具，这里我们以一个新的稿子举例。</p>
+<p>首先让我们观察一下继承树：</p>
+<p><img src="item/tool.assets/image-20200928183235878.png" alt="image-20200928183235878" /></p>
+<p>可以看到原版已经提供了4种工具对应的类，在这些工具之上还有一个<code>ToolItem</code>如果你想创建一个全新种类的工具，可以选择继承并实现这个类，实现的方法请参照原版的4个类。</p>
+<p>接下来我们开始创建黑曜石稿子</p>
+<pre><code class="language-java">public class ObsidianPickaxe extends PickaxeItem {
+    public ObsidianPickaxe() {
+        super(ModItemTier.OBSIDIAN, 2, -3f, (new Item.Properties()).group(ModGroup.itemGroup));
+    }
+}
+</code></pre>
+<p>可以看到，在这里我们选择直接继承了<code>PickaxeItem</code>类，然后传入直接我们创建好的黑曜石的<code>ItemTier</code>，其余的参数大家请参考原版的实现。</p>
+<p>然后就是注册</p>
+<pre><code class="language-java">public static final RegistryObject&lt;Item&gt; obsidianPickaxe = ITEMS.register(&quot;obsidian_pickaxe&quot;, ObsidianPickaxe::new);
+</code></pre>
+<p>添加材质和模型，这里就不再多加说明了。</p>
+<p>打开游戏看看，你应该就能看到全新的黑曜石稿了。</p>
+<p><img src="item/tool.assets/image-20200928183155484.png" alt="image-20200928183155484" /></p>
+<p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/tool">源代码地址</a></p>
+<h1><a class="header" href="#装备" id="装备">装备</a></h1>
+<p>在这节中，我们将来学习如何添加一套装备，这里我们以黑曜石装备为例。</p>
+<p>和工具与武器一样，装备也有它的等级，也就是<code>IArmorMaterial</code>，这里我们仿照原版的做法，用一个Enum实现这个接口。</p>
+<pre><code class="language-java">public enum ModArmorMaterial implements IArmorMaterial {
+    OBSIDIAN(&quot;obsidian&quot;, 40, new int[]{5, 8, 10, 5}, 20, SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, 2.0F, 0.0F, () -&gt; {
+        return Ingredient.fromItems(ItemRegistry.obsidianIngot.get());
+    });
+
+    private static final int[] MAX_DAMAGE_ARRAY = new int[]{13, 15, 16, 11};
+    private final String name;
+    private final int maxDamageFactor;
+    private final int[] damageReductionAmountArray;
+    private final int enchantability;
+    private final SoundEvent soundEvent;
+    private final float toughness;
+    private final float knockbackResistance;
+    private final LazyValue&lt;Ingredient&gt; repairMaterial;
+
+    ModArmorMaterial(String name, int maxDamageFactor, int[] damageReductionAmountArray, int enchantability, SoundEvent soundEvent, float toughness, float knockbackResistance, Supplier&lt;Ingredient&gt; repairMaterial) {
+        this.name = name;
+        this.maxDamageFactor = maxDamageFactor;
+        this.damageReductionAmountArray = damageReductionAmountArray;
+        this.enchantability = enchantability;
+        this.soundEvent = soundEvent;
+        this.toughness = toughness;
+        this.knockbackResistance = knockbackResistance;
+        this.repairMaterial = new LazyValue&lt;&gt;(repairMaterial);
+    }
+
+    public int getDurability(EquipmentSlotType slotIn) {
+        return MAX_DAMAGE_ARRAY[slotIn.getIndex()] * this.maxDamageFactor;
+    }
+
+    public int getDamageReductionAmount(EquipmentSlotType slotIn) {
+        return this.damageReductionAmountArray[slotIn.getIndex()];
+    }
+
+    public int getEnchantability() {
+        return this.enchantability;
+    }
+
+    public SoundEvent getSoundEvent() {
+        return this.soundEvent;
+    }
+
+    public Ingredient getRepairMaterial() {
+        return this.repairMaterial.getValue();
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public String getName() {
+        return this.name;
+    }
+
+    public float getToughness() {
+        return this.toughness;
+    }
+
+    public float getKnockbackResistance() {
+        return this.knockbackResistance;
+    }
+}
+</code></pre>
+<p>请注意这里的<code>name</code>，这个和之后我们要创建的玩家穿戴在身上的材质相关。</p>
+<p>接下来直接创建相对应的装备就行。</p>
+<pre><code class="language-java">public static final RegistryObject&lt;Item&gt; obsidianHelmet = ITEMS.register(&quot;obsidian_helmet&quot;, () -&gt; new ArmorItem(ModArmorMaterial.OBSIDIAN, EquipmentSlotType.HEAD, (new Item.Properties()).group(ModGroup.itemGroup)));
+public static final RegistryObject&lt;Item&gt; obsidianChestplate = ITEMS.register(&quot;obsidian_chestplate&quot;, () -&gt; new ArmorItem(ModArmorMaterial.OBSIDIAN, EquipmentSlotType.CHEST, (new Item.Properties()).group(ModGroup.itemGroup)));
+public static final RegistryObject&lt;Item&gt; obsidianLeggings = ITEMS.register(&quot;obsidian_leggings&quot;, () -&gt; new ArmorItem(ModArmorMaterial.OBSIDIAN, EquipmentSlotType.LEGS, (new Item.Properties()).group(ModGroup.itemGroup)));
+public static final RegistryObject&lt;Item&gt; obsidianBoots = ITEMS.register(&quot;obsidian_boots&quot;, () -&gt; new ArmorItem(ModArmorMaterial.OBSIDIAN, EquipmentSlotType.FEET, (new Item.Properties()).group(ModGroup.itemGroup)));
+</code></pre>
+<p>可以看到<code>ArmorItem</code>的第一个参数指明了盔甲对应的等级，第二个参数则指明了盔甲穿戴的位置。</p>
+<p>接下去就是对于物品的材质和模型的添加，这里就不多说明了。</p>
+<p>但是盔甲相比于其他的物品，它还多出一个穿戴在身上的材质，需要额外添加，因为Minecraft将所有的盔甲材质血死在<code>minecraft</code>这个域下，所以我们得创建相对应的目录，创建结束后如下。</p>
+<pre><code>resources
+├── META-INF
+│   └── mods.toml
+├── assets
+│   ├── boson
+│   └── minecraft
+│       └── textures
+│           └── models
+│               └── armor
+└── pack.mcmeta
+</code></pre>
+<p>可以看到，我们在和<code>boson</code>文件夹同级的目录下创建了<code>minecraft</code>以及对应的放盔甲材质的文件夹。</p>
+<p>接下来我们得放入我们盔甲的材质。材质有两张，命名格式为：<code>盔甲材料_layer_1</code>和<code>盔甲材料_layer_2</code>。在我们这里就是<code>obsidian_layer_1</code>和<code>obsidian_layer_2</code>。</p>
+<img src="item/./armor.assets/obsidian_layer_1.png" alt="obsidian_layer_1" style="zoom:300%;" />
+<img src="item/./armor.assets/obsidian_layer_2.png" alt="obsidian_layer_1" style="zoom:300%;" />
+<p>注意，这两张材质里包含了一套的盔甲。</p>
+<p>放入材质后目录如下：</p>
+<pre><code>resources
+├── META-INF
+│   └── mods.toml
+├── assets
+│   ├── boson
+│   └── minecraft
+│       └── textures
+│           └── models
+│               └── armor
+│                   ├── obsidian_layer_1.png
+│                   └── obsidian_layer_2.png
+└── pack.mcmeta
+</code></pre>
+<p>打开游戏，你应该就能看到一套全新的盔甲了。</p>
+<p><img src="item/armor.assets/image-20200928192041780.png" alt="image-20200928192041780" /></p>
+<p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/armor">源代码地址</a></p>
+<h1><a class="header" href="#语言文件与本地化" id="语言文件与本地化">语言文件与本地化</a></h1>
+<h1><a class="header" href="#方块" id="方块">方块</a></h1>
+<h1><a class="header" href="#第一个方块" id="第一个方块">第一个方块</a></h1>
+<h1><a class="header" href="#block和blockstate" id="block和blockstate">Block和BlockState</a></h1>
+<h1><a class="header" href="#方块模型和材质" id="方块模型和材质">方块模型和材质</a></h1>
+<h1><a class="header" href="#方块状态" id="方块状态">方块状态</a></h1>
+<h1><a class="header" href="#非实心方块与自定义模型" id="非实心方块与自定义模型">非实心方块与自定义模型</a></h1>
+<h1><a class="header" href="#方块的渲染类型" id="方块的渲染类型">方块的渲染类型</a></h1>
+<h1><a class="header" href="#特殊模型" id="特殊模型">特殊模型</a></h1>
+<h1><a class="header" href="#obj-模型" id="obj-模型">OBJ 模型</a></h1>
+<h1><a class="header" href="#b3d-模型" id="b3d-模型">B3D 模型</a></h1>
+<h1><a class="header" href="#动画" id="动画">动画</a></h1>
+<h1><a class="header" href="#方块实体" id="方块实体">方块实体</a></h1>
+<h1><a class="header" href="#第一个方块实体和其数据保存" id="第一个方块实体和其数据保存">第一个方块实体和其数据保存</a></h1>
+<h1><a class="header" href="#itickabletileentity" id="itickabletileentity">ITickableTileEntity</a></h1>
+<h1><a class="header" href="#方块实体内置的数据同步" id="方块实体内置的数据同步">方块实体内置的数据同步</a></h1>
+<h1><a class="header" href="#特殊渲染" id="特殊渲染">特殊渲染</a></h1>
+<h1><a class="header" href="#ibakedmodel烘培模型" id="ibakedmodel烘培模型">IBakedModel(烘培模型)</a></h1>
+<h1><a class="header" href="#tileentityrenderer方块实体渲染器" id="tileentityrenderer方块实体渲染器">TileEntityRenderer(方块实体渲染器)</a></h1>
+<h1><a class="header" href="#itemstacktileentityrenderer物品特殊渲染" id="itemstacktileentityrenderer物品特殊渲染">ItemStackTileEntityRenderer(物品特殊渲染)</a></h1>
+<h1><a class="header" href="#事件系统" id="事件系统">事件系统</a></h1>
+<h1><a class="header" href="#网络包" id="网络包">网络包</a></h1>
+<h1><a class="header" href="#自定义网络包" id="自定义网络包">自定义网络包</a></h1>
+<h1><a class="header" href="#关于mod安全" id="关于mod安全">关于Mod安全</a></h1>
+<h1><a class="header" href="#实体" id="实体">实体</a></h1>
+<h1><a class="header" href="#从零构建一个实体和数据同步" id="从零构建一个实体和数据同步">从零构建一个实体和数据同步</a></h1>
+<h1><a class="header" href="#创建一个动物和ai" id="创建一个动物和ai">创建一个动物和AI</a></h1>
+<h1><a class="header" href="#能力系统" id="能力系统">能力系统</a></h1>
+<h1><a class="header" href="#从零构建与使用能力" id="从零构建与使用能力">从零构建与使用能力</a></h1>
+<h1><a class="header" href="#开始使用预定义能力" id="开始使用预定义能力">开始使用预定义能力</a></h1>
+<h1><a class="header" href="#附加能力提供器" id="附加能力提供器">附加能力提供器</a></h1>
+<h1><a class="header" href="#worldsaveddata世界数据保存" id="worldsaveddata世界数据保存">WorldSavedData(世界数据保存)</a></h1>
+<h1><a class="header" href="#gui" id="gui">Gui</a></h1>
+<h1><a class="header" href="#第一个gui" id="第一个gui">第一个Gui</a></h1>
+<h1><a class="header" href="#container" id="container">Container</a></h1>
+<h1><a class="header" href="#hud" id="hud">HUD</a></h1>
+<h1><a class="header" href="#流体" id="流体">流体</a></h1>
+<h1><a class="header" href="#世界生成" id="世界生成">世界生成</a></h1>
+<h1><a class="header" href="#矿物生成" id="矿物生成">矿物生成</a></h1>
+<h1><a class="header" href="#结构生成" id="结构生成">结构生成</a></h1>
+<h1><a class="header" href="#自定义生物群系和世界类型" id="自定义生物群系和世界类型">自定义生物群系和世界类型</a></h1>
+<h1><a class="header" href="#自定义维度与区块生成器以及生物群系提供器" id="自定义维度与区块生成器以及生物群系提供器">自定义维度与区块生成器以及生物群系提供器</a></h1>
+<h1><a class="header" href="#数据包" id="数据包">数据包</a></h1>
+<h1><a class="header" href="#配方" id="配方">配方</a></h1>
+<h1><a class="header" href="#掉落物配方" id="掉落物配方">掉落物配方</a></h1>
+<h1><a class="header" href="#data-generator" id="data-generator">Data Generator</a></h1>
+<h1><a class="header" href="#命令" id="命令">命令</a></h1>
+<h1><a class="header" href="#进度" id="进度">进度</a></h1>
+<h1><a class="header" href="#配置文件" id="配置文件">配置文件</a></h1>
+<h1><a class="header" href="#药水" id="药水">药水</a></h1>
+<h1><a class="header" href="#粒子效果" id="粒子效果">粒子效果</a></h1>
+<h1><a class="header" href="#音效" id="音效">音效</a></h1>
+<h1><a class="header" href="#用户输入" id="用户输入">用户输入</a></h1>
+<h1><a class="header" href="#与其他mod的兼容" id="与其他mod的兼容">与其他mod的兼容</a></h1>
+<h1><a class="header" href="#access-transformer" id="access-transformer">Access Transformer</a></h1>
+<h1><a class="header" href="#coremod" id="coremod">CoreMod</a></h1>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+
+        
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        
+
+        
+
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+        
+        <script type="text/javascript">
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+        
+        
+
+    </body>
+</html>
