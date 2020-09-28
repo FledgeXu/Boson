@@ -162,10 +162,82 @@
                 <div id="content" class="content">
                     <main>
                         <h1><a class="header" href="#导论" id="导论">导论</a></h1>
+<p>首先欢迎你来到这个教程，既然你会打开这个教程，想必你心中有了开发一个属于自己的mod的念头吧。</p>
+<p>正好，这个教程也是为这个目的服务的。但是开发一个属于自己的mod并不是一件容易的事情，你需要学习非常多的知识才能达成这个目标，阅读和跟随这个教程只是非常浅显的部分。</p>
+<p>首先我想让你思考一个问题：<strong>你真的需要自己从头开发一个mod吗？</strong></p>
+<p>其实对于大部分人的需求，不需要从零开发一个Mod。有非常多其他的办法可以达成他们的目标：原版内置的机制，MCreator和ZenScript等。</p>
+<p>如果你的答案是确定的，那么第二个问题：你真的需要亲自写一个mod吗？</p>
+<p>Mod开发需要编程和相当的计算机科学基础，要学好这些并不容易，如果你是一个不会编程的人，或者只是粗略的学过编程，我的建议是寻找同伴。美工和设计在Mod开发中也是不可或缺的一部分。</p>
+<p>如果你对上面两个问题的答案都是肯定的，那么我觉得你可以开始阅读这个教程了。在这个教程里，我会假设你有一定的计算机科学常识，熟悉Java编程的基础。</p>
+<p>那么如果你现在还不会编程怎么办？没关系，这里有个教程推荐给你：<a href="https://v2mcdev.com/t/topic/88">Minecraft mod 开发编程入门 </a></p>
+<p>如果你有任何的问题，请去<a href="https://v2mcdev.com/">论坛</a>上<strong>按照模版</strong>发帖提问。</p>
+<p><strong>许可证</strong></p>
+<p><a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License</a>.</p>
 <h1><a class="header" href="#forge是什么" id="forge是什么">Forge是什么</a></h1>
+<p>本教程是一个基于Forge的Mod开发教程，那么自然而然的要回答一个问题：「Forge是什么？」</p>
+<p>乍一看，这个好像根本就不是一个问题，「Forge？Forge不就是Forge吗？」看到这个问题的你内心中的第一个浮现出的想法估计就是这个。</p>
+<p>但是回答这个问题还是非常有必要的，接下去我会稍微讲一讲Forge是什么，以及Forge的历史。这些看上去和我们教程无关的内容，其实是Mod开发领域的「乡谣（Lore）」，学会这些可以更好的让你和其他人交流。</p>
+<p>我们得从Minecraft本身说起，首先我们得明确Minecraft是一个用Java写成的商业软件。这意味着两件事：第一，Minecraft相对容易修改；第二，代码本身是不开源而且是被混淆过的。在Minecraft历史的早期，因为在Mojang一直都没有给Minecraft提供官方API<sup class="footnote-reference"><a href="#1">1</a></sup>，所以「Mod Coder Pack」项目诞生了（以下简称为MCP）。</p>
+<p>还记得我之前说过的，Minecraft的两个特性吗？MCP就利用这两个特性，实现了一套工具，可以让开发者可以直接修改Minecraft jar包里的内容。</p>
+<p>于是<code>srg名</code>，<code>notch名</code>和<code>mcp名</code>诞生了。</p>
+<p>那么这三个是什么呢？</p>
+<p>首先是<code>notch名</code>，他是Minecraft直接反编译、反混淆之后的名称，通常是无意义的字母数字组合。你从名称Notch就可以看出，这个名字是直接来自Minecraft（<del>以及对Notch的怨念</del>），举例来说 <code>j</code>就是一个典型的<code>notch名</code>。</p>
+<p>接下来是<code>srg名</code>，这个名字是和<code>notch名</code>是一一对应的，<code>srg名</code>在一个版本里是不会变动的，之所以叫做<code>srg名</code>，是为了纪念MCP项目开发的领导者Searge。在<code>srg名</code>中，Minecraft中的类名已经是可读了，变量方法等名称虽然还是不可读，但是有相对应的前缀和尾缀来区分了。以上面的<code>j</code>为例，它的<code>srg名</code>是<code>func_70114_g</code>。</p>
+<p>最后是<code>mcp名</code>，这个名称也是我们mod开发中接触最多的名称，在<code>mcp名</code>中，代码已经是可读的了。和我们正常写java程序中的名称没什么两样。但是<code>mcp名</code>是会变动的。举例来说上面的<code>func_70114_g</code>它的<code>mcp名</code>是<code>getCollisionBox</code>。<code>mcp名</code>中的类名和<code>srg名</code>中的类名是相同的。</p>
+<p>接下来我们来讲Forge，随着时间的发展，Mod开发者们意识到，直接修改Jar文件写mod的方式太过于粗暴了，而且Mod和Mod之间的兼容性可以说基本没有，Mod开发者们急需一种工具可以方便地开发Mod，并且能保证mod和mod之间的兼容性，于是Forge就诞生了。</p>
+<p>Forge其实就是一套通过修改Minecraft方式实现的第三方API，而且随着时间的发展，MCP现在已经死亡了，除了Forge这套API，Fabric也风头正盛，而Forge本身也在Minecraft 1.13版本到来之后经历了一次重写，引入了大量函数式编程的API。</p>
+<p>那么Forge是怎么使用我们之前提及的三个名字的呢？</p>
+<p>在你安装完Forge之后，游戏的运行过程中，所有的内容都会反编译成<code>srg名</code>运行，你编译好的mod同样也会被混淆成<code>srg名</code>，保证它可以正常运行。</p>
+<hr />
+<div class="footnote-definition" id="1"><sup class="footnote-definition-label">1</sup>
+<p>API 即 「Application programming interface（应用程序接口）」，是程序的提供的一种机制允许第三方修改或者添加功能。</p>
+</div>
 <h1><a class="header" href="#minecraft如何运作的" id="minecraft如何运作的">Minecraft如何运作的</a></h1>
+<p>这节的内容非常重要，你必须在自己的大脑中构建起Minecraft运行的模型图像，这将会帮助你理解后面涉及到的概念。</p>
+<p>在这一节中，我将介绍一下Minecraft大体上是怎么运作的，以及一个非常重要的概念：「端」。</p>
+<p>Minecraft大体上属于「C/S架构（客户端/服务端架构）」。那么什么是「服务端」，什么又是「客户端」呢？</p>
+<p>从名字上其实就能看出大概的意思，「服务端」是用来提供服务的，「客户端」是用户直接使用的。那么这两个端在Minecraft中是怎么体现的呢？</p>
+<p>在Minecraft中两个端的职责区分如下：</p>
+<ul>
+<li>
+<p>服务端</p>
+<p>负责游戏的逻辑，数据的读写。</p>
+</li>
+<li>
+<p>客户端</p>
+<p>接受用户的输入输出，根据来自服务端的数据来渲染游戏画面。</p>
+</li>
+</ul>
+<p>值得注意的是，这里客户端和服务端的区分仅是逻辑上的区分。实际上如果你处于单人模式，那么你的电脑上会同时存在服务端和客户端，而且他们处于不同的线程<sup class="footnote-reference"><a href="#1">1</a></sup>。但是当你连接某个服务器时，你的电脑上只存在客户端，服务端被转移到了远程的一台服务器上。</p>
+<p>下面一张图大概的解释了Minecraft是怎么运作的。</p>
+<p><img src="introducation/vanilla.assets/image-20200426110629794.png" alt="image-20200426110629794" /></p>
+<p>看到这张图，你可能觉得奇怪，说好的是服务端负责游戏逻辑的呢，为什么客户端也有数据模型？其实这里的「客户端数据模型」只是「服务端数据模型」一个副本，虽然它们都有独立的游戏Tick，也共享很多相同的代码，但是最终逻辑还是以服务端为准。</p>
+<p>之前我们提到，客户端和服务端是独立运行的，但是它们不可避免地需要同步数据，而在Minecraft里，所有客户端和服务端的数据同步都是通过网络数据包实现的。在大部分时候原版已经实现好了数据同步的方法，我们只需要调用已经实现好的方法就行，但是在某些情况下，原版没有实现对应的功能，或者不适合使用原版提供的功能，我们就得自己创建和发送网络数据包来完成数据的同步。</p>
+<p>那么接下去的问题是，我们怎么在代码中区分我们是处于客户端还是服务端呢？</p>
+<p>Minecraft的<code>World</code>中有一个<code>isRemote</code>字段，当处于客户端时这个变量值为<code>true</code>，当处于服务端时这个变量值为<code>false</code>。</p>
+<hr />
+<div class="footnote-definition" id="1"><sup class="footnote-definition-label">1</sup>
+<p>线程是程序调度的单位之一，处于不同的线程意味着这两个的逻辑和数据是互相独立的，只能通过特定的方法同步数据。具体来说，服务端处于「Server thread」，客户端处于「Render thread」，如果你有观察过Minecraft启动时的输出日志，应该会看到这两个词。</p>
+</div>
 <h1><a class="header" href="#开发模型" id="开发模型">开发模型</a></h1>
+<p>在这节中，我们将会粗略的讲一讲Minecraft mod的开发模型是什么样子的，理解这个模型将有助于你理解mod开发中的很多操作是为了什么。</p>
+<p>在我看来，Minecraft mod 开发基本上遵循了「事件驱动模式」，这里我们不会详细的讨论纠结什么是「事件驱动模式」，你只需要有一个感性的了解即可。</p>
+<p>那么Minecraft「事件驱动模式」是怎么样子的呢？要回答这个问题，我们得先理清三个概念：「事件」「总线」和「事件处理器」。</p>
+<p>首先什么是「事件」呢？就跟这个词表示的那样，「事件」就是「发生了某件事」。举例来说「当方块被破环」这个就是一个事件，「当玩家死亡」这个也是一个事件，当然我们前面举的都是非常具体的例子，事件也可以很抽象，比如「当渲染模型时」这个也是一个事件。</p>
+<p>接下来什么是「事件处理器」呢？事件处理器就是用来处理「事件」的函数。我们可以创建一个事件处理器来处理「方块破坏事件」，里面的内容是「重新创建一个方块」，可以注册一个事件处理器来处理「玩家死亡事件」，里面的内容是「放置一个墓碑」。</p>
+<p>最后是「总线」，总线是连接「事件」和「事件处理器」的工具，当「事件」发生的时候，「事件」的信息将会被发送到总线上，然后总线会选择监听了这个「事件」的「事件处理器」，执行这个事件处理器。</p>
+<img src="introducation/developmentmodel.assets/Untitled Diagram.png" alt="Untitled Diagram" style="zoom:150%;" />
+<p>注意这张图里的事件和事件处理器是没有先后顺序的。</p>
+<p>在Minecraft中，所写的逻辑基本上都是事件处理。</p>
+<p>在Forge开发里有两条总线，<code>Mod总线</code>和<code>Forge总线</code>，所有和初始化相关的事件都是在<code>Mod总线</code>内，其他所有事件都在<code>Forge总线</code>内。</p>
 <h1><a class="header" href="#一些核心概念" id="一些核心概念">一些核心概念</a></h1>
+<p>在这一小节中，我会讲几个不难理解但是非常重要的概念。</p>
+<h2><a class="header" href="#注册" id="注册">注册</a></h2>
+<p>如果你想往Minecraft里添加一些内容，那么你必须做的一件事就是注册。注册是一种机制，告诉游戏本身，有哪东西可以使用。你注册时需要的东西基本上可以分成两个部分：一个注册名和一个实例。</p>
+<h2><a class="header" href="#resourcelocation" id="resourcelocation">ResourceLocation</a></h2>
+<p>你可以把ResourceLocation想成一种特殊格式的字符串，它大概长成这样:<code>minecraft:textures/block/stone.png</code>，一个ResouceLocation指定了资源包下的一个特定的文件。举例来说，前面这个这个ResourceLocation代表了原版资源包下的石头的材质图片。ResouceLocation分成两部分，冒号前面的叫做「域（domain）」，在原版中只有一个域，即<code>minecraft</code>域，但是如果你开始开发mod，那么每个mod都会有一个或者多个域。冒号的后半部分是和<code>assets</code>文件夹内的目录结构一一对应的。从某种程度上来说，ResourceLocation就是一个特殊的URL。</p>
+<h2><a class="header" href="#模型和材质" id="模型和材质">模型和材质</a></h2>
+<p>在游戏中3d的对象基本上都有它的模型，模型和材质组合在一起规定了一个对象具体的样子。模型相当于是骨头，材质相当于是皮肤。在大部分时候，你的材质都是png图片，请注意保证你的材质背景是不透明的，其次不要在材质中使用半透明像素，会有不可预知的问题。</p>
 <h1><a class="header" href="#环境配置" id="环境配置">环境配置</a></h1>
 <p>在这一节中，我们会讲解如何配置Forge的开发环境。（<del>在这一节会劝退大部分人</del>）</p>
 <h1><a class="header" href="#forge开发环境的配置" id="forge开发环境的配置">Forge开发环境的配置</a></h1>

@@ -160,6 +160,24 @@
                 <div id="content" class="content">
                     <main>
                         <h1><a class="header" href="#forge是什么" id="forge是什么">Forge是什么</a></h1>
+<p>本教程是一个基于Forge的Mod开发教程，那么自然而然的要回答一个问题：「Forge是什么？」</p>
+<p>乍一看，这个好像根本就不是一个问题，「Forge？Forge不就是Forge吗？」看到这个问题的你内心中的第一个浮现出的想法估计就是这个。</p>
+<p>但是回答这个问题还是非常有必要的，接下去我会稍微讲一讲Forge是什么，以及Forge的历史。这些看上去和我们教程无关的内容，其实是Mod开发领域的「乡谣（Lore）」，学会这些可以更好的让你和其他人交流。</p>
+<p>我们得从Minecraft本身说起，首先我们得明确Minecraft是一个用Java写成的商业软件。这意味着两件事：第一，Minecraft相对容易修改；第二，代码本身是不开源而且是被混淆过的。在Minecraft历史的早期，因为在Mojang一直都没有给Minecraft提供官方API<sup class="footnote-reference"><a href="#1">1</a></sup>，所以「Mod Coder Pack」项目诞生了（以下简称为MCP）。</p>
+<p>还记得我之前说过的，Minecraft的两个特性吗？MCP就利用这两个特性，实现了一套工具，可以让开发者可以直接修改Minecraft jar包里的内容。</p>
+<p>于是<code>srg名</code>，<code>notch名</code>和<code>mcp名</code>诞生了。</p>
+<p>那么这三个是什么呢？</p>
+<p>首先是<code>notch名</code>，他是Minecraft直接反编译、反混淆之后的名称，通常是无意义的字母数字组合。你从名称Notch就可以看出，这个名字是直接来自Minecraft（<del>以及对Notch的怨念</del>），举例来说 <code>j</code>就是一个典型的<code>notch名</code>。</p>
+<p>接下来是<code>srg名</code>，这个名字是和<code>notch名</code>是一一对应的，<code>srg名</code>在一个版本里是不会变动的，之所以叫做<code>srg名</code>，是为了纪念MCP项目开发的领导者Searge。在<code>srg名</code>中，Minecraft中的类名已经是可读了，变量方法等名称虽然还是不可读，但是有相对应的前缀和尾缀来区分了。以上面的<code>j</code>为例，它的<code>srg名</code>是<code>func_70114_g</code>。</p>
+<p>最后是<code>mcp名</code>，这个名称也是我们mod开发中接触最多的名称，在<code>mcp名</code>中，代码已经是可读的了。和我们正常写java程序中的名称没什么两样。但是<code>mcp名</code>是会变动的。举例来说上面的<code>func_70114_g</code>它的<code>mcp名</code>是<code>getCollisionBox</code>。<code>mcp名</code>中的类名和<code>srg名</code>中的类名是相同的。</p>
+<p>接下来我们来讲Forge，随着时间的发展，Mod开发者们意识到，直接修改Jar文件写mod的方式太过于粗暴了，而且Mod和Mod之间的兼容性可以说基本没有，Mod开发者们急需一种工具可以方便地开发Mod，并且能保证mod和mod之间的兼容性，于是Forge就诞生了。</p>
+<p>Forge其实就是一套通过修改Minecraft方式实现的第三方API，而且随着时间的发展，MCP现在已经死亡了，除了Forge这套API，Fabric也风头正盛，而Forge本身也在Minecraft 1.13版本到来之后经历了一次重写，引入了大量函数式编程的API。</p>
+<p>那么Forge是怎么使用我们之前提及的三个名字的呢？</p>
+<p>在你安装完Forge之后，游戏的运行过程中，所有的内容都会反编译成<code>srg名</code>运行，你编译好的mod同样也会被混淆成<code>srg名</code>，保证它可以正常运行。</p>
+<hr />
+<div class="footnote-definition" id="1"><sup class="footnote-definition-label">1</sup>
+<p>API 即 「Application programming interface（应用程序接口）」，是程序的提供的一种机制允许第三方修改或者添加功能。</p>
+</div>
 
                     </main>
 
