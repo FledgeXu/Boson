@@ -207,17 +207,18 @@
 
 </code></pre>
 <p>实际上这个方块实体的代码要比我们做的第一个方块实体的代码简单许多。可以看到我们在这里实现了<code>ITickableTileEntity</code>接口，这个接口只有一个方法需要实现，就是<code>tick</code>方法，故名思义，这个会在每个游戏tick执行一次，我们这里做了一计数器，然后通过<code>world.getClosestPlayer</code>方法获取到了这个方块位置周围10格内最近的玩家，然后创建了<code>TranslationTextComponent</code>消息（，最后调用了<code>player.sendStatusMessage</code>将消息发送给了玩家，<code>sendStatusMessage</code> 接受的是<code>ITextComponent</code>接口。</p>
+<p>别忘了语言文件的翻译:</p>
+<pre><code class="language-json">&quot;message.hello_block.hello&quot;: &quot;你好&quot;
+</code></pre>
 <p>注册<code>TileEntityType</code>：</p>
 <pre><code class="language-java">public static RegistryObject&lt;TileEntityType&lt;ObsidianHelloTileEntity&gt;&gt; obsidianHelloTileEntity = TILE_ENTITIES.register(&quot;obsidian_hello_tileentity&quot;, () -&gt; TileEntityType.Builder.create(ObsidianHelloTileEntity::new, BlockRegistry.obsidianHelloBlock.get()).build(null));
 
 </code></pre>
 <p>其他的注册和模型文件的创建这里就省略了，相信读者已经有能力自主完成。</p>
-<p>打开游戏，靠近方块:</p>
-<p><img src="itickabletileentity.assets/image-20200429190609373.png" alt="image-20200429190609373" /></p>
+<p>打开游戏，靠近方块</p>
 <p>可以看见我们的方块在和我们打招呼呢。</p>
-<p><a href="https://github.com/FledgeXu/NeutrinoSourceCode/tree/master/src/main/java/com/tutorial/neutrino/tickabletileentity">源代码</a></p>
-<h2><a class="header" href="#开发小课堂" id="开发小课堂">开发小课堂</a></h2>
-<p>在很多时候，当函数要求传入的变量的类型是接口时，基本都已经有实现好的类可以使用，大家可以尝试查看这个接口的继承树来寻找可以使用的类。</p>
+<p><img src="itickabletileentity.assets/image-20200928202044020.png" alt="image-20200928202044020" /></p>
+<p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/tickabletileentity">源代码</a></p>
 
                     </main>
 

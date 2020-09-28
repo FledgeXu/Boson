@@ -189,7 +189,7 @@
 
 
     public ObsidianZombieTileEntity() {
-        super(TileEntityTypeRegistry.obsidianZombieTileentity.get());
+        super(TileEntityTypeRegistry.obsidianZombieTileEntity.get());
     }
 
     @Override
@@ -218,7 +218,7 @@
 
     @Override
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-        handleUpdateTag(pkt.getNbtCompound());
+        handleUpdateTag(world.getBlockState(pkt.getPos()), pkt.getNbtCompound());
     }
 
     @Override
@@ -229,7 +229,7 @@
     }
 
     @Override
-    public void handleUpdateTag(CompoundNBT tag) {
+    public void handleUpdateTag(BlockState state, CompoundNBT tag) {
         flag = tag.getBoolean(&quot;flag&quot;);
     }
 }
@@ -253,23 +253,24 @@
 public CompoundNBT getUpdateTag() {
   CompoundNBT compoundNBT = super.getUpdateTag();
   compoundNBT.putBoolean(&quot;flag&quot;, flag);
-   return compoundNBT;
+  return compoundNBT;
 }
 
 @Override
-public void handleUpdateTag(CompoundNBT tag) {
+public void handleUpdateTag(BlockState state, CompoundNBT tag) {
   flag = tag.getBoolean(&quot;flag&quot;);
 }
 </code></pre>
 <p>可以看到，用NBT标签传输了数据。</p>
-<pre><code class="language-java">@Override
+<pre><code class="language-java">@Nullable
+@Override
 public SUpdateTileEntityPacket getUpdatePacket() {
   return new SUpdateTileEntityPacket(pos, 1, getUpdateTag());
 }
 
 @Override
 public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-  handleUpdateTag(pkt.getNbtCompound());
+  handleUpdateTag(world.getBlockState(pkt.getPos()), pkt.getNbtCompound());
 }
 </code></pre>
 <p>在这里我们只是简单的调用了之前的两个方法而已，<code>SUpdateTileEntityPacket</code>的第二个参数的序列号值，大家可以随便填写。</p>
@@ -317,7 +318,7 @@ public void tick() {
 <p>然后就是添加材质和模型之类的事了，有兴趣的读者可以自己看源代码。</p>
 <p>打开游戏放置完方块，等待一会你应该就能听见僵尸的吼叫声了。</p>
 <p><img src="datasync.assets/image-20200429215140877.png" alt="image-20200429215140877" /></p>
-<p><a href="https://github.com/FledgeXu/NeutrinoSourceCode/tree/master/src/main/java/com/tutorial/neutrino/tileentitydatasync">源代码</a></p>
+<p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/tileentitydatasync">源代码</a></p>
 
                     </main>
 
