@@ -4300,6 +4300,78 @@ public class ParticleFactoryRegistry {
 <p><img src="paticles/intro.assets/image-20200929125358058.png" alt="image-20200929125358058" /></p>
 <p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/particle">源代码</a></p>
 <h1><a class="header" href="#音效" id="音效">音效</a></h1>
+<p>在这节中，我们讲学习如何向给我的Mod添加音效，非常的简单，就让我开始吧。</p>
+<pre><code class="language-java">public class SoundEventRegistry {
+    public static final DeferredRegister&lt;SoundEvent&gt; SOUNDS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, Utils.MOD_ID);
+    public static final RegistryObject&lt;SoundEvent&gt; meaSound = SOUNDS.register(&quot;mea&quot;, () -&gt; new SoundEvent(new ResourceLocation(Utils.MOD_ID, &quot;mea&quot;)));
+}
+</code></pre>
+<p>就这两句话，就可以注册我们的音效了。</p>
+<p>接下来我们来添加音效，在你的<code>Resource</code>目录下创建如下的文件和目录。</p>
+<pre><code>resources
+├── META-INF
+│   └── mods.toml
+├── assets
+│   └── boson
+│       ├── blockstates
+│       ├── lang
+│       ├── models
+│       ├── sounds
+│       ├── sounds.json
+│       └── textures
+├── data
+└── pack.mcmeta
+</code></pre>
+<p>在这里我们创建了一个<code>sounds.json</code>，这个文件的具体格式请参照Wiki。</p>
+<p>内容如下</p>
+<pre><code class="language-json">{
+  &quot;mea&quot;: {
+    &quot;subtitle&quot;: &quot;mea&quot;,
+    &quot;replace&quot;: &quot;true&quot;,
+    &quot;sounds&quot;: [
+      {
+        &quot;name&quot;: &quot;boson:mea&quot;,
+        &quot;steam&quot;: true
+      }
+    ]
+  }
+}
+</code></pre>
+<p>请注意，最外面的键名和你之前<code>ResourceLocation</code>中第二个参数应该是一样的。然后我们在<code>name</code>中指定了具体的声音文件。请注意，Minecraft只允许载入ogg格式的音频文件。</p>
+<p>接下来，我们将制作好的音频文件放入<code>sounds</code>文件内。</p>
+<pre><code>resources
+├── META-INF
+│   └── mods.toml
+├── assets
+│   └── boson
+│       ├── blockstates
+│       ├── lang
+│       ├── models
+│       ├── sounds
+│       │   └── mea.ogg
+│       ├── sounds.json
+│       └── textures
+├── data
+└── pack.mcmeta
+</code></pre>
+<p>放置好的目录如上。</p>
+<p>接下来就可创建物品来使用我们的音效了</p>
+<pre><code class="language-java">public class SoundTestItem extends Item {
+    public SoundTestItem() {
+        super(new Properties().group(ModGroup.itemGroup));
+    }
+
+    @Override
+    public ActionResult&lt;ItemStack&gt; onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
+        if (worldIn.isRemote) {
+            worldIn.playSound(playerIn, playerIn.getPosition(), SoundEventRegistry.meaSound.get(), SoundCategory.AMBIENT, 10f, 1f);
+        }
+        return super.onItemRightClick(worldIn, playerIn, handIn);
+    }
+}
+</code></pre>
+<p>打开游戏试试吧，我们应该成功添加了音效。</p>
+<p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/sounds">源代码</a></p>
 <h1><a class="header" href="#用户输入" id="用户输入">用户输入</a></h1>
 <h1><a class="header" href="#与其他mod的兼容" id="与其他mod的兼容">与其他mod的兼容</a></h1>
 <h1><a class="header" href="#access-transformer" id="access-transformer">Access Transformer</a></h1>
