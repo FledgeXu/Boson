@@ -41,12 +41,14 @@ public static final RegistryObject<GlassJar> glassJar = BLOCKS.register("glass_j
 public class RenderTypeRegistry {
     @SubscribeEvent
     public static void onRenderTypeSetup(FMLClientSetupEvent event) {
-        RenderTypeLookup.setRenderLayer(BlockRegistry.glassJar.get(), RenderType.getTranslucent());
+        event.enqueueWork(() -> {
+            RenderTypeLookup.setRenderLayer(BlockRegistry.glassJar.get(), RenderType.getTranslucent());
+        });
     }
 }
 ```
 
-因为渲染相关的内容都是在客户端发生，所以我们在`FMLClientSetupEvent`事件下注册我们的RenderType。
+因为渲染相关的内容都是在客户端发生，所以我们在`FMLClientSetupEvent`事件下注册我们的RenderType，而又因为现在Mod是并行加载的，所以我们得把我们的事件处理放到`event.enqueueWork`中。
 
 物理服务器是没发设置`RenderType`的，为了物理服务器的兼容性，在这里我们添加了`value = Dist.CLIENT`使它只会在物理客户端上监听事件。Forge提供了很多和物理端打交道的东西，除了我们看到的`value = Dist.CLIENT`，还有`@OnlyIn`注释，这个加了这个注释之后你就可以指定一个类只存在于物理客户端，或者物理服务端。当然还有`DistExecutor`，这里类下面有很多方法用来在在不同的物理端来执行不同的代码。
 

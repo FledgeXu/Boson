@@ -144,12 +144,14 @@ itemRenderer.renderItem(stack, ItemCameraTransforms.TransformType.FIXED, true, m
 public class ClientEventHandler {
     @SubscribeEvent
     public static void onClientEvent(FMLClientSetupEvent event) {
-        ClientRegistry.bindTileEntityRenderer(TileEntityTypeRegistry.obsidianTERTileEntity.get(), (ObsidianTER::new));
+        event.enqueueWork(() -> {
+            ClientRegistry.bindTileEntityRenderer(TileEntityTypeRegistry.obsidianTERTileEntity.get(), ObsidianTER::new);
+        });
     }
 }
 ```
 
-可以看见我们在Mod总线中的`FMLClientSetupEvent`（客户端配置）事件中，调用`ClientRegistry.bindTileEntityRenderer`方法把我们的`TER`绑定到我们的方块实体上。
+可以看见我们在Mod总线中的`FMLClientSetupEvent`（客户端配置）事件中，调用`ClientRegistry.bindTileEntityRenderer`方法把我们的`TER`绑定到我们的方块实体上，同样别忘了`event.enqueueWork`。
 
 当然别忘了注册你的方块实体
 

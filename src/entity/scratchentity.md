@@ -312,13 +312,15 @@ public class EntityTypeRegistry {
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientEventHandler {
     @SubscribeEvent
-    public static void onClientSetUpEvent(FMLClientSetupEvent event) {
-        RenderingRegistry.registerEntityRenderingHandler(EntityTypeRegistry.flyingSwordEntity.get(), FlyingSwordRender::new);
+    public static void onClientEvent(FMLClientSetupEvent event) {
+        event.enqueueWork(() -> {
+            ClientRegistry.bindTileEntityRenderer(TileEntityTypeRegistry.obsidianTERTileEntity.get(), (ObsidianTER::new));
+        });
     }
 }
 ```
 
-这里应该也挺好理解的。也就不多说什么了，同样的别忘了`value = Dist.CLIENT`。
+这里应该也挺好理解的。也就不多说什么了，同样的别忘了`value = Dist.CLIENT`，还有别忘了在`event.enqueueWork`中执行你的事件处理。
 
 打开游戏使用:
 
