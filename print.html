@@ -3860,8 +3860,109 @@ public class DispenserRegister {
 <h1><a class="header" href="#自定义生物群系和世界类型" id="自定义生物群系和世界类型">自定义生物群系和世界类型</a></h1>
 <h1><a class="header" href="#自定义维度与区块生成器以及生物群系提供器" id="自定义维度与区块生成器以及生物群系提供器">自定义维度与区块生成器以及生物群系提供器</a></h1>
 <h1><a class="header" href="#数据包" id="数据包">数据包</a></h1>
+<p>在1.13之后，Mojang推出了Data Pack，将合成表凋落物等都改成了用json文件描述，作为Mod开发者的我们自然也可以利用这点，来编写我们自己的Data Pack。读者在阅读这章之前，请确保自己对Data Pack的制作有所了解，我在这里不会一一涉及每个配方，只会略微的提及要注意的点。</p>
 <h1><a class="header" href="#配方" id="配方">配方</a></h1>
+<p><strong>请注意，在阅读本章节之前，请先学习数据包的制作与使用，不懂的话请阅读WIKI中相关的内容</strong></p>
+<p>在这节中，我们将要来学习如何添加配方，这里我们将以合成配方，和熔炼配方举例。</p>
+<p>正如原版的配方是放在数据包内，我们Mod的配方也应该放在我们的自己的数据包内，首先第一步就是创建我们Mod的数据包。请按照下面的结构性在你的<code>resources</code>文件夹下创建目录。</p>
+<pre><code>resources
+├── META-INF
+│   └── mods.toml
+├── assets
+├── data
+│   ├── minecraft
+│   └── boson
+│       └── recipes
+└── pack.mcmeta
+</code></pre>
+<p>其中的<code>data/neutrino</code>就是你自己的数据包了。</p>
+<p>接下在<code>recipes</code>文件夹下创建内容。这里你创建的文件名随意，一般情况下我都会写成和物品注册名同名。</p>
+<p>接下来举两个例子。</p>
+<p><code>obsidian_block.json</code>:</p>
+<pre><code class="language-json">{
+  &quot;type&quot;: &quot;minecraft:crafting_shaped&quot;,
+  &quot;pattern&quot;: [
+    &quot;###&quot;,
+    &quot;###&quot;,
+    &quot;###&quot;
+  ],
+  &quot;key&quot;: {
+    &quot;#&quot;: {
+      &quot;item&quot;: &quot;boson:obsidian_ingot&quot;
+    }
+  },
+  &quot;result&quot;: {
+    &quot;item&quot;: &quot;boson:obsidian_block&quot;,
+    &quot;count&quot;: 1
+  }
+}
+</code></pre>
+<p><code>obsidian_ingot.json</code></p>
+<pre><code class="language-json">{
+  &quot;type&quot;: &quot;minecraft:smelting&quot;,
+  &quot;ingredient&quot;: {
+    &quot;item&quot;: &quot;minecraft:obsidian&quot;
+  },
+  &quot;result&quot;: &quot;boson:obsidian_ingot&quot;,
+  &quot;experience&quot;: 0.35,
+  &quot;cookingtime&quot;: 200
+}
+</code></pre>
+<p>可以看到，这里和原版的数据包最大的不同就是我们通过类似<code>boson:obsidian_ingot</code>指定了，Mod中的物品，而通过<code>minecraft:obsidian</code>指定了原版的物品。</p>
+<p>创建完成以后目录结构如下:</p>
+<pre><code>resources
+├── META-INF
+│   └── mods.toml
+├── assets
+├── data
+│   ├── minecraft
+│   └── boson
+│       └── recipes
+│           ├── obsidian_block.json
+│           └── obsidian_ingot.json
+└── pack.mcmeta
+</code></pre>
 <h1><a class="header" href="#掉落物配方" id="掉落物配方">掉落物配方</a></h1>
+<p><strong>请注意，在阅读本章节之前，请先学习数据包的制作与使用，不懂的话请阅读WIKI中相关的内容</strong></p>
+<p>同样的，我们先创建目录，这里我们以方块的掉落举例。</p>
+<pre><code>resources
+├── META-INF
+│   └── mods.toml
+├── assets
+├── data
+│   ├── minecraft
+│   └── boson
+│       ├── loot_tables
+│       │   └── blocks
+│       └── recipes
+│           ├── obsidian_block.json
+│           └── obsidian_ingot.json
+└── pack.mcmeta
+</code></pre>
+<p>在<code>loot_tables/blocks</code>下创建和你方块注册名相同的Json文件。这里我们以我们创建的<code>obsidian_block</code>为例。</p>
+<p><code>obsidian_block.json</code>：</p>
+<pre><code class="language-json">{
+  &quot;type&quot;: &quot;minecraft:block&quot;,
+  &quot;pools&quot;: [
+    {
+      &quot;rolls&quot;: 1,
+      &quot;entries&quot;: [
+        {
+          &quot;type&quot;: &quot;minecraft:item&quot;,
+          &quot;name&quot;: &quot;boson:obsidian_block&quot;
+        }
+      ],
+      &quot;conditions&quot;: [
+        {
+          &quot;condition&quot;: &quot;boson:survives_explosion&quot;
+        }
+      ]
+    }
+  ]
+}
+</code></pre>
+<p>同样的，这里你可以通过<code>neutrino:obsidian_block</code>来指定你的物品。</p>
+<p>可能很多读者，对于原版的<code>Loot_table</code>很难理解，这里我可以举个例子，你就把<code>Loot_table</code>当作是在赌场里抽奖，里面配置的信息不过就是奖品是什么，可以抽几次，什么条件下可以抽，什么情况下可以多抽几次。</p>
 <h1><a class="header" href="#data-generator" id="data-generator">Data Generator</a></h1>
 <h1><a class="header" href="#命令" id="命令">命令</a></h1>
 <h1><a class="header" href="#进度" id="进度">进度</a></h1>

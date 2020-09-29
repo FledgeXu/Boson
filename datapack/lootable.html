@@ -160,6 +160,46 @@
                 <div id="content" class="content">
                     <main>
                         <h1><a class="header" href="#掉落物配方" id="掉落物配方">掉落物配方</a></h1>
+<p><strong>请注意，在阅读本章节之前，请先学习数据包的制作与使用，不懂的话请阅读WIKI中相关的内容</strong></p>
+<p>同样的，我们先创建目录，这里我们以方块的掉落举例。</p>
+<pre><code>resources
+├── META-INF
+│   └── mods.toml
+├── assets
+├── data
+│   ├── minecraft
+│   └── boson
+│       ├── loot_tables
+│       │   └── blocks
+│       └── recipes
+│           ├── obsidian_block.json
+│           └── obsidian_ingot.json
+└── pack.mcmeta
+</code></pre>
+<p>在<code>loot_tables/blocks</code>下创建和你方块注册名相同的Json文件。这里我们以我们创建的<code>obsidian_block</code>为例。</p>
+<p><code>obsidian_block.json</code>：</p>
+<pre><code class="language-json">{
+  &quot;type&quot;: &quot;minecraft:block&quot;,
+  &quot;pools&quot;: [
+    {
+      &quot;rolls&quot;: 1,
+      &quot;entries&quot;: [
+        {
+          &quot;type&quot;: &quot;minecraft:item&quot;,
+          &quot;name&quot;: &quot;boson:obsidian_block&quot;
+        }
+      ],
+      &quot;conditions&quot;: [
+        {
+          &quot;condition&quot;: &quot;boson:survives_explosion&quot;
+        }
+      ]
+    }
+  ]
+}
+</code></pre>
+<p>同样的，这里你可以通过<code>neutrino:obsidian_block</code>来指定你的物品。</p>
+<p>可能很多读者，对于原版的<code>Loot_table</code>很难理解，这里我可以举个例子，你就把<code>Loot_table</code>当作是在赌场里抽奖，里面配置的信息不过就是奖品是什么，可以抽几次，什么条件下可以抽，什么情况下可以多抽几次。</p>
 
                     </main>
 
