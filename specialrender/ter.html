@@ -266,11 +266,13 @@ itemRenderer.renderItem(stack, ItemCameraTransforms.TransformType.FIXED, true, m
 public class ClientEventHandler {
     @SubscribeEvent
     public static void onClientEvent(FMLClientSetupEvent event) {
-        ClientRegistry.bindTileEntityRenderer(TileEntityTypeRegistry.obsidianTERTileEntity.get(), (ObsidianTER::new));
+        event.enqueueWork(() -&gt; {
+            ClientRegistry.bindTileEntityRenderer(TileEntityTypeRegistry.obsidianTERTileEntity.get(), ObsidianTER::new);
+        });
     }
 }
 </code></pre>
-<p>可以看见我们在Mod总线中的<code>FMLClientSetupEvent</code>（客户端配置）事件中，调用<code>ClientRegistry.bindTileEntityRenderer</code>方法把我们的<code>TER</code>绑定到我们的方块实体上。</p>
+<p>可以看见我们在Mod总线中的<code>FMLClientSetupEvent</code>（客户端配置）事件中，调用<code>ClientRegistry.bindTileEntityRenderer</code>方法把我们的<code>TER</code>绑定到我们的方块实体上，同样别忘了<code>event.enqueueWork</code>。</p>
 <p>当然别忘了注册你的方块实体</p>
 <pre><code class="language-java">public static final RegistryObject&lt;TileEntityType&lt;ObsidianTERTileEntity&gt;&gt; obsidianTERTileEntity = TILE_ENTITIES.register(&quot;obsidian_ter_tileentity&quot;, () -&gt; TileEntityType.Builder.create(ObsidianTERTileEntity::new, BlockRegistry.obsidianTERBlock.get()).build(null));
 

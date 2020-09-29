@@ -160,6 +160,53 @@
                 <div id="content" class="content">
                     <main>
                         <h1><a class="header" href="#开始使用预定义能力" id="开始使用预定义能力">开始使用预定义能力</a></h1>
+<p>在这一节中我们来学习如何使用Forge已经提供好的Capability。</p>
+<p>Forge为我们已经预定义好了一下几种Capability，你可通过查看<code>@CapabilityInject</code>注释在原版内容中的使用来找到预定于好的Capability。</p>
+<ul>
+<li><code>ANIMATION_CAPABILITY</code>，接口<code>IAnimationStateMachine</code>，这个能力与动画有关</li>
+<li><code>ENERGY</code>，接口<code>IEnergyStorage</code>，这个能力就是大家可能都听说过的Forge Energy</li>
+<li><code>FLUID_HANDLER_CAPABILITY</code> ，接口<code>IFluidHandler</code> ，这个能力和方块形式的流体有关</li>
+<li><code>FLUID_HANDLER_ITEM_CAPABILITY</code>，接口<code>IFluidHandlerItem</code>，这个能力和物品形式的流体有关</li>
+<li><code>ITEM_HANDLER_CAPABILITY</code>，接口<code>IItemHandler</code>，这个能力和物品的输入输出有关</li>
+</ul>
+<p>在这节中，我们将会以<code>ITEM_HANDLER_CAPABILITY</code>，做一个简单的演示。如果想要更详细的例子，可以看看ustc-zzzz中关于Forge 能力系统介绍的<a href="https://blog.ustc-zzzz.net/forge-energy-demo-1/">博客</a>。</p>
+<p>在这里我们要实现一个只能从上方倒入并且可以帮我们自动删除圆石的垃圾桶。</p>
+<pre><code class="language-java">public class ObsidianTrashTileEntity extends TileEntity {
+    public ObsidianTrashTileEntity() {
+        super(TileEntityTypeRegistry.obsidianTrash.get());
+    }
+
+    @Nonnull
+    @Override
+    public &lt;T&gt; LazyOptional&lt;T&gt; getCapability(@Nonnull Capability&lt;T&gt; cap, @Nullable Direction side) {
+        if (side == Direction.UP &amp;&amp; cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            return LazyOptional.of(() -&gt; new ItemStackHandler() {
+                @Override
+                public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+                    return stack.getItem() == Items.COBBLESTONE;
+                }
+            }).cast();
+        }
+        return super.getCapability(cap, side);
+    }
+}
+</code></pre>
+<pre><code class="language-java">if (side == Direction.UP &amp;&amp; cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) 
+</code></pre>
+<p>在这里我们规定了我们的垃圾桶只有从上方导入时才有效，并且声明了有<code>ITEM_HANDLER_CAPABILITY</code>这个能力。</p>
+<pre><code class="language-java">return LazyOptional.of(() -&gt; new ItemStackHandler() {
+  @Override
+  public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+    return stack.getItem() == Items.COBBLESTONE;
+  }
+}).cast();
+</code></pre>
+<p>然后在这里创建了一个<code>ItemStackHandler</code>实例，这个是Forge内置的已经实现了<code>IItemHandler</code>接口的类，大家可以通过查看<code>IItemHandler</code>的基础树来找到这个类。</p>
+<p>并且我们在创建这个实例的时候复写了<code>isItemValid</code>方法用来过滤物品，至于这些方法都有什么作用，请大家自行阅读<code>IItemHandler</code>接口的注释。</p>
+<p>因为这里的能力是内置了，所以我们就不需要注册了。</p>
+<p>至于方块，物品等注册，请读者自行完成。</p>
+<p>打开游戏试试吧。</p>
+<p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/use_cap">源代码</a></p>
 
                     </main>
 

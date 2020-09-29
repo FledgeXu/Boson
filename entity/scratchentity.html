@@ -402,12 +402,14 @@ public void render(FlyingSwordEntity entityIn, float entityYaw, float partialTic
 <pre><code class="language-java">@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientEventHandler {
     @SubscribeEvent
-    public static void onClientSetUpEvent(FMLClientSetupEvent event) {
-        RenderingRegistry.registerEntityRenderingHandler(EntityTypeRegistry.flyingSwordEntity.get(), FlyingSwordRender::new);
+    public static void onClientEvent(FMLClientSetupEvent event) {
+        event.enqueueWork(() -&gt; {
+            ClientRegistry.bindTileEntityRenderer(TileEntityTypeRegistry.obsidianTERTileEntity.get(), (ObsidianTER::new));
+        });
     }
 }
 </code></pre>
-<p>这里应该也挺好理解的。也就不多说什么了，同样的别忘了<code>value = Dist.CLIENT</code>。</p>
+<p>这里应该也挺好理解的。也就不多说什么了，同样的别忘了<code>value = Dist.CLIENT</code>，还有别忘了在<code>event.enqueueWork</code>中执行你的事件处理。</p>
 <p>打开游戏使用:</p>
 <pre><code>/summon boson:flying_sword
 </code></pre>

@@ -160,6 +160,149 @@
                 <div id="content" class="content">
                     <main>
                         <h1><a class="header" href="#从零构建与使用能力" id="从零构建与使用能力">从零构建与使用能力</a></h1>
+<p>在这一节中，我们将会从0开始构建与使用Capability。在开始之前我们必须要解释一下，什么是Capability。</p>
+<p>Capability 的诞生起源于在写程序时出现的一个问题。考虑如下一种情况，你正在写一个能量转换器，你的能量转换器需要可以转换不同mod中的不同能量：EU、RF，Forge Energy等等。每一个能量都提供了一个接口用来实现输入输出的方法，那么你很快就会发现你的类定义会变成下面这个样子:</p>
+<pre><code class="language-java">class MyTileEntity extends TileEntity implements EnergyInterface1,  EnergyInterface2, EnergyInterface3, FluidsInterface1, FluidsInterface2, FluidsInterface3, ItemsApi1, ItemsApi2, ItemsApi3, ComputerApi1, ComputerApi2, ...
+</code></pre>
+<p>这样的代码简直是地狱级别的可怕。而Capability（能力系统）出现解决了这个问题，再用了能力系统之后你的类定义就可以简化成类似下面的形式:</p>
+<pre><code class="language-java">class MyTileEntity extends CapabilityProvider
+</code></pre>
+<p>这里是演示代码，但是你可以立马发现，你的代码简化了很多。请注意Capability系统并不是Minecraft原版提供的，而是Forge提供的。</p>
+<p>在Capability系统主要由两部分构成，Capability（能力）本身以及CapabilityProvider（能力提供者）。请注意务必要区分清楚Capability和CapabilityProvider，在很多的教程中，这两者都被混为一谈。当然在实际使用的过程中还会牵涉到调用CapabilityProvider的一方。这里我讲一个简单比喻来帮助大家理解这三方的关系。</p>
+<blockquote>
+<p>假设，你是一个投资商，想要投资建一栋商务楼。一般情况下，你就会去找一个建筑方案提供商。如果这个建筑方案提供商拿不出这个建筑方案，你可能就不建了，如果这个建筑方案提供商拿的出建筑方案，你就可以从这个方法中获取一些信息或者直接按照这个方案建筑商务楼。</p>
+</blockquote>
+<p>在Capability系统中，调用CapabilityProvider的方相当于「投资商」，CapabilityProvider相当于是「建筑方案提供商」，而Capability本身就是「建筑方案」。</p>
+<p>而在代码层面，首先调用方会调用CapabilityProvider的<code>getCapability</code>方法并传入一个具体的Capability。然后在实现了<code>CapbilityProvider</code>接口的类中，判断传入的能力是不是自己可以完成的，如果不能换成就会返回一个空值，如果可以完成就会返回传入的Capability所指定类或接口的一个实例。</p>
+<p>接下来我们会创建两个特殊的方块，分为「上方块」和「下方块」。当你把「上方块」放在「下方块」的上方时，「上方块会输出下方块传来的信息」。</p>
+<p>介于篇幅的原因，这里就直接从TilEntity开始了，相关的方块也没什么内容，就只是关联的方块实体而已。</p>
+<p><code>ObsidianUpBlockTileEntity</code></p>
+<pre><code class="language-java">public class ObsidianUpBlockTileEntity extends TileEntity implements ITickableTileEntity {
+    public ObsidianUpBlockTileEntity() {
+        super(TileEntityTypeRegistry.obsidianUpTileEntity.get());
+    }
+
+    private static final Logger logger = LogManager.getLogger();
+
+    @Override
+    public void tick() {
+        if (world != null &amp;&amp; !world.isRemote) {
+            BlockPos pos = this.pos.down();
+            TileEntity tileEntity = world.getTileEntity(pos);
+            if (tileEntity != null) {
+                LazyOptional&lt;ISimpleCapability&gt; simpleCapabilityLazyOptional = tileEntity.getCapability(ModCapability.SIMPLE_CAPABILITY);
+                simpleCapabilityLazyOptional.ifPresent((s) -&gt; {
+                    String context = s.getString(this.pos);
+                    logger.info(context);
+                });
+            }
+        }
+
+    }
+}
+</code></pre>
+<p>可以看见这里的内容并不艰深。我们先获取了下方方块的方块实体。</p>
+<pre><code class="language-java">LazyOptional&lt;ISimpleCapability&gt; simpleCapabilityLazyOptional = tileEntity.getCapability(ModCapability.SIMPLE_CAPABILITY);
+</code></pre>
+<p>然后就是调用这里的<code>getCapbility</code>并传入了我们自定义的<code>ModCapability.SIMPLE_CAPABILITY</code>这个能力，来询问我们下方的方块是否可以完成这件事。</p>
+<p>这里有个很奇怪的类型，叫做<code>LazyOptional&lt;ISimpleCapability&gt;</code>我们必须要稍微解释一下。简单来说你在读这个类的名字时可以忽视<code>Lazy</code>，它其实就是一个特殊的<code>Optional</code>类。那么什么是<code>Optioanl</code>类呢？<code>Optinal</code> 类其实是对<code>null</code>和<code>有值</code>这两个状态的封装。简单来说，当<code>LazyOptional.isPresent</code>为真时，代表这个变量里有值，如果为假，代表这个变量的值为<code>null</code>。</p>
+<pre><code class="language-java">simpleCapabilityLazyOptional.ifPresent((s) -&gt; {
+  String context = s.getString(this.pos);
+  logger.info(context);
+});
+</code></pre>
+<p>这里的<code>ifPresent</code>的意思就是当返回值不是<code>null</code>时需要做什么。这里的lambda表达式参数<code>s</code>就是之前<code>getCapbility</code>调用的返回值。而且它的类型就是我们写在<code>LazyOptional&lt;T&gt;</code>这个泛型中的类型，在我们的例子里就是<code>ISimpleCapability</code>这个接口的实例。</p>
+<p>然后我们就调用了<code>ISimpleCapability</code>规定的方法<code>getString</code>，并且把值输出了出来。</p>
+<p>读完这里希望读者能稍微停一下，然后思考这个过程和之前比喻之间的关系。</p>
+<p>接下来我们就要来看看我们的「方案提供商人 / CapabilityProvider 」了。</p>
+<p><code>ObsidianDownBlockTileEntity.java</code></p>
+<pre><code class="language-java">public class ObsidianDownBlockTileEntity extends TileEntity {
+    public ObsidianDownBlockTileEntity() {
+        super(TileEntityTypeRegistry.obsidianDownTileEntity.get());
+    }
+
+    @Nonnull
+    @Override
+    public &lt;T&gt; LazyOptional&lt;T&gt; getCapability(@Nonnull Capability&lt;T&gt; cap, @Nullable Direction side) {
+        if (cap == ModCapability.SIMPLE_CAPABILITY) {
+            return LazyOptional.of(() -&gt; new SimpleCapability(&quot;Hello&quot;)).cast();
+        }
+        return LazyOptional.empty();
+    }
+}
+</code></pre>
+<p>可以看见我们这里就简单的复写了<code>getCapability</code>方法，你可能会好奇<code>getCapability</code>明明是<code>CapabilityProvider</code>规定的方法，我们却可以直接复写。</p>
+<p>如果你查看TileEntity类的定义，你应该可以看到如下内容:</p>
+<pre><code class="language-java">public abstract class TileEntity extends net.minecraftforge.common.capabilities.CapabilityProvider&lt;TileEntity&gt; implements net.minecraftforge.common.extensions.IForgeTileEntity
+</code></pre>
+<p>可以看见TileEntity类默认继承了CapabilityProvider（知道Capability对于方块实体多么重要了吧），这就是为什么我们可以直接复写<code>getCapability</code>的原因。</p>
+<p>这里的内容，非常简单，我们就是判断传入的能力是不是我们可以完成的，如果不可以完成就返回一个<code>LazyOptional.empty()</code>（你可以当成返回了一个<code>null</code>)，如果可以完成就返回了一个相对应的实例。</p>
+<pre><code class="language-java">return LazyOptional.of(() -&gt; new SimpleCapability(&quot;Hello&quot;)).cast();
+</code></pre>
+<p>这里的意思是将<code>SimpleCapability</code>的实例塞入<code>LazyOptinal</code>中。请注意，最后的这里的<code>cast</code>方法是必须要调用的，不然会出现类型错误。</p>
+<p>这里的<code>SimpleCapability</code>就是实现了我们之前提到的<code>ISimpleCapability</code>接口的类。所以这里返回的实例也是<code>ISimpleCapability</code>的实例。</p>
+<p>接下来我们来看<code>SimpleCapability.java</code>和<code>ISimpleCapability.java</code></p>
+<pre><code class="language-java">public class SimpleCapability implements ISimpleCapability {
+    private final String context;
+
+    public SimpleCapability(String context) {
+        this.context = context;
+    }
+
+    @Override
+    public String getString(BlockPos pos) {
+        return pos.toString() + &quot;:::&quot; + this.context;
+    }
+}
+</code></pre>
+<pre><code class="language-java">public interface ISimpleCapability {
+    String getString(BlockPos pos);
+}
+</code></pre>
+<p>在你写自定义Capability（这里指的不是CapabilityProvider）时，你应该也要遵循这个形式，把规定的操作抽象成一个接口，这样你就可以你就可以在Mod的API中向别人提供这个接口，别人就可以在它们的Mod中使用你定义的Capability了。</p>
+<p>接下来是注册，首先我们得声明一个实例。</p>
+<p><code>ModCapability.java</code></p>
+<pre><code class="language-java">public class ModCapability {
+    @CapabilityInject(ISimpleCapability.class)
+    public static Capability&lt;ISimpleCapability&gt; SIMPLE_CAPABILITY;
+}
+</code></pre>
+<p>在这里我们使用了<code>@CapabilityInject</code>注解，来表示我们的定义的变量是Capability，并且会在正式注册完这个Capability后给下面的变量赋值。这里的参数和下方的泛型，都应该是你之前定义的Capability的接口。</p>
+<p>最后我们来正式注册它。</p>
+<pre><code class="language-java">@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+public class CommonSetupEventHandler {
+    @SubscribeEvent
+    public static void onSetUpEvent(FMLCommonSetupEvent event) {
+        event.enqueueWork(() -&gt; {
+            CapabilityManager.INSTANCE.register(
+                    ISimpleCapability.class,
+                    new Capability.IStorage&lt;ISimpleCapability&gt;() {
+                        @Nullable
+                        @Override
+                        public INBT writeNBT(Capability&lt;ISimpleCapability&gt; capability, ISimpleCapability instance, Direction side) {
+                            return null;
+                        }
+
+                        @Override
+                        public void readNBT(Capability&lt;ISimpleCapability&gt; capability, ISimpleCapability instance, Direction side, INBT nbt) {
+
+                        }
+                    },
+                    () -&gt; null
+            );
+        });
+    }
+}
+</code></pre>
+<p>你需要在<code>Mod</code>总线的<code>FMLCommonSetupEvent</code>这个生命周期事件发生时，调用<code> CapabilityManager.INSTANCE.register</code>注册你的Capability，这里第一个参数就是你写好的Capability，后面两个参数你是用来规定默认情况下的储存和创建方法的，我们不需要这些功能，所以留空。你可直接像上面的代码一样写最后两个参数，同样的请注意，这里的世界要放在<code>event.enqueueWork</code>中执行。</p>
+<p>然后就是方块，方块实体等的注册，这里就不多加解释了。</p>
+<p>打开游戏。</p>
+<p><img src="capabilityfromscratch.assets/image-20200504112815135.png" alt="image-20200504112815135" /></p>
+<p>当像这样叠放时。</p>
+<p><img src="capabilityfromscratch.assets/image-20200504112836268.png" alt="image-20200504112836268" /></p>
+<p>控制台里输出了相对应的内容了。</p>
+<p>这部分的概念有些抽象，大家可以结合源代码自己思考整个调用过程。只要你理解了调用过程，Capability系统其实没有想象的那么难以理解。</p>
+<p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/first_cap">源代码</a></p>
 
                     </main>
 

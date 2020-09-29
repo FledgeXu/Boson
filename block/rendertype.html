@@ -188,11 +188,13 @@
 public class RenderTypeRegistry {
     @SubscribeEvent
     public static void onRenderTypeSetup(FMLClientSetupEvent event) {
-        RenderTypeLookup.setRenderLayer(BlockRegistry.glassJar.get(), RenderType.getTranslucent());
+        event.enqueueWork(() -&gt; {
+            RenderTypeLookup.setRenderLayer(BlockRegistry.glassJar.get(), RenderType.getTranslucent());
+        });
     }
 }
 </code></pre>
-<p>因为渲染相关的内容都是在客户端发生，所以我们在<code>FMLClientSetupEvent</code>事件下注册我们的RenderType。</p>
+<p>因为渲染相关的内容都是在客户端发生，所以我们在<code>FMLClientSetupEvent</code>事件下注册我们的RenderType，而又因为现在Mod是并行加载的，所以我们得把我们的事件处理放到<code>event.enqueueWork</code>中。</p>
 <p>物理服务器是没发设置<code>RenderType</code>的，为了物理服务器的兼容性，在这里我们添加了<code>value = Dist.CLIENT</code>使它只会在物理客户端上监听事件。Forge提供了很多和物理端打交道的东西，除了我们看到的<code>value = Dist.CLIENT</code>，还有<code>@OnlyIn</code>注释，这个加了这个注释之后你就可以指定一个类只存在于物理客户端，或者物理服务端。当然还有<code>DistExecutor</code>，这里类下面有很多方法用来在在不同的物理端来执行不同的代码。</p>
 <p>一个非常常见的问题就是，在物理服务端调用了只有在物理客户端存在的类，比如加了<code>@OnlyIn(Dist.CLIENT)</code>的类或者方法，当你在物理服务端调用它时，它相当于是不存在的，这时就是出现错误。</p>
 <p>你在注意你调用的代码究竟是处于哪一个「逻辑端」的同时，你也得注意你的代码就行执行在哪一个「物理端」。</p>

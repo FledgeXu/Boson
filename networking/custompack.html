@@ -250,11 +250,11 @@
 public class CommonEventHandler {
     @SubscribeEvent
     public static void onCommonSetup(FMLCommonSetupEvent event) {
-        Networking.registerMessage();
+        event.enqueueWork(Networking::registerMessage);
     }
 }
 </code></pre>
-<p>你需要在<code>Mod</code>总线中的<code>FMLCommonSetupEvent</code>这个生命周期方法中创建你的Channel。</p>
+<p>你需要在<code>Mod</code>总线中的<code>FMLCommonSetupEvent</code>这个生命周期方法中创建你的Channel，这里的内容要放在<code>event.enqueueWork</code>中执行。</p>
 <p>接下来看一个实例，如何从客户端向服务端发送数据，以及从服务端向客户端发送数据。</p>
 <p><code>ObsidianMessage</code>:</p>
 <pre><code class="language-java">public class ObsidianMessage extends Item {
