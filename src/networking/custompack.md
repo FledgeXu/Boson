@@ -121,12 +121,12 @@ public class SendPack {
 public class CommonEventHandler {
     @SubscribeEvent
     public static void onCommonSetup(FMLCommonSetupEvent event) {
-        Networking.registerMessage();
+        event.enqueueWork(Networking::registerMessage);
     }
 }
 ```
 
-你需要在`Mod`总线中的`FMLCommonSetupEvent`这个生命周期方法中创建你的Channel。
+你需要在`Mod`总线中的`FMLCommonSetupEvent`这个生命周期方法中创建你的Channel，这里的内容要放在`event.enqueueWork`中执行。
 
 接下来看一个实例，如何从客户端向服务端发送数据，以及从服务端向客户端发送数据。
 
