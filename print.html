@@ -4020,6 +4020,61 @@ public class CommandEventHandler {
 <p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/command">源代码</a></p>
 <h1><a class="header" href="#进度" id="进度">进度</a></h1>
 <h1><a class="header" href="#配置文件" id="配置文件">配置文件</a></h1>
+<p>在这节中，我们将要来学习配置文件的编写。在1.12之后，Forge将配置文件格式改成Toml。</p>
+<p>现在我们开始吧</p>
+<p>为了理解方便，我先把最后生成出的配置文件格式粘贴出来</p>
+<pre><code class="language-toml">#General settings
+[general]
+	#Test config value
+	#Range: &gt; 0
+	value = 10
+</code></pre>
+<pre><code class="language-java">public class Config {
+    public static ForgeConfigSpec COMMON_CONFIG;
+    public static ForgeConfigSpec.IntValue VALUE;
+
+    static {
+        ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
+        COMMON_BUILDER.comment(&quot;General settings&quot;).push(&quot;general&quot;);
+        VALUE = COMMON_BUILDER.comment(&quot;Test config value&quot;).defineInRange(&quot;value&quot;, 10, 0, Integer.MAX_VALUE);
+        COMMON_BUILDER.pop();
+        COMMON_CONFIG = COMMON_BUILDER.build();
+    }
+}
+</code></pre>
+<p>创建一个配置文件可以大致分为一下几个部分，首先你得创建一个<code>Builder</code>，然后向这个<code>Builder</code>塞入你需要的配置选项，以及注释等，最后调用其<code>build</code>方法，构建出我们的配置实例。</p>
+<p>我们先来看静态代码块中的内容。</p>
+<p>首先我们调用<code>ForgeConfigSpec.Builder()</code>创建了一个<code>Builder</code>。</p>
+<p>接下来的<code>push</code>和<code>pop</code>是一组方法，必须配合使用，每一个<code>comment</code>对应了配置文件中一个节（也就是中括号的部分），其中的<code>push</code>规定了节的名字，<code>comment</code>则是添加了注释。</p>
+<p><code>ForgeConfigSpec.IntValue</code>规定了我们的值，这里的值的允许的种类可以有：EnumValue、LongValue、IntValue、BoolenValue、DoubleValue。</p>
+<p>我们在这里通过<code>defineInRange</code>方法定义了我们配置文件中选项的名字，默认值，以及值的范围。</p>
+<p>最后我们通过<code>COMMON_BUILDER.build()</code>，构建出了我们配置文件的实例。</p>
+<p>当然，你还需要注册这个配置文件，回到你的Mod主类的构造方法中，添加</p>
+<pre><code class="language-java">ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON_CONFIG);
+</code></pre>
+<p>Forge 提供了不同种类的配置文件，比如服务端起效，客户端起效的等，这里我们通过<code>ModConfig.Type.COMMON</code>选用了通用的配置文件。</p>
+<p>到此你配置文件就已经注册完毕了。</p>
+<p>你的配置文件的名字将会是<code>modid-common.toml</code>。</p>
+<p>使用配置文件里的值，也是非常的简单。</p>
+<pre><code class="language-java">public class ConfigureTestItem extends Item {
+    public ConfigureTestItem() {
+        super(new Properties().group(ModGroup.itemGroup));
+    }
+
+    @Override
+    public ActionResult&lt;ItemStack&gt; onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
+        if (!worldIn.isRemote) {
+            playerIn.sendMessage(new TranslationTextComponent(&quot;message.&quot; + Utils.MOD_ID + &quot;.config&quot;, Config.VALUE.get()), playerIn.getUniqueID());
+        }
+        return super.onItemRightClick(worldIn, playerIn, handIn);
+    }
+}
+</code></pre>
+<p>直接通过<code>Config.VALUE.get()</code>就可以获取配置文件中的值了。</p>
+<p>修改你的配置文件，你可以看到物品栏的消息也发生了改变。</p>
+<p><img src="configure/configure.assets/image-20200516101413181.png" alt="image-20200516101413181" /></p>
+<p><img src="configure/configure.assets/image-20200516101637019.png" alt="image-20200516101637019" /></p>
+<p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/configure">源代码</a></p>
 <h1><a class="header" href="#药水" id="药水">药水</a></h1>
 <h1><a class="header" href="#粒子效果" id="粒子效果">粒子效果</a></h1>
 <h1><a class="header" href="#音效" id="音效">音效</a></h1>
