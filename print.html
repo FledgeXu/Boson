@@ -4373,6 +4373,42 @@ public class ParticleFactoryRegistry {
 <p>打开游戏试试吧，我们应该成功添加了音效。</p>
 <p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/sounds">源代码</a></p>
 <h1><a class="header" href="#用户输入" id="用户输入">用户输入</a></h1>
+<p>这一节中我们将来学习如何获取用户输入。这里我们将以快捷键举例。请注意，所有的用户输入都是客户端行为。</p>
+<pre><code class="language-java">@Mod.EventBusSubscriber(value = Dist.CLIENT)
+public class KeyBoardInput {
+    public static final KeyBinding MESSAGE_KEY = new KeyBinding(&quot;key.message&quot;,
+            KeyConflictContext.IN_GAME,
+            KeyModifier.CONTROL,
+            InputMappings.Type.KEYSYM,
+            GLFW.GLFW_KEY_J,
+            &quot;key.category.&quot; + Utils.MOD_ID);
+
+    @SubscribeEvent
+    public static void onKeyboardInput(InputEvent.KeyInputEvent event) {
+        if (MESSAGE_KEY.isPressed()) {
+            assert Minecraft.getInstance().player != null;
+            Minecraft.getInstance().player.sendMessage(new TranslationTextComponent(&quot;message.&quot; + Utils.MOD_ID + &quot;.press&quot;), Minecraft.getInstance().player.getUniqueID());
+        }
+    }
+}
+</code></pre>
+<p>首先我们创建了一个<code>KeyBinding</code>，这个就是一个可以配置的快捷键，具体的参数非常简单，这里就不多加说明了，别忘了<code>value = Dist.CLIENT</code>，因为用户输入是物理客户端才有的东西。</p>
+<p>可以看到，我们监听了Forge总线上的<code>InputEvent.KeyInputEvent</code>，即键盘输入事件。<code>InputEvent</code>下还有其他子事件，大家可以按需选用。在这里我们判断当我的快捷键按下时，给玩家发送一个消息。</p>
+<p>当然我们还需要注册我们的快捷键。</p>
+<pre><code class="language-java">@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+public class KeybindingRegistry {
+    @SubscribeEvent
+    public static void onClientSetup(FMLClientSetupEvent event) {
+        event.enqueueWork(() -&gt; ClientRegistry.registerKeyBinding(KeyBoardInput.MESSAGE_KEY));
+    }
+}
+</code></pre>
+<p>因为按钮按下是个客户端行为，所有这里我们选用<code>FMLClientSetupEvent</code>事件，在里面调用<code>ClientRegistry.registerKeyBinding</code>方法注册我们的快捷键，同样的在这里别忘了<code>value = Dist.CLIENT</code>。</p>
+<p>打开游戏按下我们之前设置的快捷键，就可以看到我们的消息了。</p>
+<p><img src="io/intro.assets/image-20200929130319238.png" alt="image-20200929130319238" /></p>
+<p><img src="io/intro.assets/image-20200929130502781.png" alt="image-20200929130502781" /></p>
+<p>注：因为我的系统时macOS，所以这里显示的是CMD。</p>
+<p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/input">源代码</a></p>
 <h1><a class="header" href="#与其他mod的兼容" id="与其他mod的兼容">与其他mod的兼容</a></h1>
 <h1><a class="header" href="#access-transformer" id="access-transformer">Access Transformer</a></h1>
 <h1><a class="header" href="#coremod" id="coremod">CoreMod</a></h1>
