@@ -3206,9 +3206,555 @@ player.setItemStackToSlot(EquipmentSlotType.MAINHAND, stack);
 <p>打开游戏右键你的方块试试吧，现在应该可以不限距离，不限维度传输物品了。</p>
 <p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/wordsaveddata">源代码</a></p>
 <h1><a class="header" href="#gui" id="gui">Gui</a></h1>
+<p>在这节我们将进入很多人期待已久的章节，GUI（图形界面）。</p>
 <h1><a class="header" href="#第一个gui" id="第一个gui">第一个Gui</a></h1>
+<p>在这一节中，我们将创建一个自定义的Gui，在开始教程之前，我必须要强调一点，打开Gui等操作只能在客户端执行，不能在服务端执行。</p>
+<p>与GUI相关的最直接的一个类就是<code>Screen</code>类，自然我们要创建一个类并继承<code>Screen</code>。</p>
+<p><code>ObsidianFirstGui.java</code>:</p>
+<pre><code class="language-java">package com.tutorial.boson.first_gui;
+
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.tutorial.boson.Utils;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.gui.widget.Widget;
+import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.client.settings.SliderPercentageOption;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+
+public class ObsidianFirstGui extends Screen {
+    TextFieldWidget textFieldWidget;
+    Button button;
+    ResourceLocation OBSIDIAN_FIRST_GUI_TEXTURE = new ResourceLocation(Utils.MOD_ID, &quot;textures/gui/first_gui.png&quot;);
+    TranslationTextComponent content = new TranslationTextComponent(&quot;gui.&quot; + Utils.MOD_ID + &quot;.first&quot;);
+    SliderPercentageOption sliderPercentageOption;
+    Widget sliderBar;
+
+    protected ObsidianFirstGui(ITextComponent titleIn) {
+        super(titleIn);
+    }
+
+    @Override
+    protected void init() {
+        this.minecraft.keyboardListener.enableRepeatEvents(true);
+        this.textFieldWidget = new TextFieldWidget(this.font, this.width / 2 - 100, 66, 200, 20, new TranslationTextComponent(&quot;gui.&quot; + Utils.MOD_ID + &quot;.first.context&quot;));
+        this.children.add(this.textFieldWidget);
+
+        this.button = new Button(this.width / 2 - 40, 96, 80, 20, new TranslationTextComponent(&quot;gui.&quot; + Utils.MOD_ID + &quot;.first.save&quot;), (button) -&gt; {
+        });
+        this.addButton(button);
+
+        this.sliderPercentageOption = new SliderPercentageOption(Utils.MOD_ID + &quot;.sliderbar&quot;, 5, 100, 5, (setting) -&gt; Double.valueOf(0), (setting, value) -&gt; {
+        }, (gameSettings, sliderPercentageOption1) -&gt; new TranslationTextComponent(&quot;gui.&quot; + Utils.MOD_ID + &quot;.first.test&quot;));
+        this.sliderBar = this.sliderPercentageOption.createWidget(Minecraft.getInstance().gameSettings, this.width / 2 - 100, 120, 200);
+        this.children.add(this.sliderBar);
+
+        super.init();
+    }
+
+    @Override
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        this.renderBackground(matrixStack);
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        this.minecraft.getTextureManager().bindTexture(OBSIDIAN_FIRST_GUI_TEXTURE);
+        int textureWidth = 208;
+        int textureHeight = 156;
+        this.blit(matrixStack, this.width / 2 - 150, 10, 0, 0, 300, 200, textureWidth, textureHeight);
+        drawCenteredString(matrixStack, this.font, content, this.width / 2 - 10, 30, 0xeb0505);
+        this.textFieldWidget.render(matrixStack, mouseX, mouseY, partialTicks);
+        this.button.render(matrixStack, mouseX, mouseY, partialTicks);
+        this.sliderBar.render(matrixStack, mouseX, mouseY, partialTicks);
+        super.render(matrixStack, mouseX, mouseY, partialTicks);
+    }
+}
+
+</code></pre>
+<p>在这里最重要的是两个方法，<code>init</code>和<code>render</code>方法。首先，我们先来讲<code>init</code>方法。</p>
+<pre><code class="language-java">@Override
+protected void init() {
+  this.minecraft.keyboardListener.enableRepeatEvents(true);
+  this.textFieldWidget = new TextFieldWidget(this.font, this.width / 2 - 100, 66, 200, 20, new TranslationTextComponent(&quot;gui.&quot; + Utils.MOD_ID + &quot;.first.context&quot;));
+  this.children.add(this.textFieldWidget);
+
+  this.button = new Button(this.width / 2 - 40, 96, 80, 20, new TranslationTextComponent(&quot;gui.&quot; + Utils.MOD_ID + &quot;.first.save&quot;), (button) -&gt; {});
+  this.addButton(button);
+
+  this.sliderPercentageOption = new SliderPercentageOption(Utils.MOD_ID + &quot;.sliderbar&quot;, 5, 100, 5, (setting) -&gt; Double.valueOf(0), (setting, value) -&gt; {}, (gameSettings, sliderPercentageOption1) -&gt; new TranslationTextComponent(&quot;gui.&quot; + Utils.MOD_ID + &quot;.first.test&quot;));
+  this.sliderBar = this.sliderPercentageOption.createWidget(Minecraft.getInstance().gameSettings, this.width / 2 - 100, 120, 200);
+  this.children.add(this.sliderBar);
+
+  super.init();
+}
+</code></pre>
+<p>在这里我们创建了三个「Widget（组件）」——Button（按钮）、TextFieldWidget（文本框）以及Slider（滑条）。Widget 是Minecraft GUI中最小可交互的对象。在GUI中添加Wdget大体上可以分成两步骤：</p>
+<ol>
+<li>创建：你需要先创建一个组件，在创建组件时你需要指定它的宽和高、X坐标和Y坐标，对于一个特殊的组件，你还得指定它的回调函数，也就是当你操作组件后它需要执行的内容。比如说，当你按下按钮，你需要执行的内容就是一个回调函数。</li>
+<li>添加，为了你的GUI可以使用组件，你需要在创建完组件之后将组件添加到GUI上，对于绝大部分的组件你只需要调用<code>this.children.add(组件实例)</code>即可，按钮比较特殊，你需要调用<code>this.addButton(按钮实例)</code>。</li>
+</ol>
+<p>接下来我们来讲解一下窗口布局，对于我们的这个Screen类来说，你可以通过<code>this.width</code>和<code>this.height</code>来获取宽度和高度。请注意，在GUI中，X轴是从左上角向下，Y轴是从左上角向右。</p>
+<p>因为这里涉及到的方法很多，我就稍微讲解一下，大体上所有的组件创建的都有X、Y位置设定，以及宽和高的设定，大家可以自己看方法签名。</p>
+<p>其中值得一讲的是:</p>
+<pre><code class="language-java">this.button = new Button(this.width / 2 - 40, 96, 80, 20, new TranslationTextComponent(&quot;gui.&quot; + Utils.MOD_ID + &quot;.first.save&quot;), (button) -&gt; {});
+</code></pre>
+<p>这里最后一个参数，这个空的闭包就是按钮的回调函数，如果你希望你的按钮能做什么的话，就在这个闭包内写上逻辑吧。</p>
+<pre><code class="language-java">this.sliderPercentageOption = new SliderPercentageOption(Utils.MOD_ID + &quot;.sliderbar&quot;, 5, 100, 5, (setting) -&gt; Double.valueOf(0), (setting, value) -&gt; {}, (gameSettings, sliderPercentageOption1) -&gt; new TranslationTextComponent(&quot;gui.&quot; + Utils.MOD_ID + &quot;.first.test&quot;));
+</code></pre>
+<p>接下来是滚动条，它比较特殊，你得先创建一个<code>SliderPercentageOption</code>，然后调用它的<code>createWidget</code>的组件，之所以这么做是因为滚动条必须要和一个数据范围相对应。</p>
+<p>这里的第五和第六个参数是<code>getter</code>和<code>setter</code>，这个是用来设置滚动条相对应的数值用的，你可在这里写上非常复杂的逻辑。当你调用它相对应的<code>set</code>和<code>get</code>方法时，会先执行你设置的这两个方法，然后获取值。这里我们不进行任何的设置，返回值也设置成0，最后一个方法是用来设置滚动条底部文字的，因为要实现滚动条处于不同地方时呈现不同的内容，所以这里也是一个闭包（虽然我们没有用到这个功能），其他参数的意义请自行查看函数签名。</p>
+<p>接下来就<code>render</code>方法。</p>
+<pre><code class="language-java">@Override
+public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+  this.renderBackground(matrixStack);
+  this.minecraft.getTextureManager().bindTexture(OBSIDIAN_FIRST_GUI_TEXTURE);
+  int textureWidth = 208;
+  int textureHeight = 156;
+  this.blit(matrixStack, this.width / 2 - 150, 10, 0, 0, 300, 200, textureWidth, textureHeight);
+  drawCenteredString(matrixStack, this.font, content, this.width / 2 - 10, 30, 0xeb0505);
+  this.textFieldWidget.render(matrixStack, mouseX, mouseY, partialTicks);
+  this.button.render(matrixStack, mouseX, mouseY, partialTicks);
+  this.sliderBar.render(matrixStack, mouseX, mouseY, partialTicks);
+  super.render(matrixStack, mouseX, mouseY, partialTicks);
+}
+</code></pre>
+<p>我们将在这里渲染背景图片。</p>
+<p>首先我们调用了<code> RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F)</code>来确保我们渲染出来的图片是正常的，这里的三个值分别代表着RGBA，红绿蓝和透明度。你电脑上所有能看到的颜色都是这4个元素的混合，这里的值规定了颜色的范围，如果RGB三个值不相等会出现偏色的现象，如果小于1会出现某些颜色无法显示，整个画面会变暗变灰。具体的效果大家可以自行调式使用。</p>
+<p>你需要用<code>this.minecraft.getTextureManager().bindTexture(OBSIDIAN_FIRST_GUI_TEXTURE);</code>绑定你需要渲染的图片，这里用<code>ResouceLocation</code>指明了你得图片在资源包中的位置，在我们的例子里是:</p>
+<pre><code class="language-java">ResourceLocation OBSIDIAN_FIRST_GUI_TEXTURE = new ResourceLocation(Utils.MOD_ID, &quot;textures/gui/first_gui.png&quot;);
+</code></pre>
+<p>其中第一个参数请填入你的<code>ModId</code>，后面的内容就是具体的位置。</p>
+<p>然后调用blit方法来正式渲染。</p>
+<p>我们用的函数签名如下。</p>
+<pre><code class="language-java">blit(MatrixStack matrixStack, int x, int y, float uOffset, float vOffset, int width, int height, int textureWidth, int textureHeight) 
+</code></pre>
+<p><img src="gui/firstgui.assets/ABDAB8F2-7777-4249-9249-2278B64FF5BA.jpeg" alt="ABDAB8F2-7777-4249-9249-2278B64FF5BA" /></p>
+<p>这几个参数的作用如上图。</p>
+<p>其中没有讲到的<code>U</code>和<code>V</code>（相当于是XY，用UV是计算机图形学的一个传统）是用来指定你背景图片在实际图片中的左上角位置的。之所以要这么做，是因为对于GPU来说切换图片是一个非常耗时的工作，所以如果可能的话，你应该把所以要用的的元素放在同一张图片中，然后通过指定不同的UV，来指定它的位置。</p>
+<p>当你的<code>textureHeight</code>和<code>textureWidth</code>小于<code>width</code>和<code>height</code>时，渲染结果如下。</p>
+<p><img src="gui/./firstgui.assets/image-20200501210032253.png" alt="image-20200501210032253" /></p>
+<p>当你的<code>textureHeight</code>和<code>textureWidth</code>大于<code>width</code>和<code>height</code>时，渲染结果如下。</p>
+<p><img src="gui/firstgui.assets/image-20200501210423881.png" alt="image-20200501210423881" /></p>
+<p>然后我们调用如下方法，绘制了文字。</p>
+<pre><code class="language-java">drawCenteredString(matrixStack, this.font, content, this.width / 2 - 10, 30, 0xeb0505);
+</code></pre>
+<p>然后调用如下方法绘制了我们的组件:</p>
+<pre><code class="language-java">this.textFieldWidget.render(matrixStack, mouseX, mouseY, partialTicks);
+this.button.render(matrixStack, mouseX, mouseY, partialTicks);
+this.sliderBar.render(matrixStack, mouseX, mouseY, partialTicks);
+</code></pre>
+<p>至于打开一个只存在在客户端的GUI也很简单，<code>ObsidianFirstGuiItem</code>:</p>
+<pre><code class="language-java">public class ObsidianFirstGuiItem extends Item {
+    public ObsidianFirstGuiItem() {
+        super(new Properties().group(ModGroup.itemGroup));
+    }
+
+
+    @Override
+    public ActionResult&lt;ItemStack&gt; onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
+        if (worldIn.isRemote) {
+            DistExecutor.safeCallWhenOn(Dist.CLIENT, () -&gt; OpenGUI::new);
+        }
+        return super.onItemRightClick(worldIn, playerIn, handIn);
+    }
+}
+</code></pre>
+<p>你只需要先判断是不是在客户端，然后调用一个额外的类来打开GUI，<code>DistExecutor.safeCallWhenOn</code>这个函数的第一个参数是用来判断物理端的，因为物理服务器上是没有<code>Screen</code>的，所以我们不能在这个类里触发类加载（因为Item类在物理客户端上有），我们得到另一个类里触发类加载，第一参数<code>Dist.CLIENT</code>就是用来指定物理端的，第二类参数是一个两层的lambda表达式，在这里面我们调用了<code>OpenGuI.openGUI()</code>类来打开gui，<code>DistExecutor</code>下有很多用来判断物理端而进行不同操作的函数，大家可以按需选用。</p>
+<pre><code class="language-java">public class OpenGUI {
+    public OpenGUI() {
+        Minecraft.getInstance().displayGuiScreen(new ObsidianFirstGui(new TranslationTextComponent(Utils.MOD_ID + &quot;.test&quot;)));
+    }
+}
+</code></pre>
+<p>因为在之前已经通过<code>DistExecutor.runWhenOn</code>来判断过物理端了，所以在<code>OpenGuI</code>类中，我们不用担心<code>Screen</code>缺失的问题，我们在这里调用<code>Minecraft.getInstance().displayGuiScreen</code>方法显示GUI，第二个参数是你GUI的标题，我们这里没有渲染标题，但是还是需要填入一个。</p>
+<p>打开游戏你就可以看见我们的GUI被渲染出来了。</p>
+<p><img src="gui/firstgui.assets/image-20200929121858967.png" alt="image-20200929121858967" /></p>
+<p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/first_gui">源代码</a></p>
 <h1><a class="header" href="#container" id="container">Container</a></h1>
+<p>在上一节中，我们已经学习了如何创建一个非常简单的GUI，但是那个GUI显然有些功能是实现不了的。在这节中，我们将要来学习GUI中一个非常重要的类，Container。</p>
+<p>在开始之前我们先要回答Container是什么，已经它的存在是为了什么。Container和Screen的关系有点像是，Block和TileEntity的关系，Container本身不会被渲染，它存在的意义就是用来临时的储存数据（Container没法把数据保存到硬盘上）以及数据同步。但是很可惜的是Container所能同步的数据非常有限，不过就是Inventory和IntArray而已，如果你需要更加复杂的数据同步，那只能自己手动发包了。</p>
+<p><img src="gui/container.assets/guistructure.svg" alt="guistructure" /></p>
+<p>这里这张图是GUI操作中数据流向图，实线和虚线代表了数据流动的方向。所以跨过中间的箭头都需要进行发包。</p>
+<p>当你在Screen上点击按钮或者进行什么别的什么操作，最后修改的都应该是服务端的方块实体或者是Container里面的值，然后在通过它们的同步机制，同步回客户端。切记不能直接修改客户端的方块实体或者Container里的值。请注意，在客户端Container和方块实体之间是没有数据同步的。</p>
+<p>希望你大脑里对这个过程有些印象，接下来我们就开始一步一步的实现一个非常简单的箱子。这里涉及到的类挺多的，建议大家在IntelliJ中打开源代码，自己试着理清整个调用关系。</p>
+<p>在这节中，我们要创建一个非常简单的箱子。</p>
+<p>首先我们先来看方块相关的代码</p>
+<pre><code class="language-java">public class ObsidianFirstContainerBlock extends Block {
+    public ObsidianFirstContainerBlock() {
+        super(Properties.create(Material.ROCK).hardnessAndResistance(5));
+    }
+
+    @Override
+    public boolean hasTileEntity(BlockState state) {
+        return true;
+    }
+
+    @Nullable
+    @Override
+    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
+        return new ObsidianFirstContainerTileEntity();
+    }
+
+    @Override
+    public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
+        if (!worldIn.isRemote &amp;&amp; handIn == Hand.MAIN_HAND) {
+            ObsidianFirstContainerTileEntity obsidianFirstContainerTileEntity = (ObsidianFirstContainerTileEntity) worldIn.getTileEntity(pos);
+            NetworkHooks.openGui((ServerPlayerEntity) player, obsidianFirstContainerTileEntity, (PacketBuffer packerBuffer) -&gt; {
+                packerBuffer.writeBlockPos(obsidianFirstContainerTileEntity.getPos());
+            });
+        }
+        return ActionResultType.SUCCESS;
+    }
+}
+</code></pre>
+<p>我们来看最为重要的方法，</p>
+<pre><code class="language-java">@Override
+public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
+  if (!worldIn.isRemote &amp;&amp; handIn == Hand.MAIN_HAND) {
+    ObsidianFirstContainerTileEntity obsidianFirstContainerTileEntity = (ObsidianFirstContainerTileEntity) worldIn.getTileEntity(pos);
+    NetworkHooks.openGui((ServerPlayerEntity) player, obsidianFirstContainerTileEntity, (PacketBuffer packerBuffer) -&gt; {
+      packerBuffer.writeBlockPos(obsidianFirstContainerTileEntity.getPos());
+    });
+  }
+  return ActionResultType.SUCCESS;
+}
+</code></pre>
+<p>大部分的内容没什么好说的，想想大家以及可以读的懂了，这里最为关键的只有一句话。</p>
+<pre><code class="language-java">NetworkHooks.openGui((ServerPlayerEntity) player, obsidianFirstContainerTileEntity, (PacketBuffer packerBuffer) -&gt; {
+  packerBuffer.writeBlockPos(obsidianFirstContainerTileEntity.getPos());
+});
+</code></pre>
+<p>这句话就是打开一个包含有Container的GUI的语句。</p>
+<p>当你执行这条命令时，Minecraft会同时在客户端和服务端各自创建一个Container，并且创建的流程不一样。我们来讲一下这个创建的流程时什么样子的。</p>
+<ul>
+<li>
+<p>服务端：这个函数的第二个参数是是一个<code>INamedContainerProvider</code>接口，这里我们让我们的方块实体实现了这个接口（大部分时候你都应该这么做）。这个接口下有个叫做<code>createMenu</code>的方法，在服务端最终会调用这个方法来创建Container。</p>
+</li>
+<li>
+<p>客户端：客户端的操作首先会进行一次发包处理，<code>NetworkHooks.openGui</code>方法的第三个参数让你可以在发送的数据包中额外的附加数据（为了方便展示，我没有使用内置的封装好的函数），这里添加数据的方法，相信已经会自定义网络包的你，理解起来不难。</p>
+<p>当客户端接受到发送来的包之后，客户的会调用你在注册时设置的构造方法创建，具体的内容我们留到注册部分再说</p>
+</li>
+</ul>
+<p>接下来我们开看看我们的方块实体</p>
+<pre><code class="language-java">public class ObsidianFirstContainerTileEntity extends TileEntity implements ITickableTileEntity, INamedContainerProvider {
+
+    private Inventory inventory = new Inventory(1);
+    private ObsidianFirstContainerItemNumber itemNumber = new ObsidianFirstContainerItemNumber();
+
+    public ObsidianFirstContainerTileEntity() {
+        super(TileEntityTypeRegistry.obsidianFirstContainerTileEntity.get());
+    }
+
+    @Override
+    public ITextComponent getDisplayName() {
+        return new TranslationTextComponent(&quot;gui.&quot; + Utils.MOD_ID + &quot;.first_container&quot;);
+    }
+
+    @Nullable
+    @Override
+    public Container createMenu(int sycID, PlayerInventory inventory, PlayerEntity player) {
+        return new ObsidianFirstContainer(sycID, inventory, this.pos, this.world, itemNumber);
+    }
+
+    @Override
+    public void read(BlockState state, CompoundNBT nbt) {
+        this.inventory.addItem(ItemStack.read(nbt.getCompound(&quot;item&quot;)));
+        super.read(state, nbt);
+    }
+
+    @Override
+    public CompoundNBT write(CompoundNBT compound) {
+        ItemStack itemStack = this.inventory.getStackInSlot(0).copy();
+        compound.put(&quot;item&quot;, itemStack.serializeNBT());
+        return super.write(compound);
+    }
+
+    public Inventory getInventory() {
+        return inventory;
+    }
+
+    @Override
+    public void tick() {
+        if (!world.isRemote) {
+            this.itemNumber.set(0, this.inventory.getStackInSlot(0).getCount());
+        }
+    }
+}
+</code></pre>
+<p>这些就是方块实体的代码，我们细细的来讲。</p>
+<p>首先就是。</p>
+<pre><code class="language-java">@Override
+public ITextComponent getDisplayName() {
+ return new TranslationTextComponent(&quot;gui.&quot; + Utils.MOD_ID + &quot;.first_container&quot;);
+}
+
+@Nullable
+@Override
+public Container createMenu(int sycID, PlayerInventory inventory, PlayerEntity player) {
+ return new ObsidianFirstContainer(sycID, inventory, this.pos, this.world, itemNumber);
+}
+</code></pre>
+<p>这两个方法是<code>INamedContainerProvider</code>规定的方法，可以看到我们在<code>createMenu</code>方法中创建了我们的Container。</p>
+<p>接下来，我们看一个变量</p>
+<pre><code class="language-java">private Inventory inventory = new Inventory(1);
+</code></pre>
+<p>这个变量的代表了一个只有1个「Slot（槽位）」的「Inventory（物品栏）」。<strong>请注意这里的Slot和Inventory也是只是一个抽象上的概念。</strong></p>
+<p><img src="gui/container.assets/Inventoryandslot.jpg" alt="Inventoryandslot" /></p>
+<p>因为我们希望的我们要创建的是一个箱子，自然需要存放物品，所以需要创建一个<code>Inventory</code>，这个是原版已经实现好的<code>IInvetory</code>接口的一个类，如果需要你也可以自己实现这个接口。</p>
+<p>至于数据的保存和恢复这里也就不在多提，大家可以自行查看。</p>
+<p>接下来是</p>
+<pre><code class="language-java">private ObsidianFirstContainerItemNumber itemNumber = new ObsidianFirstContainerItemNumber();
+</code></pre>
+<p>我们接下来看一看这个类。</p>
+<pre><code class="language-java">public class ObsidianFirstContainerItemNumber implements IIntArray {
+    int i = 0;
+
+    @Override
+    public int get(int index) {
+        return i;
+    }
+
+    @Override
+    public void set(int index, int value) {
+        i = value;
+    }
+
+    @Override
+    public int size() {
+        return 1;
+    }
+}
+</code></pre>
+<p>这个类继承了<code>IIntArray</code>，具体的内容非常的简单，相信大家都能看懂。接下去的问题就是，什么是<code>IntArray</code>。<code>IntArray</code>简单是Container可以自动同步数据的两个类中的一个，另外一个类就是我们之前提及过的<code>Inventory</code>。<code>IntArray</code>的作用是给类似于熔炉这样用进度条的GUI来同步Int值用的（熔炉的进度条是根据Int值的大小按比例绘制的）。</p>
+<p>然后我们回过头去看TileEntity中的</p>
+<pre><code class="language-java">@Override
+public void tick() {
+  if (!world.isRemote) {
+    this.itemNumber.set(0, this.inventory.getStackInSlot(0).getCount());
+  }
+}
+</code></pre>
+<p>我们在服务端，每个tick计算<code>inventory</code>中物品的数量，并将其赋值给之前创建的<code>itemNumber</code>。</p>
+<p>至此方块实体部分的内容已经完成。</p>
+<p>接下来就是我们的Container</p>
+<pre><code class="language-java">public class ObsidianFirstContainer extends Container {
+    private ObsidianFirstContainerItemNumber intArray;
+
+    protected ObsidianFirstContainer(int id, PlayerInventory playerInventory, BlockPos pos, World world, ObsidianFirstContainerItemNumber intArray) {
+        super(ContainerTypeRegistry.obsidianFirstContainer.get(), id);
+        this.intArray = intArray;
+        trackIntArray(this.intArray);
+        ObsidianFirstContainerTileEntity obsidianFirstContainerTileEntity = (ObsidianFirstContainerTileEntity) world.getTileEntity(pos);
+        this.addSlot(new Slot(obsidianFirstContainerTileEntity.getInventory(), 0, 80, 32));
+        layoutPlayerInventorySlots(playerInventory, 8, 84);
+    }
+
+    @Override
+    public boolean canInteractWith(PlayerEntity playerIn) {
+        return true;
+    }
+
+    @Override
+    public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
+        return ItemStack.EMPTY;
+    }
+
+    private int addSlotRange(IInventory inventory, int index, int x, int y, int amount, int dx) {
+        for (int i = 0; i &lt; amount; i++) {
+            addSlot(new Slot(inventory, index, x, y));
+            x += dx;
+            index++;
+        }
+        return index;
+    }
+
+    private int addSlotBox(IInventory inventory, int index, int x, int y, int horAmount, int dx, int verAmount, int dy) {
+        for (int j = 0; j &lt; verAmount; j++) {
+            index = addSlotRange(inventory, index, x, y, horAmount, dx);
+            y += dy;
+        }
+        return index;
+    }
+
+    private void layoutPlayerInventorySlots(IInventory inventory, int leftCol, int topRow) {
+        // Player inventory
+        addSlotBox(inventory, 9, leftCol, topRow, 9, 18, 3, 18);
+
+        // Hotbar
+        topRow += 58;
+        addSlotRange(inventory, 0, leftCol, topRow, 9, 18);
+    }
+
+    public IIntArray getIntArray() {
+        return intArray;
+    }
+}
+</code></pre>
+<p>其实Container里的内容相对来说比较简单。</p>
+<pre><code class="language-java">protected ObsidianFirstContainer(int id, PlayerInventory playerInventory, BlockPos pos, World world, ObsidianFirstContainerItemNumber intArray) {
+  super(ContainerTypeRegistry.obsidianFirstContainer.get(), id);
+  this.intArray = intArray;
+  trackIntArray(this.intArray);
+  ObsidianFirstContainerTileEntity obsidianFirstContainerTileEntity = (ObsidianFirstContainerTileEntity) world.getTileEntity(pos);
+  this.addSlot(new Slot(obsidianFirstContainerTileEntity.getInventory(), 0, 80, 32));
+  layoutPlayerInventorySlots(playerInventory, 8, 84);
+}
+</code></pre>
+<p>首先就是构造函数。</p>
+<pre><code class="language-java">this.intArray = intArray;
+trackIntArray(this.intArray);
+</code></pre>
+<p>在这里，我们获取需要同步的<code>IntArray</code>并且调用<code>trackIntArray</code>方法将其加入同步序列中。如此，当你在客户端修改<code>IntArray</code>的值，服务端就可以自动同步数据了。</p>
+<p>接下来就是添加Slot。</p>
+<pre><code class="language-java">this.addSlot(new Slot(obsidianFirstContainerTileEntity.getInventory(), 0, 80, 32));
+</code></pre>
+<p>一个Inventory里可以有很多个Slot，这里我们需要给他添加进我们的GUI中，其中<code>Slot</code>第一个参数是一个Inventory，第二个参数是Inventory中ItemStack的序号，因为我们的Inventory总数只有1，所以这里填入0即可。最后两个坐标是X，Y。这个X，Y的起始点是( (this.width - this.xSize) / 2,  (this.height - this.ySize) / 2)，这里的<code>xSize</code>和<code>ySize</code>我们在之后将Screen的时候会讲到。</p>
+<p>最后的<code>layoutPlayerInventorySlots</code>是自定义的函数用来把玩家自带的Inventory添加到Container中，这里大家可以跟着自行计算位置，就不多讲了。</p>
+<p>接下来是</p>
+<pre><code class="language-java">@Override
+public boolean canInteractWith(PlayerEntity playerIn) {
+  return true;
+}
+</code></pre>
+<p>这个函数是用来判断玩家能否打开GUI，一般情况下这里都应该做一次玩家和方块的距离计算，用来防止玩家在过远的地方打开GUI，这里我比较懒就不计算了。</p>
+<pre><code class="language-java">@Override
+public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
+  return ItemStack.EMPTY;
+}
+</code></pre>
+<p>最后这个函数是用来控制玩家按住Shift键以后点击物品的行为，这里我也是懒得写所以直接返回空了。在默认情况下，你需要实现按住Shift讲物品放入指定空的Slot行为。</p>
+<p>因为Container主要的作用就是数据同步，所以Container类中的内容并不多，当然Container自带的方法不止这些，大家可以自行阅读Container的注释。</p>
+<p>然后就是我们的Screen。</p>
+<pre><code class="language-java">public class ObsidianFirstContainerScreen extends ContainerScreen&lt;ObsidianFirstContainer&gt; {
+    private final ResourceLocation OBSIDIAN_CONTAINER_RESOURCE = new ResourceLocation(Utils.MOD_ID, &quot;textures/gui/container.png&quot;);
+    private final int textureWidth = 176;
+    private final int textureHeight = 166;
+
+    @Override
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        renderBackground(matrixStack);
+        super.render(matrixStack, mouseX, mouseY, partialTicks);
+        renderHoveredTooltip(matrixStack, mouseX, mouseY);
+    }
+
+    public ObsidianFirstContainerScreen(ObsidianFirstContainer screenContainer, PlayerInventory inv, ITextComponent titleIn) {
+        super(screenContainer, inv, titleIn);
+        this.xSize = textureWidth;
+        this.ySize = textureHeight;
+    }
+
+    @Override
+    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
+        drawCenteredString(matrixStack, this.font, Integer.toString(this.getContainer().getIntArray().get(0)), 82, 20, 0xeb0505);
+    }
+
+    @Override
+    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) {
+        this.renderBackground(matrixStack);
+        this.minecraft.getTextureManager().bindTexture(OBSIDIAN_CONTAINER_RESOURCE);
+        int i = (this.width - this.xSize) / 2;
+        int j = (this.height - this.ySize) / 2;
+        blit(matrixStack, i, j, 0, 0, xSize, ySize, this.textureWidth, textureHeight);
+    }
+}
+</code></pre>
+<p>首先我们继承的是<code>ContainerScreen</code>，这个是<code>Screen</code>类中的一个子类，用来和Container绑定用的。比起<code>Screen</code>，它实现了一些额外的功能，比如按照指定的<code>Container</code>中的数据自动添加组件并渲染出<code>Container</code>中<code>Slot</code>（再一次提醒渲染工作都是由<code>Screen</code>完成，和<code>Container</code>无关）。</p>
+<p>首先我们先来讲<code>xSize</code>和<code>ySize</code>，这两个变量时<code>ContainerScreen</code>创建的，用来设定GUI窗口的大小，这里我们就将其设置的和我背景图大小一样。</p>
+<p><code>Screen</code>内主要有两个函数<code>drawGuiContainerBackgroundLayer</code>和<code>drawGuiContainerForegroundLayer</code>，这两个函数中绘制内容时的坐标系不同。</p>
+<p>其中<code>drawGuiContainerBackgroundLayer</code>的起始点是(0,0)，而<code>drawGuiContainerForegroundLayer</code>的起始点是`</p>
+<p>( (this.width - this.xSize)/2 , (this.height - this.ySize)/2 )。</p>
+<p>你应该在<code>drawGuiContainerBackgroundLayer</code>渲染你的背景图，而在<code>drawGuiContainerForegroundLayer</code>渲染你的组件（字符串，按钮等）。</p>
+<p>如果你已经有了上一节的基础，相信渲染部分的内容并不会难到你，这里就不多加解释了。</p>
+<p>这里多出来的是<code>render</code>方法，为了能让我们的GUI显示ToolTip，这里在render方法里调用了<code>renderHoveredToolTip</code>方法，当然这里也不要忘了调用父类的<code>render</code>方法。</p>
+<pre><code class="language-java">@Override
+public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+  renderBackground(matrixStack);
+  super.render(matrixStack, mouseX, mouseY, partialTicks);
+  renderHoveredTooltip(matrixStack, mouseX, mouseY);
+}
+</code></pre>
+<p>接下来时注册，我们首先需要注册<code>ContainerType</code></p>
+<pre><code class="language-java">public class ContainerTypeRegistry {
+    public static final DeferredRegister&lt;ContainerType&lt;?&gt;&gt; CONTAINERS = DeferredRegister.create(ForgeRegistries.CONTAINERS, Utils.MOD_ID);
+    public static final RegistryObject&lt;ContainerType&lt;ObsidianFirstContainer&gt;&gt; obsidianFirstContainer = CONTAINERS.register(&quot;obsidian_first_container&quot;, () -&gt; IForgeContainerType.create((int windowId, PlayerInventory inv, PacketBuffer data) -&gt; new ObsidianFirstContainer(windowId, inv, data.readBlockPos(), Minecraft.getInstance().world, new ObsidianFirstContainerItemNumber())));
+}
+</code></pre>
+<p>可以看见我们调用了<code>IForgeContainerType.create</code>来创建ContainerType，其中第二个参数里所写的创建我们Container的指令，会在客户端收到网络数据包创建Container时执行，其中的<code>windowID </code>就是用来在两端之间同步Container用的。<code>data.readBlockPos()</code>，可以看到我们从数据包里获取了之前调用<code>NetworkHooks.openGui</code>塞入的值。当然别忘了在你Mod的主类里将<code>CONTAINERS</code>添加进Mod总线中。</p>
+<p>接下去你还需要手动把<code>Container</code>和<code>ContainerScreen</code>相绑定，同样别忘了放在<code>enqueueWork</code>中执行。</p>
+<pre><code class="language-java">@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+public class ModBusEventHandler {
+    @SubscribeEvent
+    public static void onClientSetupEvent(FMLClientSetupEvent event) {
+        event.enqueueWork(() -&gt; {
+            ScreenManager.registerFactory(ContainerTypeRegistry.obsidianFirstContainer.get(), ObsidianFirstContainerScreen::new);
+        });
+    }
+}
+</code></pre>
+<p>至此，我们的特殊箱子就已经实现了，打开游戏看看吧。</p>
+<p><img src="gui/container.assets/image-20200508193516742.png" alt="image-20200508193516742" /></p>
+<p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/container">源代码</a></p>
+<p><a href="https://greyminecraftcoder.blogspot.com/2020/04/containers-1144.html">相关的资料</a></p>
 <h1><a class="header" href="#hud" id="hud">HUD</a></h1>
+<p>在这节中我们将来学习如何绘制HUD。首先以免读者不清楚，HUD或者又称为inGameGui，指的是你在游戏中看到的类似于经验条、准星之类的东西。</p>
+<p>那我们开始吧。</p>
+<p>Forge给我提供了一个事件让我们可以渲染HUD，这个事件是<code>RenderGameOverlayEvent</code> 。</p>
+<pre><code class="language-java">@Mod.EventBusSubscriber(value = Dist.CLIENT)
+public class HudClientEvent {
+   @SubscribeEvent
+   public static void onOverlayRender(RenderGameOverlayEvent event) {
+       if (event.getType() != RenderGameOverlayEvent.ElementType.ALL) {
+           return;
+       }
+       if (Minecraft.getInstance().player == null || Minecraft.getInstance().player.getHeldItem(Hand.MAIN_HAND).getItem() != ItemRegistry.obsidianHud.get()) {
+           return;
+       }
+       ObsidianGUI obsidianGUI = new ObsidianGUI(event.getMatrixStack());
+       obsidianGUI.render();
+   }
+}
+</code></pre>
+<p>可以看到，我们订阅了这个事件做了一些判断，最后调用<code>obsidianGUI.render();</code>进行了渲染。<code>RenderGameOverlayEvent</code>事件有<code>Pre</code>和<code>Post</code>两个子事件，大家可以按需选用。另外<code>RenderGameOverlayEvent</code>这个事件包含有不同的<code>ElementType</code>，在渲染你的内容前（特别是要渲染图片时），务必判断一次<code>ElementType</code>，以防导致原版内容的错误渲染，同样的这里别忘了<code>value = Dist.CLIENT</code>。</p>
+<pre><code class="language-java">if (Minecraft.getInstance().player == null || Minecraft.getInstance().player.getHeldItem(Hand.MAIN_HAND).getItem() != ItemRegistry.obsidianHud.get()) {
+  return;
+}
+</code></pre>
+<p>这里只是简单的判断玩家手上拿的东西是不是我们规定的物品，因为渲染肯定发生在客户端，所以这里我们调用<code>Minecraft.getInstance()</code>。</p>
+<p>接下来我们来看<code>ObsidianGUI</code>的具体内容。</p>
+<pre><code class="language-java">public class ObsidianGUI extends AbstractGui {
+    private final int width;
+    private final int height;
+    private final Minecraft minecraft;
+    private final ResourceLocation HUD = new ResourceLocation(Utils.MOD_ID, &quot;textures/gui/hud.png&quot;);
+    private MatrixStack matrixStack;
+
+    public ObsidianGUI(MatrixStack matrixStack) {
+        this.width = Minecraft.getInstance().getMainWindow().getScaledWidth();
+        this.height = Minecraft.getInstance().getMainWindow().getScaledHeight();
+        this.minecraft = Minecraft.getInstance();
+        this.matrixStack = matrixStack;
+    }
+
+    public void setMatrixStack(MatrixStack stack) {
+        this.matrixStack = stack;
+    }
+
+    public void render() {
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        this.minecraft.getTextureManager().bindTexture(HUD);
+        blit(matrixStack, width / 2 - 16, height / 2 - 64, 0, 0, 32, 32, 32, 32);
+    }
+
+}
+</code></pre>
+<p>可以看到我们继承了<code>AbstractGui</code>，这允许我们直接使用<code>AbstractGui</code>自带的一系列方法，比如<code>blit</code>。然后我们在构造方法里，手动的设置里类似于<code>width</code> <code>hegiht</code>等变量。</p>
+<p>然后手动的创建了<code>render</code>方法，<code>render</code>方法的写法你之前在<code>Screen</code>中的<code>render</code>的写法是一样的。我在这里就只是渲染了一张图片而已。</p>
+<p>打开游戏，把物品拿在手上，你应该就能看见物品被渲染出来了。</p>
+<p><img src="gui/hud.assets/image-20200509082639854.png" alt="image-20200509082639854" /></p>
+<p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/hud">源代码</a></p>
+<p>另外原版的HUD渲染内容都在<code>IngameGui</code>这个类中。</p>
 <h1><a class="header" href="#流体" id="流体">流体</a></h1>
 <h1><a class="header" href="#世界生成" id="世界生成">世界生成</a></h1>
 <h1><a class="header" href="#矿物生成" id="矿物生成">矿物生成</a></h1>
