@@ -5,8 +5,9 @@
 首先我们创建一个叫做`ObsidianFrame`的类，内容如下：
 
 ```java
-public class ObsidianFrame extends Block {
+public class ObsidianFrame extends Block implements IWaterLoggable {
     private static final VoxelShape shape;
+    private static final BooleanProperty WATERLOGGED = BooleanProperty.create("waterlogged");
 
     static {
         VoxelShape base = Block.makeCuboidShape(0, 0, 0, 16, 1, 16);
@@ -20,11 +21,44 @@ public class ObsidianFrame extends Block {
 
     public ObsidianFrame() {
         super(Properties.create(Material.ROCK).hardnessAndResistance(5).notSolid());
+        this.setDefaultState(this.stateContainer.getBaseState().with(WATERLOGGED, false));
+    }
+
+    @Override
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+        builder.add(WATERLOGGED);
+        super.fillStateContainer(builder);
     }
 
     @Override
     public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
         return shape;
+    }
+
+    @Nullable
+    @Override
+    public BlockState getStateForPlacement(BlockItemUseContext context) {
+        BlockPos blockpos = context.getPos();
+        BlockState blockstate = context.getWorld().getBlockState(blockpos);
+        if (blockstate.isIn(this)) {
+            return blockstate.with(WATERLOGGED, Boolean.valueOf(false));
+        } else {
+            FluidState fluidstate = context.getWorld().getFluidState(blockpos);
+            BlockState blockstate1 = this.getDefaultState().with(WATERLOGGED, Boolean.valueOf(fluidstate.getFluid() == Fluids.WATER));
+            return blockstate1;
+        }
+    }
+
+    public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
+        if (stateIn.get(WATERLOGGED)) {
+            worldIn.getPendingFluidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickRate(worldIn));
+        }
+        return super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+    }
+
+    @Override
+    public FluidState getFluidState(BlockState state) {
+        return state.get(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false) : super.getFluidState(state);
     }
 }
 ```
@@ -38,6 +72,63 @@ public class ObsidianFrame extends Block {
 ![image-20200428204119348](nonesoildblock.assets/image-20200428204119348.png)
 
 如果对Minecraft方块渲染相关的内容感兴趣，可以阅读这篇博客[文章](https://greyminecraftcoder.blogspot.com/2020/04/block-rendering-1144.html)，以及这个博客下其他文章（如果你打不开这个页面，说明你所在的国家或地区封锁了这个网站）。
+
+在1.13之后，Minecraft加入「含水」这一个特性，对于原版的非完整方块很多都具有这个特性，而我们也可以给我们的方块加上这个特性。
+
+首先你需要让你的方块实现`IWaterLoggable`这个接口：
+
+```java
+public class ObsidianFrame extends Block implements IWaterLoggable
+```
+
+接下来你必须要给你的方块，添加一个叫做`waterlogged`的布尔类型的BlockState.
+
+```java
+private static final BooleanProperty WATERLOGGED = BooleanProperty.create("waterlogged");
+
+public ObsidianFrame() {
+  super(Properties.create(Material.ROCK).hardnessAndResistance(5).notSolid());
+  this.setDefaultState(this.stateContainer.getBaseState().with(WATERLOGGED, false));
+}
+
+@Override
+protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+  builder.add(WATERLOGGED);
+  super.fillStateContainer(builder);
+}
+```
+
+接下去实现如下方块，代码抄自原版的半砖。
+
+```java
+@Nullable
+@Override
+public BlockState getStateForPlacement(BlockItemUseContext context) {
+  BlockPos blockpos = context.getPos();
+  BlockState blockstate = context.getWorld().getBlockState(blockpos);
+  if (blockstate.isIn(this)) {
+    return blockstate.with(WATERLOGGED, Boolean.valueOf(false));
+  } else {
+    FluidState fluidstate = context.getWorld().getFluidState(blockpos);
+    BlockState blockstate1 = this.getDefaultState().with(WATERLOGGED, Boolean.valueOf(fluidstate.getFluid() == Fluids.WATER));
+    return blockstate1;
+  }
+}
+
+public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
+  if (stateIn.get(WATERLOGGED)) {
+    worldIn.getPendingFluidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickRate(worldIn));
+  }
+  return super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+}
+
+@Override
+public FluidState getFluidState(BlockState state) {
+  return state.get(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false) : super.getFluidState(state);
+}
+```
+
+ 不过总体来说，含水方块的目前的设计更像是个hack，所以这些实现有点莫名其妙的……
 
 注册方块:
 
@@ -166,6 +257,10 @@ public static RegistryObject<Item> obsidianFrame = ITEMS.register("obsidian_fram
 打开游戏，你应该就能看见我们的黑曜石框架了。
 
 ![image-20200428214022814](nonesoildblock.assets/image-20200428214022814.png)
+
+以及含水的
+
+![image-20201017113953896](nonesoildblock.assets/image-20201017113953896.png)
 
 [源代码](https://github.com/FledgeXu/NeutrinoSourceCode/tree/master/src/main/java/com/tutorial/neutrino/nonesoildblock)
 
