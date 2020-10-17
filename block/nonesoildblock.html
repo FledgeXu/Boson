@@ -162,8 +162,9 @@
                         <h1><a class="header" href="#非实心方块与自定义模型" id="非实心方块与自定义模型">非实心方块与自定义模型</a></h1>
 <p>在这一节中，我们将创建一个有着特殊外形且是透明的方块，这里我们以黑曜石框架举例。</p>
 <p>首先我们创建一个叫做<code>ObsidianFrame</code>的类，内容如下：</p>
-<pre><code class="language-java">public class ObsidianFrame extends Block {
+<pre><code class="language-java">public class ObsidianFrame extends Block implements IWaterLoggable {
     private static final VoxelShape shape;
+    private static final BooleanProperty WATERLOGGED = BooleanProperty.create(&quot;waterlogged&quot;);
 
     static {
         VoxelShape base = Block.makeCuboidShape(0, 0, 0, 16, 1, 16);
@@ -177,11 +178,44 @@
 
     public ObsidianFrame() {
         super(Properties.create(Material.ROCK).hardnessAndResistance(5).notSolid());
+        this.setDefaultState(this.stateContainer.getBaseState().with(WATERLOGGED, false));
+    }
+
+    @Override
+    protected void fillStateContainer(StateContainer.Builder&lt;Block, BlockState&gt; builder) {
+        builder.add(WATERLOGGED);
+        super.fillStateContainer(builder);
     }
 
     @Override
     public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
         return shape;
+    }
+
+    @Nullable
+    @Override
+    public BlockState getStateForPlacement(BlockItemUseContext context) {
+        BlockPos blockpos = context.getPos();
+        BlockState blockstate = context.getWorld().getBlockState(blockpos);
+        if (blockstate.isIn(this)) {
+            return blockstate.with(WATERLOGGED, Boolean.valueOf(false));
+        } else {
+            FluidState fluidstate = context.getWorld().getFluidState(blockpos);
+            BlockState blockstate1 = this.getDefaultState().with(WATERLOGGED, Boolean.valueOf(fluidstate.getFluid() == Fluids.WATER));
+            return blockstate1;
+        }
+    }
+
+    public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
+        if (stateIn.get(WATERLOGGED)) {
+            worldIn.getPendingFluidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickRate(worldIn));
+        }
+        return super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+    }
+
+    @Override
+    public FluidState getFluidState(BlockState state) {
+        return state.get(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false) : super.getFluidState(state);
     }
 }
 </code></pre>
@@ -190,6 +224,52 @@
 <p>如果不开启这个就会出现这样效果。</p>
 <p><img src="nonesoildblock.assets/image-20200428204119348.png" alt="image-20200428204119348" /></p>
 <p>如果对Minecraft方块渲染相关的内容感兴趣，可以阅读这篇博客<a href="https://greyminecraftcoder.blogspot.com/2020/04/block-rendering-1144.html">文章</a>，以及这个博客下其他文章（如果你打不开这个页面，说明你所在的国家或地区封锁了这个网站）。</p>
+<p>在1.13之后，Minecraft加入「含水」这一个特性，对于原版的非完整方块很多都具有这个特性，而我们也可以给我们的方块加上这个特性。</p>
+<p>首先你需要让你的方块实现<code>IWaterLoggable</code>这个接口：</p>
+<pre><code class="language-java">public class ObsidianFrame extends Block implements IWaterLoggable
+</code></pre>
+<p>接下来你必须要给你的方块，添加一个叫做<code>waterlogged</code>的布尔类型的BlockState.</p>
+<pre><code class="language-java">private static final BooleanProperty WATERLOGGED = BooleanProperty.create(&quot;waterlogged&quot;);
+
+public ObsidianFrame() {
+  super(Properties.create(Material.ROCK).hardnessAndResistance(5).notSolid());
+  this.setDefaultState(this.stateContainer.getBaseState().with(WATERLOGGED, false));
+}
+
+@Override
+protected void fillStateContainer(StateContainer.Builder&lt;Block, BlockState&gt; builder) {
+  builder.add(WATERLOGGED);
+  super.fillStateContainer(builder);
+}
+</code></pre>
+<p>接下去实现如下方块，代码抄自原版的半砖。</p>
+<pre><code class="language-java">@Nullable
+@Override
+public BlockState getStateForPlacement(BlockItemUseContext context) {
+  BlockPos blockpos = context.getPos();
+  BlockState blockstate = context.getWorld().getBlockState(blockpos);
+  if (blockstate.isIn(this)) {
+    return blockstate.with(WATERLOGGED, Boolean.valueOf(false));
+  } else {
+    FluidState fluidstate = context.getWorld().getFluidState(blockpos);
+    BlockState blockstate1 = this.getDefaultState().with(WATERLOGGED, Boolean.valueOf(fluidstate.getFluid() == Fluids.WATER));
+    return blockstate1;
+  }
+}
+
+public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
+  if (stateIn.get(WATERLOGGED)) {
+    worldIn.getPendingFluidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickRate(worldIn));
+  }
+  return super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+}
+
+@Override
+public FluidState getFluidState(BlockState state) {
+  return state.get(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false) : super.getFluidState(state);
+}
+</code></pre>
+<p>不过总体来说，含水方块的目前的设计更像是个hack，所以这些实现有点莫名其妙的……</p>
 <p>注册方块:</p>
 <pre><code class="language-java">public static final RegistryObject&lt;Block&gt; obsidianFrame = BLOCKS.register(&quot;obsidian_frame&quot;, ObsidianFrame::new);
 </code></pre>
@@ -296,6 +376,8 @@
 </code></pre>
 <p>打开游戏，你应该就能看见我们的黑曜石框架了。</p>
 <p><img src="nonesoildblock.assets/image-20200428214022814.png" alt="image-20200428214022814" /></p>
+<p>以及含水的</p>
+<p><img src="nonesoildblock.assets/image-20201017113953896.png" alt="image-20201017113953896" /></p>
 <p><a href="https://github.com/FledgeXu/NeutrinoSourceCode/tree/master/src/main/java/com/tutorial/neutrino/nonesoildblock">源代码</a></p>
 
                     </main>
