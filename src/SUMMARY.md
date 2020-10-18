@@ -19,7 +19,7 @@
   - [近战武器](./item/meleeweapons.md)
   - [工具](./item/tool.md)
   - [装备](./item/armor.md)
-  - [物品属性覆盖](./item/item-property-override)
+  - [物品属性覆盖](./item/item-property-override.md)
 - [语言文件与本地化](./i18n/i18n.md)
 - [方块](./block/intro.md)
   - [第一个方块](./block/firstblock.md)
