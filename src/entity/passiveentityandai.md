@@ -10,7 +10,7 @@
 
 ```java
 public class ObsidianAnimal extends AnimalEntity {
-    protected ObsidianAnimal(EntityType<? extends AnimalEntity> type, World worldIn) {
+    public ObsidianAnimal(EntityType<? extends AnimalEntity> type, World worldIn) {
         super(type, worldIn);
         this.goalSelector.addGoal(0, new ObsidianGoal(this));
         this.getAttributeManager().createInstanceIfAbsent(Attributes.MAX_HEALTH);
