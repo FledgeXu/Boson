@@ -313,14 +313,12 @@ public class EntityTypeRegistry {
 public class ClientEventHandler {
     @SubscribeEvent
     public static void onClientEvent(FMLClientSetupEvent event) {
-        event.enqueueWork(() -> {
-            ClientRegistry.bindTileEntityRenderer(TileEntityTypeRegistry.obsidianTERTileEntity.get(), (ObsidianTER::new));
-        });
+      ClientRegistry.bindTileEntityRenderer(TileEntityTypeRegistry.obsidianTERTileEntity.get(), (ObsidianTER::new));
     }
 }
 ```
 
-这里应该也挺好理解的。也就不多说什么了，同样的别忘了`value = Dist.CLIENT`，还有别忘了在`event.enqueueWork`中执行你的事件处理。
+这里应该也挺好理解的。也就不多说什么了，同样的别忘了`value = Dist.CLIENT`。
 
 打开游戏使用:
 
