@@ -312,8 +312,10 @@ public class EntityTypeRegistry {
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientEventHandler {
     @SubscribeEvent
-    public static void onClientEvent(FMLClientSetupEvent event) {
-      ClientRegistry.bindTileEntityRenderer(TileEntityTypeRegistry.obsidianTERTileEntity.get(), (ObsidianTER::new));
+    public static void onClientSetUpEvent(FMLClientSetupEvent event) {
+        RenderingRegistry.registerEntityRenderingHandler(EntityTypeRegistry.flyingSwordEntity.get(), (EntityRendererManager manager) -> {
+            return new FlyingSwordRender(manager);
+        });
     }
 }
 ```
