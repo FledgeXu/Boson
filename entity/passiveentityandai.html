@@ -169,7 +169,7 @@
 <p>这里的第二个问题就是什么是<strong>属性</strong>，你可以把属性当作每一个存在游戏中的实体各自独立的「配置文件」，这个「配置文件」的值存放在每个实体的NBT标签里，你可以通过调整「配置文件」里的值来修改实体的默认的血量，移动速度等。</p>
 <p>首先我们来创建我们的实体类，<code>ObsidianAnimal</code>：</p>
 <pre><code class="language-java">public class ObsidianAnimal extends AnimalEntity {
-    protected ObsidianAnimal(EntityType&lt;? extends AnimalEntity&gt; type, World worldIn) {
+    public ObsidianAnimal(EntityType&lt;? extends AnimalEntity&gt; type, World worldIn) {
         super(type, worldIn);
         this.goalSelector.addGoal(0, new ObsidianGoal(this));
         this.getAttributeManager().createInstanceIfAbsent(Attributes.MAX_HEALTH);
