@@ -26,7 +26,9 @@
         <link rel="stylesheet" href="../css/variables.css">
         <link rel="stylesheet" href="../css/general.css">
         <link rel="stylesheet" href="../css/chrome.css">
+        
         <link rel="stylesheet" href="../css/print.css" media="print">
+        
 
         <!-- Fonts -->
         <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
@@ -128,9 +130,11 @@
                     <h1 class="menu-title">Boson 1.16 Modding Tutorial</h1>
 
                     <div class="right-buttons">
+                        
                         <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
+                        
                         
                     </div>
                 </div>
@@ -403,13 +407,11 @@ public void render(FlyingSwordEntity entityIn, float entityYaw, float partialTic
 public class ClientEventHandler {
     @SubscribeEvent
     public static void onClientEvent(FMLClientSetupEvent event) {
-        event.enqueueWork(() -&gt; {
-            ClientRegistry.bindTileEntityRenderer(TileEntityTypeRegistry.obsidianTERTileEntity.get(), (ObsidianTER::new));
-        });
+      ClientRegistry.bindTileEntityRenderer(TileEntityTypeRegistry.obsidianTERTileEntity.get(), (ObsidianTER::new));
     }
 }
 </code></pre>
-<p>这里应该也挺好理解的。也就不多说什么了，同样的别忘了<code>value = Dist.CLIENT</code>，还有别忘了在<code>event.enqueueWork</code>中执行你的事件处理。</p>
+<p>这里应该也挺好理解的。也就不多说什么了，同样的别忘了<code>value = Dist.CLIENT</code>。</p>
 <p>打开游戏使用:</p>
 <pre><code>/summon boson:flying_sword
 </code></pre>
