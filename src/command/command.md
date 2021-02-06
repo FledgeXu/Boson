@@ -56,7 +56,7 @@ Commands.literal(Utils.MOD_ID).then(
 dispatcher.register(Commands.literal("bs").redirect(cmd));
 ```
 
-而这条句话则是一个重定向，使得`neutrino`和`nu`等价。
+而这条句话则是一个重定向，使得`boson`和`bs`等价。
 
 ```java
 public class TestCommand implements Command<CommandSource> {
