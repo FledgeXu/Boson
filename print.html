@@ -4227,7 +4227,7 @@ public class CommandEventHandler {
 <p><code> Commands.literal(&quot;test”)</code>这里就是上一条命令子命令的开始，这里的<code>requires</code>表面的执行权限是所有玩家都可以执行的。比起上一条命令，这里没有填入<code>then</code>方法，而是用了<code>executes</code>方法，这说明着我们的命令解析结束了。匹配成功之后就要自行<code>TestCommand.instance</code>这个实例所规定的操作。具体什么内容我们之后再看。</p>
 <pre><code class="language-java">dispatcher.register(Commands.literal(&quot;bs&quot;).redirect(cmd));
 </code></pre>
-<p>而这条句话则是一个重定向，使得<code>neutrino</code>和<code>nu</code>等价。</p>
+<p>而这条句话则是一个重定向，使得<code>boson</code>和<code>bs</code>等价。</p>
 <pre><code class="language-java">public class TestCommand implements Command&lt;CommandSource&gt; {
     public static TestCommand instance = new TestCommand();
 
