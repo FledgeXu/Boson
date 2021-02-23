@@ -34,7 +34,7 @@ public class ItemRegistry {
 
 ```
 
-这就是注册的全部内容，首先我们创建了一个类型为`DeferredRegister<Item>`名字叫做`ITEMS`的变量，这个泛型表明我们需要注册的东西是物品，然后通过`new DeferredRegister<>(ForgeRegistries.ITEMS, Utils.MOD_ID);`实例化了这个类，这个类里有两个参数`ForgeRegistries.ITEMS`代表了我们要注册的是物品，第二个参数填入的应该是你的`modId`。这样我们就创建好了注册器，接下去就是注册我们的物品。
+这就是注册的全部内容，首先我们创建了一个类型为`DeferredRegister<Item>`名字叫做`ITEMS`的变量，这个泛型表明我们需要注册的东西是物品，~~然后通过`（旧版）new DeferredRegister<>(ForgeRegistries.ITEMS, Utils.MOD_ID);`实例化了这个类~~，然后通过静态方法`DeferredRegister.create(ForgeRegistries.ITEMS, Utils.MOD_ID);`创建了一个实例，这个类里有两个参数`ForgeRegistries.ITEMS`代表了我们要注册的是物品，第二个参数填入的应该是你的`modId`。这样我们就创建好了注册器，接下去就是注册我们的物品。
 
 还记得我之前说过的吗？注册需要两个东西，一个是「注册名」，还有一个就是你要注册对象的实例，`ITEMS.register`里的两个参数就是分别对应了这两个东西。
 
