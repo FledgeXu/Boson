@@ -163,7 +163,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#ibakedmodel烘焙模型" id="ibakedmodel烘焙模型">IBakedModel(烘焙模型)</a></h1>
+                        <h1 id="ibakedmodel烘焙模型"><a class="header" href="#ibakedmodel烘焙模型">IBakedModel(烘焙模型)</a></h1>
 <p>首先我们从IBakedModel开始讲起。在开始正式写代码之前，我们先要了解如何一个方块是如何渲染出来的</p>
 <p>Minecraft本身会读取<code>json</code>和材质文件将其转换成<code>IModel</code>接口的实例，然后<code>IModel</code>进行了「Bake（烘焙）」处理，变成了<code>IBakedModel</code>，这个<code>IBakedModel</code>会被放入<code>BlockRendererDispatcher</code>中，当游戏需要时会直接从<code>BlockRendererDispatcher</code>取出<code>IBakedModel</code>进行渲染。至于什么是「Bake」，Bake基本上是对模型的材质进行光照计算等操作，让它变成可以直接被GPU渲染的东西。</p>
 <p>在这节中我们将来研究如何为我们的方块自定义<code>IBakedModel</code>。这节我们将要制作一个「隐藏方块」，这个方块会自动的显示它下方方块的模型的材质（虽然有些Bug，但是为了演示这已经足够了）。</p>

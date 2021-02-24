@@ -163,21 +163,18 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#近战武器" id="近战武器">近战武器</a></h1>
+                        <h1 id="近战武器"><a class="header" href="#近战武器">近战武器</a></h1>
 <p>在这一节中，我们将讲解如何创建一个新的剑，这里我们以黑曜石剑举例。</p>
 <p>首先我们得创建一个<code>ItemTier</code>。<code>ItemTier</code>就是我们日常说的工具等级，比如「钻石等级」，「铁等级」以及「下届合金等级」。</p>
 <pre><code class="language-java">public enum ModItemTier implements IItemTier {
 
-    OBSIDIAN(3, 2000, 10.0F, 4.0F, 30, () -&gt; {
-        return Ingredient.fromItems(ItemRegistry.obsidianIngot.get());
-    });
+    OBSIDIAN(3, 2000, 10.0F, 4.0F, 30)
 
     private final int harvestLevel;
     private final int maxUses;
     private final float efficiency;
     private final float attackDamage;
     private final int enchantability;
-    private final LazyValue&lt;Ingredient&gt; repairMaterial;
 
      ModItemTier(int harvestLevelIn, int maxUsesIn, float efficiencyIn, float attackDamageIn, int enchantabilityIn, Supplier&lt;Ingredient&gt; repairMaterialIn) {
         this.harvestLevel = harvestLevelIn;
@@ -185,7 +182,6 @@
         this.efficiency = efficiencyIn;
         this.attackDamage = attackDamageIn;
         this.enchantability = enchantabilityIn;
-        this.repairMaterial = new LazyValue&lt;&gt;(repairMaterialIn);
     }
 
     @Override
@@ -215,7 +211,7 @@
 
     @Override
     public Ingredient getRepairMaterial() {
-        return this.repairMaterial.getValue();
+        return Ingredient.fromItems(ItemRegistry.obsidianIngot.get());
     }
 
 }

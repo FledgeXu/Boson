@@ -163,16 +163,16 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#自定义mod信息" id="自定义mod信息">自定义mod信息</a></h1>
+                        <h1 id="自定义mod信息"><a class="header" href="#自定义mod信息">自定义mod信息</a></h1>
 <p>从这节起我们就会开始正式的写我们mod了！</p>
-<h2><a class="header" href="#更新mappings" id="更新mappings">更新Mappings</a></h2>
+<h2 id="更新mappings"><a class="header" href="#更新mappings">更新Mappings</a></h2>
 <p><strong>Forge的Mapping系统正在迁移的过程中，关于mapping文件的内容等MMS系统发布之后将会更新，我们目前使用的版本是<code>20200916-1.16.2</code></strong></p>
 <p>我们需要将<code>build.gradle</code>下的<code>mappings channel: 'snapshot', version: '20200514-1.16’</code>修改为<code>mappings channel: 'snapshot', version: '20200916-1.16.2’</code>。</p>
 <p><img src="modinfo.assets/image-20200928114420876.png" alt="image-20200928114420876" /></p>
 <p>然后点击右侧Gradle面板的重新导入按钮，重新导入项目，因为<code>build.gradle</code>文件非常的重要，请注意不要改错。</p>
 <p><img src="modinfo.assets/image-20200928114634037.png" alt="image-20200928114634037" /></p>
 <p>这个过程可能会涉及下载文件（但不会很多），有出现错误的可能性，出错了请检查你的<code>build.gradle</code>内容有没有填错，然后多试几次。</p>
-<h2><a class="header" href="#配置" id="配置">配置</a></h2>
+<h2 id="配置"><a class="header" href="#配置">配置</a></h2>
 <p>首先我们选中<code>java</code>文件夹下所有的目录和文件，然后右键删除Java包下的默认类。</p>
 <p><img src="modinfo.assets/image-20200928164532729.png" alt="image-20200928164532729" /></p>
 <p>然后再右键新建立一个包</p>

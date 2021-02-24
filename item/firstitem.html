@@ -163,7 +163,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#第一个物品" id="第一个物品">第一个物品</a></h1>
+                        <h1 id="第一个物品"><a class="header" href="#第一个物品">第一个物品</a></h1>
 <p>从现在开始我们就要正式开始写代码了。首先有几件事要说明，本项目的代码都会开源，每节的代码链接我都会放在文章的后面，而为了之后修正和查看方便。</p>
 <p>首先我们得明确，创建一个物品需要哪几个步骤。答案是三步：创建自己的物品并继承原版的物品的类，实例化这个物品，最后把这个物品注册进游戏。</p>
 <p>注意上面这些步骤是通用的，很多自定义内容的添加都是遵循着上面的步骤。</p>
@@ -185,7 +185,7 @@
 }
 
 </code></pre>
-<p>这就是注册的全部内容，首先我们创建了一个类型为<code>DeferredRegister&lt;Item&gt;</code>名字叫做<code>ITEMS</code>的变量，这个泛型表明我们需要注册的东西是物品，然后通过<code>new DeferredRegister&lt;&gt;(ForgeRegistries.ITEMS, Utils.MOD_ID);</code>实例化了这个类，这个类里有两个参数<code>ForgeRegistries.ITEMS</code>代表了我们要注册的是物品，第二个参数填入的应该是你的<code>modId</code>。这样我们就创建好了注册器，接下去就是注册我们的物品。</p>
+<p>这就是注册的全部内容，首先我们创建了一个类型为<code>DeferredRegister&lt;Item&gt;</code>名字叫做<code>ITEMS</code>的变量，这个泛型表明我们需要注册的东西是物品，<del>然后通过<code>（旧版）new DeferredRegister&lt;&gt;(ForgeRegistries.ITEMS, Utils.MOD_ID);</code>实例化了这个类</del>，然后通过静态方法<code>DeferredRegister.create(ForgeRegistries.ITEMS, Utils.MOD_ID);</code>创建了一个实例，这个类里有两个参数<code>ForgeRegistries.ITEMS</code>代表了我们要注册的是物品，第二个参数填入的应该是你的<code>modId</code>。这样我们就创建好了注册器，接下去就是注册我们的物品。</p>
 <p>还记得我之前说过的吗？注册需要两个东西，一个是「注册名」，还有一个就是你要注册对象的实例，<code>ITEMS.register</code>里的两个参数就是分别对应了这两个东西。</p>
 <pre><code class="language-java">public static final RegistryObject&lt;Item&gt; obsidianIngot = ITEMS.register(&quot;obsidian_ingot&quot;, ObsidianIngot::new);
 </code></pre>
