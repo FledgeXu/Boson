@@ -41,7 +41,7 @@ resources
     "sounds": [
       {
         "name": "boson:mea",
-        "steam": true
+        "stream": true
       }
     ]
   }
