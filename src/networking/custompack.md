@@ -38,13 +38,11 @@ public class Networking {
                 (version) -> version.equals(VERSION),
                 (version) -> version.equals(VERSION)
         );
-        INSTANCE.registerMessage(
-                nextID(),
-                SendPack.class,
-                SendPack::toBytes,
-                SendPack::new,
-                SendPack::handler
-        );
+        INSTANCE.messageBuilder(SendPack.class, nextID())
+                .encoder(SendPack::toBytes)
+                .decoder(SendPack::new)
+                .consumer(SendPack::handler)
+                .add();
     }
 }
 ```
@@ -67,16 +65,14 @@ INSTANCE = NetworkRegistry.newSimpleChannel(
 接下来我们来注册数据包。
 
 ```java
-INSTANCE.registerMessage(
-                nextID(),
-                SendPack.class,
-                SendPack::toBytes,
-                SendPack::new,
-                SendPack::handler
-);
+INSTANCE.messageBuilder(SendPack.class, nextID())
+        .encoder(SendPack::toBytes)
+        .decoder(SendPack::new)
+        .consumer(SendPack::handler)
+        .add();
 ```
 
-这个注册方法有5个参数，我们一一来说明，第一个参数是数据包的序号，这个数据包序号不能重复，所以我们写了一个自增的函数来提供序号。第二个是一个类，这个类就是我们要自定义数据包的类，第三个参数是用来让我们序列化（把数据包实例转换成字节流）我们的数据包，这里我们不需要返回任何值，其中的pack参数就是我们第二个参数中提供的类的一个实例。第四个参数是用来反序列化数据包的（从字节流构建数据包实例），这里我们直接调用了一个特殊的构造方法，然后返回了实例。最后一个参数是用来当接受到数据之后进行一系列操作的，这里的ctx是用来进行线程安全操作用的，至于是什么我们之后再讲。
+这一步需要提供5个参数，我们一一来说明，第一个参数是一个类，这个类就是我们要自定义数据包的类，第二个参数是数据包的序号，这个数据包序号不能重复，所以我们写了一个自增的函数来提供序号，第三个参数（encoder方法的参数）是用来让我们序列化（把数据包实例转换成字节流）我们的数据包，这里我们不需要返回任何值，其中的pack参数就是我们第一个参数中提供的类的一个实例。第四个参数（decoder方法的参数）是用来反序列化数据包的（从字节流构建数据包实例），这里我们直接调用了一个特殊的构造方法，然后返回了实例。最后一个参数（consumer方法的参数）是用来当接受到数据之后进行一系列操作的，这里的ctx是用来进行线程安全操作用的，至于是什么我们之后再讲。
 
 接下来就是我们自定义的数据包了`SendPack.java`:
 
