@@ -136,13 +136,15 @@
                         </a>
                         
                         
+                        
+
                     </div>
                 </div>
 
                 
                 <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -191,13 +193,11 @@
                 (version) -&gt; version.equals(VERSION),
                 (version) -&gt; version.equals(VERSION)
         );
-        INSTANCE.registerMessage(
-                nextID(),
-                SendPack.class,
-                SendPack::toBytes,
-                SendPack::new,
-                SendPack::handler
-        );
+        INSTANCE.messageBuilder(SendPack.class, nextID())
+                .encoder(SendPack::toBytes)
+                .decoder(SendPack::new)
+                .consumer(SendPack::handler)
+                .add();
     }
 }
 </code></pre>
@@ -211,15 +211,13 @@
 <p>首先我们创建了一个SimpleChannel的实例，这个实例就是我们之后发包时需要操作的对象。</p>
 <p>他有如下几个参数，第一个参数<code>ResourceLocation</code>是这个<code>SimpleChannle</code>的唯一标识符，因为一个mod里可以有许多个传送数据用的<code>SimplieChannle</code>，所以需要这个标识符。第二个参数是个匿名函数，返回值是数据包的版本，第三、四个参数是用来控制客户端和服务端可以接收的版本号的，这里的version就是具体的版本号，我们在这里判断是否和当前的版本号相同。如上我们的频道就已经构建完成了。</p>
 <p>接下来我们来注册数据包。</p>
-<pre><code class="language-java">INSTANCE.registerMessage(
-                nextID(),
-                SendPack.class,
-                SendPack::toBytes,
-                SendPack::new,
-                SendPack::handler
-);
+<pre><code class="language-java">INSTANCE.messageBuilder(SendPack.class, nextID())
+        .encoder(SendPack::toBytes)
+        .decoder(SendPack::new)
+        .consumer(SendPack::handler)
+        .add();
 </code></pre>
-<p>这个注册方法有5个参数，我们一一来说明，第一个参数是数据包的序号，这个数据包序号不能重复，所以我们写了一个自增的函数来提供序号。第二个是一个类，这个类就是我们要自定义数据包的类，第三个参数是用来让我们序列化（把数据包实例转换成字节流）我们的数据包，这里我们不需要返回任何值，其中的pack参数就是我们第二个参数中提供的类的一个实例。第四个参数是用来反序列化数据包的（从字节流构建数据包实例），这里我们直接调用了一个特殊的构造方法，然后返回了实例。最后一个参数是用来当接受到数据之后进行一系列操作的，这里的ctx是用来进行线程安全操作用的，至于是什么我们之后再讲。</p>
+<p>这一步需要提供5个参数，我们一一来说明，第一个参数是一个类，这个类就是我们要自定义数据包的类，第二个参数是数据包的序号，这个数据包序号不能重复，所以我们写了一个自增的函数来提供序号，第三个参数（encoder方法的参数）是用来让我们序列化（把数据包实例转换成字节流）我们的数据包，这里我们不需要返回任何值，其中的pack参数就是我们第一个参数中提供的类的一个实例。第四个参数（decoder方法的参数）是用来反序列化数据包的（从字节流构建数据包实例），这里我们直接调用了一个特殊的构造方法，然后返回了实例。最后一个参数（consumer方法的参数）是用来当接受到数据之后进行一系列操作的，这里的ctx是用来进行线程安全操作用的，至于是什么我们之后再讲。</p>
 <p>接下来就是我们自定义的数据包了<code>SendPack.java</code>:</p>
 <pre><code class="language-java">public class SendPack {
     private final String message;

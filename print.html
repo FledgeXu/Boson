@@ -138,13 +138,15 @@
                         </a>
                         
                         
+                        
+
                     </div>
                 </div>
 
                 
                 <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -177,7 +179,7 @@
 <p>如果你有任何的问题，请去<a href="https://v2mcdev.com/">论坛</a>上<strong>按照模版</strong>发帖提问。</p>
 <p><strong>许可证</strong></p>
 <p><a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License</a>.</p>
-<h1 id="forge是什么"><a class="header" href="#forge是什么">Forge是什么</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="forge是什么"><a class="header" href="#forge是什么">Forge是什么</a></h1>
 <p>本教程是一个基于Forge的Mod开发教程，那么自然而然的要回答一个问题：「Forge是什么？」</p>
 <p>乍一看，这个好像根本就不是一个问题，「Forge？Forge不就是Forge吗？」看到这个问题的你内心中的第一个浮现出的想法估计就是这个。</p>
 <p>但是回答这个问题还是非常有必要的，接下去我会稍微讲一讲Forge是什么，以及Forge的历史。这些看上去和我们教程无关的内容，其实是Mod开发领域的「乡谣（Lore）」，学会这些可以更好的让你和其他人交流。</p>
@@ -196,7 +198,7 @@
 <div class="footnote-definition" id="1"><sup class="footnote-definition-label">1</sup>
 <p>API 即 「Application programming interface（应用程序接口）」，是程序的提供的一种机制允许第三方修改或者添加功能。</p>
 </div>
-<h1 id="minecraft如何运作的"><a class="header" href="#minecraft如何运作的">Minecraft如何运作的</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="minecraft如何运作的"><a class="header" href="#minecraft如何运作的">Minecraft如何运作的</a></h1>
 <p>这节的内容非常重要，你必须在自己的大脑中构建起Minecraft运行的模型图像，这将会帮助你理解后面涉及到的概念。</p>
 <p>在这一节中，我将介绍一下Minecraft大体上是怎么运作的，以及一个非常重要的概念：「端」。</p>
 <p>Minecraft大体上属于「C/S架构（客户端/服务端架构）」。那么什么是「服务端」，什么又是「客户端」呢？</p>
@@ -223,7 +225,7 @@
 <div class="footnote-definition" id="1"><sup class="footnote-definition-label">1</sup>
 <p>线程是程序调度的单位之一，处于不同的线程意味着这两个的逻辑和数据是互相独立的，只能通过特定的方法同步数据。具体来说，服务端处于「Server thread」，客户端处于「Render thread」，如果你有观察过Minecraft启动时的输出日志，应该会看到这两个词。</p>
 </div>
-<h1 id="开发模型"><a class="header" href="#开发模型">开发模型</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="开发模型"><a class="header" href="#开发模型">开发模型</a></h1>
 <p>在这节中，我们将会粗略的讲一讲Minecraft mod的开发模型是什么样子的，理解这个模型将有助于你理解mod开发中的很多操作是为了什么。</p>
 <p>在我看来，Minecraft mod 开发基本上遵循了「事件驱动模式」，这里我们不会详细的讨论纠结什么是「事件驱动模式」，你只需要有一个感性的了解即可。</p>
 <p>那么Minecraft「事件驱动模式」是怎么样子的呢？要回答这个问题，我们得先理清三个概念：「事件」「总线」和「事件处理器」。</p>
@@ -234,7 +236,7 @@
 <p>注意这张图里的事件和事件处理器是没有先后顺序的。</p>
 <p>在Minecraft中，所写的逻辑基本上都是事件处理。</p>
 <p>在Forge开发里有两条总线，<code>Mod总线</code>和<code>Forge总线</code>，所有和初始化相关的事件都是在<code>Mod总线</code>内，其他所有事件都在<code>Forge总线</code>内。</p>
-<h1 id="一些核心概念"><a class="header" href="#一些核心概念">一些核心概念</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="一些核心概念"><a class="header" href="#一些核心概念">一些核心概念</a></h1>
 <p>在这一小节中，我会讲几个不难理解但是非常重要的概念。</p>
 <h2 id="注册"><a class="header" href="#注册">注册</a></h2>
 <p>如果你想往Minecraft里添加一些内容，那么你必须做的一件事就是注册。注册是一种机制，告诉游戏本身，有哪东西可以使用。你注册时需要的东西基本上可以分成两个部分：一个注册名和一个实例。</p>
@@ -242,9 +244,9 @@
 <p>你可以把ResourceLocation想成一种特殊格式的字符串，它大概长成这样:<code>minecraft:textures/block/stone.png</code>，一个ResouceLocation指定了资源包下的一个特定的文件。举例来说，前面这个这个ResourceLocation代表了原版资源包下的石头的材质图片。ResouceLocation分成两部分，冒号前面的叫做「域（domain）」，在原版中只有一个域，即<code>minecraft</code>域，但是如果你开始开发mod，那么每个mod都会有一个或者多个域。冒号的后半部分是和<code>assets</code>文件夹内的目录结构一一对应的。从某种程度上来说，ResourceLocation就是一个特殊的URL。</p>
 <h2 id="模型和材质"><a class="header" href="#模型和材质">模型和材质</a></h2>
 <p>在游戏中3d的对象基本上都有它的模型，模型和材质组合在一起规定了一个对象具体的样子。模型相当于是骨头，材质相当于是皮肤。在大部分时候，你的材质都是png图片，请注意保证你的材质背景是不透明的，其次不要在材质中使用半透明像素，会有不可预知的问题。</p>
-<h1 id="环境配置"><a class="header" href="#环境配置">环境配置</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="环境配置"><a class="header" href="#环境配置">环境配置</a></h1>
 <p>在这一节中，我们会讲解如何配置Forge的开发环境。（<del>在这一节会劝退大部分人</del>）</p>
-<h1 id="forge开发环境的配置"><a class="header" href="#forge开发环境的配置">Forge开发环境的配置</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="forge开发环境的配置"><a class="header" href="#forge开发环境的配置">Forge开发环境的配置</a></h1>
 <h2 id="需要的工具"><a class="header" href="#需要的工具">需要的工具</a></h2>
 <ul>
 <li>
@@ -299,7 +301,7 @@
 <p><img src="devenvironment/setup.assets/image-20200928113803025.png" alt="image-20200928113803025" /></p>
 <p>将项目JDK改成1.8版本</p>
 <p><img src="devenvironment/setup.assets/image-20200928113851675.png" alt="image-20200928113851675" /></p>
-<h1 id="开发环境的介绍"><a class="header" href="#开发环境的介绍">开发环境的介绍</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="开发环境的介绍"><a class="header" href="#开发环境的介绍">开发环境的介绍</a></h1>
 <p>在这一节中，我会介绍一下Mod开发产生的一系列文件和文件夹，以及它们的作用。</p>
 <p>首先最为重要的一个文件便是：<code>build.gradle</code>，这个文件是Gradle的配置文件，它规定了Mod的项目是如何构建，有哪些依赖，如何配置等。</p>
 <p>其中的<code>minecraft </code>闭包下的内容就是关于Forge Gradle的配置。</p>
@@ -311,7 +313,7 @@
 <p>接下去是<code>run</code>文件夹，这个基本上就是一个标准的<code>.minecraft</code>文件夹，值得注意的是，因为开发环境是同时有Minecraft客户端和服务器代码的，它们两个是共用<code>run</code>目录的。</p>
 <p>剩下值得一提的就是<code>build</code>目录，当你在Gradle面板里运行<code>build</code>任务，你的mod就会被打包好放在<code>build=&gt;libs</code>下。</p>
 <p>剩下所有带<code>gradle</code>相关的文件夹和文件都是Gradle所需要的运行和配置文件，请不要随便删除。</p>
-<h1 id="自定义mod信息"><a class="header" href="#自定义mod信息">自定义mod信息</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="自定义mod信息"><a class="header" href="#自定义mod信息">自定义mod信息</a></h1>
 <p>从这节起我们就会开始正式的写我们mod了！</p>
 <h2 id="更新mappings"><a class="header" href="#更新mappings">更新Mappings</a></h2>
 <p><strong>Forge的Mapping系统正在迁移的过程中，关于mapping文件的内容等MMS系统发布之后将会更新，我们目前使用的版本是<code>20200916-1.16.2</code></strong></p>
@@ -386,7 +388,7 @@ This is Boson, the 1.16 Modding tutorial example mod.
 <p>现在我们已经修改完我们的mod信息了，现在让我打开游戏。</p>
 <p><img src="devenvironment/modinfo.assets/image-20200928170338998.png" alt="image-20200928170338998" /></p>
 <p>可以看见我们的Mod已经出现了！</p>
-<h1 id="事件系统"><a class="header" href="#事件系统">事件系统</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="事件系统"><a class="header" href="#事件系统">事件系统</a></h1>
 <p>在开始我们接下来的教程之前，我们得先讲讲事件系统。在之前的章节中，我一直用<code>DeferredRegister</code>系统掩盖了直接的事件系统，可惜的是这已经无法再隐藏下去了，在这一节中，我们将学习事件系统，为了读者方便理解，如果你已经忘了总线，事件和事件处理器是什么的话，请先翻阅之前的内容。</p>
 <p>首先要说明的是这个事件系统并不是Minecraft自带的，这个事件系统是Forge实现的。</p>
 <p>你可以用两种方式来使用事件系统，一种是实例方式，一种是静态的方式。</p>
@@ -415,9 +417,9 @@ public class MyStaticClientOnlyEventHandler {
 <p>这里第二点不同就是我们的事件处理函数也变成了静态的，这是在你还不熟悉事件系统使用时非常容易出错的地方，请务必注意。</p>
 <p>作为我个人的偏好，我更喜欢后一种静态的事件处理方式，之后的教程也会使用这个方式。</p>
 <p>当然事件系统还有很多功能，比如取消，设置结果以及设置优先级，限于篇幅大家可以自行阅读Forge的<a href="https://mcforge.readthedocs.io/en/latest/events/intro/">文档</a></p>
-<h1 id="物品"><a class="header" href="#物品">物品</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="物品"><a class="header" href="#物品">物品</a></h1>
 <p>物品是Minecraft中的基本元素之一，在这一节中，我将介绍如何创建物品。</p>
-<h1 id="第一个物品"><a class="header" href="#第一个物品">第一个物品</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="第一个物品"><a class="header" href="#第一个物品">第一个物品</a></h1>
 <p>从现在开始我们就要正式开始写代码了。首先有几件事要说明，本项目的代码都会开源，每节的代码链接我都会放在文章的后面，而为了之后修正和查看方便。</p>
 <p>首先我们得明确，创建一个物品需要哪几个步骤。答案是三步：创建自己的物品并继承原版的物品的类，实例化这个物品，最后把这个物品注册进游戏。</p>
 <p>注意上面这些步骤是通用的，很多自定义内容的添加都是遵循着上面的步骤。</p>
@@ -459,7 +461,7 @@ public class Neutrino {
 <p><img src="item/firstitem.assets/image-20200928175414243.png" alt="image-20200928175414243" /></p>
 <p>虽然这个物品还是很丑，但这就是我们第一个物品了。</p>
 <p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/first_item">源码链接</a></p>
-<h1 id="物品材质与模型"><a class="header" href="#物品材质与模型">物品材质与模型</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="物品材质与模型"><a class="header" href="#物品材质与模型">物品材质与模型</a></h1>
 <p>在上一节中我们已经成功添加了第一个物品，当然那个物品还很丑，在这一节中我们将会为它添加模型和材质。</p>
 <p>首先按照如下目录在<code>resources</code>下创建文件夹。</p>
 <pre><code>resources
@@ -507,7 +509,7 @@ public class Neutrino {
 <p><img src="item/modelandtextures.assets/image-20200427113433338.png" alt="image-20200427113433338" /></p>
 <h2 id="开发小课堂"><a class="header" href="#开发小课堂">开发小课堂</a></h2>
 <p>一个方便的工具用来制作方块和物品等模型：<a href="https://blockbench.net/">BlockBench</a>。</p>
-<h1 id="item和itemstack"><a class="header" href="#item和itemstack">Item和ItemStack</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="item和itemstack"><a class="header" href="#item和itemstack">Item和ItemStack</a></h1>
 <p>在这里，我想讲一下<code>Item</code>和<code>ItemStack</code>的区分。我们先从<code>ItemStack</code>开始一步一步思考为什么它们需要区分开。</p>
 <p><code>ItemStack</code>顾名思义就是「物品堆」。实际上在游戏中，所有物品槽里放着的物品都是单独的<code>ItemStack</code>。</p>
 <p><img src="item/itemstack.assets/image-20200428080226198.png" alt="image-20200428080226198" /></p>
@@ -519,7 +521,7 @@ public class Neutrino {
 <p>这里值得注意的是，<code>ItemStack</code>的数量为0，虽然代表是空了，这不代表它就变成<code>null</code>了，所以在你必须得用<code>ItemStack</code>下的<code>isEmpty()</code>方法来判断是否为空。</p>
 <p><code>ItemStack</code>中所包含的<code>Item</code>其实是同一个实例，原因非常简单，如果不是同一个实例，会无意义地产生非常多相同的实例，出于优化的考虑，当然是共用一个实例合适，这同时意味着你可通过<code>result.getItem() == Items.AIR</code>来判断<code>ItemStack</code>存放了哪一个<code>Item</code>。</p>
 <p>至于更加详细的解释，<a href="https://harbinger.covertdragon.team/chapter-04/item-stack.html">harbinger</a>已经写的很清楚了。</p>
-<h1 id="自定义创造模式物品栏"><a class="header" href="#自定义创造模式物品栏">自定义创造模式物品栏</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="自定义创造模式物品栏"><a class="header" href="#自定义创造模式物品栏">自定义创造模式物品栏</a></h1>
 <p>在这一节中，我们将研究如何创建一个属于自己的创造模式物品栏，非常简单。</p>
 <p>首先创建一个类，让它继承<code>ItemGroup</code>，<code>ItemGroup</code>代表的就是创造模式物品栏，因为我们需要创建一个属于自己的创造模式物品栏，自然需要继承它。</p>
 <p>内容如下:</p>
@@ -551,7 +553,7 @@ public class Neutrino {
 <p>此时打开游戏我们的黑曜石碇应该就在指定的物品栏里了。</p>
 <p><img src="item/group.assets/image-20200427211358242.png" alt="image-20200427211358242" /></p>
 <p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/group">源代码</a></p>
-<h1 id="食物"><a class="header" href="#食物">食物</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="食物"><a class="header" href="#食物">食物</a></h1>
 <p>在这一节中我们将会在Minecraft世界中添加一个新的食物：黑曜石苹果，吃了这个苹果以后你可以回复饥饿，但是会中毒。和很多人想象的不一样，食物并不是单独的一个东西，对于Minecraft来说，食物只是一种特殊的物品而已。</p>
 <p>同样的我们先来创建一个类，让这个类继承<code>Item</code></p>
 <pre><code class="language-java">public class ObsidianApple extends Item {
@@ -588,7 +590,7 @@ public class Neutrino {
 <p>拿出你的苹果试着吃吃看吧。</p>
 <p><img src="item/food.assets/image-20200427165949417.png" alt="image-20200427165949417" /></p>
 <p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/food">源代码</a></p>
-<h1 id="近战武器"><a class="header" href="#近战武器">近战武器</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="近战武器"><a class="header" href="#近战武器">近战武器</a></h1>
 <p>在这一节中，我们将讲解如何创建一个新的剑，这里我们以黑曜石剑举例。</p>
 <p>首先我们得创建一个<code>ItemTier</code>。<code>ItemTier</code>就是我们日常说的工具等级，比如「钻石等级」，「铁等级」以及「下届合金等级」。</p>
 <pre><code class="language-java">public enum ModItemTier implements IItemTier {
@@ -670,7 +672,7 @@ public class Neutrino {
 <p>创建完成之后打开游戏看看吧。</p>
 <p><img src="item/meleeweapons.assets/image-20200427184918516.png" alt="image-20200427184918516" /></p>
 <p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/melee_weapons">源代码地址</a></p>
-<h1 id="工具"><a class="header" href="#工具">工具</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="工具"><a class="header" href="#工具">工具</a></h1>
 <p>在这节中，我们将学习如何添加一个新的工具，这里我们以一个新的稿子举例。</p>
 <p>首先让我们观察一下继承树：</p>
 <p><img src="item/tool.assets/image-20200928183235878.png" alt="image-20200928183235878" /></p>
@@ -690,7 +692,7 @@ public class Neutrino {
 <p>打开游戏看看，你应该就能看到全新的黑曜石稿了。</p>
 <p><img src="item/tool.assets/image-20200928183155484.png" alt="image-20200928183155484" /></p>
 <p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/tool">源代码地址</a></p>
-<h1 id="装备"><a class="header" href="#装备">装备</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="装备"><a class="header" href="#装备">装备</a></h1>
 <p>在这节中，我们将来学习如何添加一套装备，这里我们以黑曜石装备为例。</p>
 <p>和工具与武器一样，装备也有它的等级，也就是<code>IArmorMaterial</code>，这里我们仿照原版的做法，用一个Enum实现这个接口。</p>
 <pre><code class="language-java">public enum ModArmorMaterial implements IArmorMaterial {
@@ -796,7 +798,7 @@ public static final RegistryObject&lt;Item&gt; obsidianBoots = ITEMS.register(&q
 <p>打开游戏，你应该就能看到一套全新的盔甲了。</p>
 <p><img src="item/armor.assets/image-20200928192041780.png" alt="image-20200928192041780" /></p>
 <p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/armor">源代码地址</a></p>
-<h1 id="物品属性覆盖"><a class="header" href="#物品属性覆盖">物品属性覆盖</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="物品属性覆盖"><a class="header" href="#物品属性覆盖">物品属性覆盖</a></h1>
 <p>物品属性覆盖（Item Property Override）是一个Minecraft原版的机制，用来实现比如弓箭根据不同的拉弓时间显示不同的弓的模型。我们用原版<code>bow.json</code>的模型文件，来解释一下什么是物品属性覆盖，更多的内容请参照原版的<a href="https://minecraft-zh.gamepedia.com/%E6%A8%A1%E5%9E%8B#.E7.89.A9.E5.93.81.E6.A8.A1.E5.9E.8B">WIKi</a>中的「overrides」。</p>
 <p><code>bow.json</code></p>
 <pre><code class="language-json">{ 
@@ -878,7 +880,7 @@ public class PropertyRegistry {
 <p><img src="item/item-property-override.assets/image-20201009195911814.png" alt="image-20201009195911814" /></p>
 <p><img src="item/item-property-override.assets/image-20201009195924247.png" alt="image-20201009195924247" /></p>
 <p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/item_property_overrides">源代码</a></p>
-<h1 id="语言文件与本地化"><a class="header" href="#语言文件与本地化">语言文件与本地化</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="语言文件与本地化"><a class="header" href="#语言文件与本地化">语言文件与本地化</a></h1>
 <p>在这一节中，我们将学习如何给我的物品添加名称。</p>
 <p>在前面的章节，我们创建的物品的名字看上去是一串没有意义的字符，在这一节中我们将给他们加上一个有意义的名字。</p>
 <p>在Minecraft中，文件的名字是以语言文件的形式提供的，在高版本语言文件是个json文件，它大概内容如下:</p>
@@ -926,9 +928,9 @@ public class PropertyRegistry {
 </code></pre>
 <p>然后启动游戏，调成简体中文，你应该就可以看见我们的物品有了翻译。<img src="i18n/i18n.assets/image-20200427220407913.png" alt="image-20200427220407913" /></p>
 <p>作为一个简体中文的使用者，你的mod里至少应该有<code>zh_cn.json</code>，<code>en_us.json</code>和<code>zh_tw.json</code>这三个语言文件，所有可用的语言文件列表请在Wiki的<a href="https://minecraft-zh.gamepedia.com/index.php?title=%E8%AF%AD%E8%A8%80&amp;variant=zh#%E5%8F%AF%E7%94%A8%E8%AF%AD%E8%A8%80">语言#可用语言</a>内查看。</p>
-<h1 id="方块"><a class="header" href="#方块">方块</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="方块"><a class="header" href="#方块">方块</a></h1>
 <p>我们在这节中终于要进入Minecraft中最为迷人的其中一部分：方块。当然我们会从最为简单的方块开始学起。</p>
-<h1 id="第一个方块"><a class="header" href="#第一个方块">第一个方块</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="第一个方块"><a class="header" href="#第一个方块">第一个方块</a></h1>
 <p>在这一节中，我们将会创建一个最简单的方块，一个什么功能也没有的方块，甚至连模型和材质也没有。在开始之前我必须做一个概念上的区分，关于物品和方块概念上的区分。任何你可在拿在手中的东西都是「物品」，只有放置在世界中才成为了「方块」。</p>
 <p><img src="block/firstblock.assets/image-20200428155404000.png" alt="image-20200428155404000" /></p>
 <p>这个是一个物品</p>
@@ -976,7 +978,7 @@ public class Neutrino {
 <p><img src="block/firstblock.assets/image-20200428164024589.png" alt="image-20200428164024589" /></p>
 <p><img src="block/firstblock.assets/image-20200428164037088.png" alt="image-20200428164037088" /></p>
 <p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/first_block">源代码</a></p>
-<h1 id="block和blockstate"><a class="header" href="#block和blockstate">Block和BlockState</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="block和blockstate"><a class="header" href="#block和blockstate">Block和BlockState</a></h1>
 <p>在开始我们接下来的讲解之前，我想先来讲一下<code>BlockState</code>这个概念，相信已经对<code>ItemStack</code>有所了解到你，应该也能很快理解这个概念。</p>
 <p>就和在游戏中的所有物品其实是<code>Itemstack</code>一样，在游戏中的所有方块其实是<code>BlockState</code>，而<code>BlockState</code>相比起<code>Block</code>，还包括最为重要的<code>state</code>信息，也就是状态信息。状态信息乍一看很难以理解，但是其实非常好懂。我们以原版的栅栏举例，当你把原版的栅栏放在地上，栅栏会根据周围方块的不同自动地改变形状，这其实是栅栏自动地改变了状态，我们可以在F3调试模式下查看方块的状态。</p>
 <p><img src="block/blockandblockstate.assets/A31FDCB0-F8AC-43BC-BD70-801476111C97.jpeg" alt="A31FDCB0-F8AC-43BC-BD70-801476111C97" /></p>
@@ -984,7 +986,7 @@ public class Neutrino {
 <p><img src="block/blockandblockstate.assets/EDC215E2-DF26-4764-AE2D-2640C7184482.jpeg" alt="EDC215E2-DF26-4764-AE2D-2640C7184482" /></p>
 <p>可以看到我们使用Debug Stick修改了栅栏的方块状态之后，方块的模型也相应地发生了改变。</p>
 <p>对于一些简单方块来说，它们可能只有一种可能的状态，比如石头。</p>
-<h1 id="方块模型和材质"><a class="header" href="#方块模型和材质">方块模型和材质</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="方块模型和材质"><a class="header" href="#方块模型和材质">方块模型和材质</a></h1>
 <p>我们已经成功地创建了一个方块，但是这个方块还很丑，就是一个紫黑块而已。在这一节中，我们就要来为这个方块添加模型和材质。</p>
 <p>首先我们创建一些文件夹，创建成功后的目录如下显示:</p>
 <pre><code>resources
@@ -1034,7 +1036,7 @@ public class Neutrino {
 </code></pre>
 <p>对，你没看错，就一句话，我们直接继承相对应的方块模型就行了。</p>
 <p><img src="block/modelandtextures.assets/image-20200428182406212.png" alt="image-20200428182406212" /></p>
-<h1 id="方块状态"><a class="header" href="#方块状态">方块状态</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="方块状态"><a class="header" href="#方块状态">方块状态</a></h1>
 <p>在之前我们已经稍微地提及了BlockState，但是我们的第一个方块显然是没有状态的，这一节我们将以黑曜石魔方举例来创建一个带有状态的方块。</p>
 <p>首先创建一个叫做<code>ObsidianRubikCube</code>的类，内容如下:</p>
 <pre><code class="language-java">public class ObsidianRubikCube extends Block {
@@ -1118,7 +1120,7 @@ protected void fillStateContainer(StateContainer.Builder&lt;Block, BlockState&gt
 <p><img src="block/blocksstates.assets/2020-09-28_19.51.12.png" alt="2020-09-28_19.51.12" /></p>
 <p><img src="block/blocksstates.assets/2020-09-28_19.52.32.png" alt="2020-09-28_19.52.32" /></p>
 <p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/blockstate">源代码</a></p>
-<h1 id="非实心方块与自定义模型"><a class="header" href="#非实心方块与自定义模型">非实心方块与自定义模型</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="非实心方块与自定义模型"><a class="header" href="#非实心方块与自定义模型">非实心方块与自定义模型</a></h1>
 <p>在这一节中，我们将创建一个有着特殊外形且是透明的方块，这里我们以黑曜石框架举例。</p>
 <p>首先我们创建一个叫做<code>ObsidianFrame</code>的类，内容如下：</p>
 <pre><code class="language-java">public class ObsidianFrame extends Block implements IWaterLoggable {
@@ -1338,7 +1340,7 @@ public FluidState getFluidState(BlockState state) {
 <p>以及含水的</p>
 <p><img src="block/nonesoildblock.assets/image-20201017113953896.png" alt="image-20201017113953896" /></p>
 <p><a href="https://github.com/FledgeXu/NeutrinoSourceCode/tree/master/src/main/java/com/tutorial/neutrino/nonesoildblock">源代码</a></p>
-<h1 id="方块的渲染类型"><a class="header" href="#方块的渲染类型">方块的渲染类型</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="方块的渲染类型"><a class="header" href="#方块的渲染类型">方块的渲染类型</a></h1>
 <p>在这一节中，我们将会聊一下渲染类型（RenderType)。</p>
 <p><img src="block/./rendertype.assets/blockrenderlayers.png" alt="img" /></p>
 <blockquote>
@@ -1383,9 +1385,9 @@ public class RenderTypeRegistry {
 <p>打开游戏你就能看见我们的玻璃罐了。</p>
 <p><img src="block/rendertype.assets/image-20200625163139129.png" alt="image-20200625163139129" /></p>
 <p><a href="https://github.com/FledgeXu/NeutrinoSourceCode/tree/master/src/main/java/com/tutorial/neutrino/special_render_type">源代码</a></p>
-<h1 id="特殊模型"><a class="header" href="#特殊模型">特殊模型</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="特殊模型"><a class="header" href="#特殊模型">特殊模型</a></h1>
 <p>在这一节中，我们将学习如何在Minecraft中使用特殊的物品模型，Forge为Minecraft添加了额外两种物品模型的支持：OBJ和B3D。</p>
-<h1 id="obj-模型"><a class="header" href="#obj-模型">OBJ 模型</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="obj-模型"><a class="header" href="#obj-模型">OBJ 模型</a></h1>
 <p>在这一节我我们将学习如何给方块添加OBJ物品模型，在开始添加OBJ模型之前强烈建议读者先阅读关于OBJ和MTL文件格式的定义以及相关名词的意义，这里有个简短的<a href="https://segmentfault.com/a/1190000021126476">说明</a></p>
 <p>首先创建我们的方块<code>ObsidianOBJ.java</code>：</p>
 <pre><code class="language-java">public class ObsidianOBJ extends Block {
@@ -1441,12 +1443,12 @@ public class RenderTypeRegistry {
 <hr />
 <h2 id="开发小课堂-1"><a class="header" href="#开发小课堂-1">开发小课堂</a></h2>
 <p>如果你在使用Blender制作OBJ模型，请将你的模型中心点设置为<code>X:0.5m,Y-0.5m,Z:0.5</code>，这样你就不需要在json文件中进行额外的偏移计算了。Minecraft一个满方块在Blender里刚好是<code>1m*1m*1m</code>。</p>
-<h1 id="b3d-模型"><a class="header" href="#b3d-模型">B3D 模型</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="b3d-模型"><a class="header" href="#b3d-模型">B3D 模型</a></h1>
 <p>在1.15中，关于B3D的支持似乎暂时被注释掉了。</p>
-<h1 id="动画"><a class="header" href="#动画">动画</a></h1>
-<h1 id="方块实体"><a class="header" href="#方块实体">方块实体</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="动画"><a class="header" href="#动画">动画</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="方块实体"><a class="header" href="#方块实体">方块实体</a></h1>
 <p>欢迎来到方块实体这一章，方块实体（BlockEntity或者TilEntity）是Minecraft中最为迷人的主题之一，原版的熔炉，工业模组里的机器，这些都是通过方块实体实现的，在这节中，我们将要学习如何创建我们自己的方块实体。</p>
-<h1 id="第一个方块实体和其数据保存"><a class="header" href="#第一个方块实体和其数据保存">第一个方块实体和其数据保存</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="第一个方块实体和其数据保存"><a class="header" href="#第一个方块实体和其数据保存">第一个方块实体和其数据保存</a></h1>
 <p>在这节中，我们将学习如何创建一个属于自己的方块实体，我们以计数器为例，它唯一的作用就是当你右击方块时它会加一，然后向你的聊天框里发送相对应的值。</p>
 <p>首先我们来创建我们的方块，<code>ObsidianCounter.java</code>：</p>
 <pre><code class="language-java">public class ObsidianCounter extends Block {
@@ -1597,7 +1599,7 @@ public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockP
 </code></pre>
 <p>我们在这里加入了<code>markDirty()</code>方法，这个方法的意思是标记了我们数据被修改，让游戏知道在关闭的时候要保存调用保存方法。这样做是因为相对于CPU的执行速度，硬盘的保存和读写速度是非常慢的，所以如果频繁的进行保存和读写操作会严重拖慢游戏的速度，一个合理的方法就是标记我们需要保存的数据，然后在一个统一的时间点一起保存，<code>markDirty()</code>的作用正是如此。</p>
 <p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/first_tileentity">源代码</a></p>
-<h1 id="itickabletileentity"><a class="header" href="#itickabletileentity">ITickableTileEntity</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="itickabletileentity"><a class="header" href="#itickabletileentity">ITickableTileEntity</a></h1>
 <p>在这一节中，我们来学习TileEntity中最为重要的一个接口：<code>ITickableTileEntity</code>。</p>
 <p>这一节我们将以制作一个会自动打招呼的方块为例，来体现这个接口的功能。</p>
 <p><code>ObsidianHelloBlock</code>:</p>
@@ -1657,7 +1659,7 @@ public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockP
 <p>可以看见我们的方块在和我们打招呼呢。</p>
 <p><img src="tileentity/itickabletileentity.assets/image-20200928202044020.png" alt="image-20200928202044020" /></p>
 <p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/tickabletileentity">源代码</a></p>
-<h1 id="方块实体内置的数据同步"><a class="header" href="#方块实体内置的数据同步">方块实体内置的数据同步</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="方块实体内置的数据同步"><a class="header" href="#方块实体内置的数据同步">方块实体内置的数据同步</a></h1>
 <p>在这节中，我们将学习方块实体中内置的数据同步功能。</p>
 <p>还记得我们之前讲过的服务端和客户端自己的数据同步吗？幸运的是，TileEntity给我们内置了两组数据同步的方法，不幸的是这个两组方法只能实现从服务端到客户端的数据同步，而且只能同步少量的数据。</p>
 <p>在这节中，我们讲学习制作一个每隔几秒中就会播放僵尸吼叫声的方块，我们先从方块开始;</p>
@@ -1817,9 +1819,9 @@ public void tick() {
 <p>打开游戏放置完方块，等待一会你应该就能听见僵尸的吼叫声了。</p>
 <p><img src="tileentity/datasync.assets/image-20200429215140877.png" alt="image-20200429215140877" /></p>
 <p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/tileentitydatasync">源代码</a></p>
-<h1 id="特殊渲染"><a class="header" href="#特殊渲染">特殊渲染</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="特殊渲染"><a class="header" href="#特殊渲染">特殊渲染</a></h1>
 <p>在这一节中，我们将来学习一些常见的特殊渲染。</p>
-<h1 id="ibakedmodel烘焙模型"><a class="header" href="#ibakedmodel烘焙模型">IBakedModel(烘焙模型)</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="ibakedmodel烘焙模型"><a class="header" href="#ibakedmodel烘焙模型">IBakedModel(烘焙模型)</a></h1>
 <p>首先我们从IBakedModel开始讲起。在开始正式写代码之前，我们先要了解如何一个方块是如何渲染出来的</p>
 <p>Minecraft本身会读取<code>json</code>和材质文件将其转换成<code>IModel</code>接口的实例，然后<code>IModel</code>进行了「Bake（烘焙）」处理，变成了<code>IBakedModel</code>，这个<code>IBakedModel</code>会被放入<code>BlockRendererDispatcher</code>中，当游戏需要时会直接从<code>BlockRendererDispatcher</code>取出<code>IBakedModel</code>进行渲染。至于什么是「Bake」，Bake基本上是对模型的材质进行光照计算等操作，让它变成可以直接被GPU渲染的东西。</p>
 <p>在这节中我们将来研究如何为我们的方块自定义<code>IBakedModel</code>。这节我们将要制作一个「隐藏方块」，这个方块会自动的显示它下方方块的模型的材质（虽然有些Bug，但是为了演示这已经足够了）。</p>
@@ -2039,7 +2041,7 @@ public static void onModelBaked(ModelBakeEvent event)
 <p><img src="specialrender/ibakedmodel.assets/image-20200430173122813.png" alt="image-20200430173122813" /></p>
 <p>在这张图片里上面的方块都是同一种方块。</p>
 <p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/ibakedmodel">源代码地址</a></p>
-<h1 id="tileentityrenderer方块实体渲染器"><a class="header" href="#tileentityrenderer方块实体渲染器">TileEntityRenderer(方块实体渲染器)</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="tileentityrenderer方块实体渲染器"><a class="header" href="#tileentityrenderer方块实体渲染器">TileEntityRenderer(方块实体渲染器)</a></h1>
 <p>在这节中，我们将来学习一个非常重要的渲染方式<code>TileEntityRenderer</code>简称<code>TER</code>。在开始之前我们首先需要知道<code>TER</code>的作用是什么。让我回想一下原版中的箱子、附魔台。它们都有特殊的动画，而<code>TER</code>的作用就是让你也可以实现这些动画。</p>
 <p>首先我们从方块开始</p>
 <pre><code class="language-java">public class ObsidianTERBlock extends Block {
@@ -2160,7 +2162,7 @@ public class ClientEventHandler {
 <p>打开游戏放下方块，你应该就能看见一个特殊的方块了。</p>
 <p><img src="specialrender/ter.assets/image-20200509093429490.png" alt="image-20200509093429490" /></p>
 <p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/ter">源代码</a></p>
-<h1 id="itemstacktileentityrenderer物品特殊渲染"><a class="header" href="#itemstacktileentityrenderer物品特殊渲染">ItemStackTileEntityRenderer(物品特殊渲染)</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="itemstacktileentityrenderer物品特殊渲染"><a class="header" href="#itemstacktileentityrenderer物品特殊渲染">ItemStackTileEntityRenderer(物品特殊渲染)</a></h1>
 <p>这一节中，我们将要来学习Item的特殊渲染：<code>ItemStackTileEntityRenderer</code>简称<code>ISTER</code>，它的作用和<code>TileEntityRenderer</code>非常类似，在以前<code>ItemStackTileEntityRenderer</code>甚至就是靠<code>TileEntityRenderer</code>实现的。</p>
 <p>利用<code>ISTER</code>你可以实现一些非常酷的渲染效果，举例来说Create（机械动力）中的扳手，它会自动旋转的齿轮就是利用<code>ISTER</code>实现的。</p>
 <p>首先我们先来看物品的代码</p>
@@ -2298,8 +2300,8 @@ degree++;
 <p>到此，我们的物品特殊渲染就完成了。</p>
 <p>打开游戏看看，你应该就能看到一个会自动旋转的物品了。</p>
 <p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/ister">源代码</a></p>
-<h1 id="网络包"><a class="header" href="#网络包">网络包</a></h1>
-<h1 id="自定义网络包"><a class="header" href="#自定义网络包">自定义网络包</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="网络包"><a class="header" href="#网络包">网络包</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="自定义网络包"><a class="header" href="#自定义网络包">自定义网络包</a></h1>
 <p>在这节中我们将要来学习如何自定义数据包。在之前的内容中我们已经讲过了如何利用Minecraft原版内置的功能来实现数据的同步，但是这些功能或多或少都有限制。在某些时候我们不得不自己来解决数据同步的问题，在这时我们就得使用自定义数据包了。幸运的是Forge已经提供了一个类，让我们能够简单而且方便地自定义数据包，这个类就是<code>SimpleChannel</code>，我们将学习如何使用它。</p>
 <p>这一节的内容可能有些无聊，因为我们做出的物品并不能在游戏中产生实际的效果，但是这不代表的这节的内容不重要，让我们开始吧。</p>
 <p>首先我们讲一下发包的过程，具体过程如下:</p>
@@ -2327,13 +2329,11 @@ degree++;
                 (version) -&gt; version.equals(VERSION),
                 (version) -&gt; version.equals(VERSION)
         );
-        INSTANCE.registerMessage(
-                nextID(),
-                SendPack.class,
-                SendPack::toBytes,
-                SendPack::new,
-                SendPack::handler
-        );
+        INSTANCE.messageBuilder(SendPack.class, nextID())
+                .encoder(SendPack::toBytes)
+                .decoder(SendPack::new)
+                .consumer(SendPack::handler)
+                .add();
     }
 }
 </code></pre>
@@ -2347,15 +2347,13 @@ degree++;
 <p>首先我们创建了一个SimpleChannel的实例，这个实例就是我们之后发包时需要操作的对象。</p>
 <p>他有如下几个参数，第一个参数<code>ResourceLocation</code>是这个<code>SimpleChannle</code>的唯一标识符，因为一个mod里可以有许多个传送数据用的<code>SimplieChannle</code>，所以需要这个标识符。第二个参数是个匿名函数，返回值是数据包的版本，第三、四个参数是用来控制客户端和服务端可以接收的版本号的，这里的version就是具体的版本号，我们在这里判断是否和当前的版本号相同。如上我们的频道就已经构建完成了。</p>
 <p>接下来我们来注册数据包。</p>
-<pre><code class="language-java">INSTANCE.registerMessage(
-                nextID(),
-                SendPack.class,
-                SendPack::toBytes,
-                SendPack::new,
-                SendPack::handler
-);
+<pre><code class="language-java">INSTANCE.messageBuilder(SendPack.class, nextID())
+        .encoder(SendPack::toBytes)
+        .decoder(SendPack::new)
+        .consumer(SendPack::handler)
+        .add();
 </code></pre>
-<p>这个注册方法有5个参数，我们一一来说明，第一个参数是数据包的序号，这个数据包序号不能重复，所以我们写了一个自增的函数来提供序号。第二个是一个类，这个类就是我们要自定义数据包的类，第三个参数是用来让我们序列化（把数据包实例转换成字节流）我们的数据包，这里我们不需要返回任何值，其中的pack参数就是我们第二个参数中提供的类的一个实例。第四个参数是用来反序列化数据包的（从字节流构建数据包实例），这里我们直接调用了一个特殊的构造方法，然后返回了实例。最后一个参数是用来当接受到数据之后进行一系列操作的，这里的ctx是用来进行线程安全操作用的，至于是什么我们之后再讲。</p>
+<p>这一步需要提供5个参数，我们一一来说明，第一个参数是一个类，这个类就是我们要自定义数据包的类，第二个参数是数据包的序号，这个数据包序号不能重复，所以我们写了一个自增的函数来提供序号，第三个参数（encoder方法的参数）是用来让我们序列化（把数据包实例转换成字节流）我们的数据包，这里我们不需要返回任何值，其中的pack参数就是我们第一个参数中提供的类的一个实例。第四个参数（decoder方法的参数）是用来反序列化数据包的（从字节流构建数据包实例），这里我们直接调用了一个特殊的构造方法，然后返回了实例。最后一个参数（consumer方法的参数）是用来当接受到数据之后进行一系列操作的，这里的ctx是用来进行线程安全操作用的，至于是什么我们之后再讲。</p>
 <p>接下来就是我们自定义的数据包了<code>SendPack.java</code>:</p>
 <pre><code class="language-java">public class SendPack {
     private final String message;
@@ -2431,9 +2429,9 @@ public class CommonEventHandler {
 <p><img src="networking/custompack.assets/image-20200501102439453.png" alt="image-20200501102439453" /></p>
 <p>注：「Server Thread」是服务端，「Render Thread」是客户端。</p>
 <p><a href="https://github.com/FledgeXu/Boson/tree/master/src/networking">源代码</a></p>
-<h1 id="关于mod安全"><a class="header" href="#关于mod安全">关于Mod安全</a></h1>
-<h1 id="实体"><a class="header" href="#实体">实体</a></h1>
-<h1 id="从零构建一个实体和数据同步"><a class="header" href="#从零构建一个实体和数据同步">从零构建一个实体和数据同步</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="关于mod安全"><a class="header" href="#关于mod安全">关于Mod安全</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="实体"><a class="header" href="#实体">实体</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="从零构建一个实体和数据同步"><a class="header" href="#从零构建一个实体和数据同步">从零构建一个实体和数据同步</a></h1>
 <p>在这节中，我们将从零构建出一个实体，并将学习实体是如何进行数据同步的。我们将以「飞剑」作为例子。首先我们得要知道构建出一个实体需要那些东西。</p>
 <p>构建一个实体我们需要以下这些东西:</p>
 <ul>
@@ -2692,7 +2690,7 @@ public class ClientEventHandler {
 <p><img src="entity/scratchentity.assets/image-20200503201357602.png" alt="image-20200503201357602" /></p>
 <p>并且数据也已经同步了。</p>
 <p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/first_entity">源代码</a></p>
-<h1 id="创建一个动物和ai"><a class="header" href="#创建一个动物和ai">创建一个动物和AI</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="创建一个动物和ai"><a class="header" href="#创建一个动物和ai">创建一个动物和AI</a></h1>
 <p>虽然上节中，我们从零创建了一个最简单的实体，但是其实你在写mod的大部分时候都不需要直继承<code>Entity</code>类，原版已经写好了非常多的类供你使用。在这节中我们将创建一个黑曜石动物，并且为这个动物添加一个AI和<strong>属性</strong>。</p>
 <p>这里就引出的第一个问题，什么是AI？AI代表着生物的特殊的行为，比如牛会被玩家用小麦吸引，怪物会攻击玩家，会在村庄里走来走去。这些都是通过AI实现的，请注意不是所有的实体都可以有AI，AI是<code>MobEntity</code> 的子类特有的行为。</p>
 <p>这里的第二个问题就是什么是<strong>属性</strong>，你可以把属性当作每一个存在游戏中的实体各自独立的「配置文件」，这个「配置文件」的值存放在每个实体的NBT标签里，你可以通过调整「配置文件」里的值来修改实体的默认的血量，移动速度等。</p>
@@ -2810,9 +2808,9 @@ public class AttributesSetEvent {
 <p><img src="entity/passiveentityandai.assets/image-20200929110941436.png" alt="image-20200929110941436" /></p>
 <p>可以看到，当你靠近实体时，你就获得了一个饥饿效果，试试用剑杀死它吧。</p>
 <p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/obsidian_animal">源代码</a></p>
-<h1 id="能力系统"><a class="header" href="#能力系统">能力系统</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="能力系统"><a class="header" href="#能力系统">能力系统</a></h1>
 <p>在这节中，我们将会介绍Forge Mod开发过程中可能最为抽象的一部分内容：Capability系统。</p>
-<h1 id="从零构建与使用能力"><a class="header" href="#从零构建与使用能力">从零构建与使用能力</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="从零构建与使用能力"><a class="header" href="#从零构建与使用能力">从零构建与使用能力</a></h1>
 <p>在这一节中，我们将会从0开始构建与使用Capability。在开始之前我们必须要解释一下，什么是Capability。</p>
 <p>Capability 的诞生起源于在写程序时出现的一个问题。考虑如下一种情况，你正在写一个能量转换器，你的能量转换器需要可以转换不同mod中的不同能量：EU、RF，Forge Energy等等。每一个能量都提供了一个接口用来实现输入输出的方法，那么你很快就会发现你的类定义会变成下面这个样子:</p>
 <pre><code class="language-java">class MyTileEntity extends TileEntity implements EnergyInterface1,  EnergyInterface2, EnergyInterface3, FluidsInterface1, FluidsInterface2, FluidsInterface3, ItemsApi1, ItemsApi2, ItemsApi3, ComputerApi1, ComputerApi2, ...
@@ -2956,7 +2954,7 @@ public class CommonSetupEventHandler {
 <p>控制台里输出了相对应的内容了。</p>
 <p>这部分的概念有些抽象，大家可以结合源代码自己思考整个调用过程。只要你理解了调用过程，Capability系统其实没有想象的那么难以理解。</p>
 <p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/first_cap">源代码</a></p>
-<h1 id="开始使用预定义能力"><a class="header" href="#开始使用预定义能力">开始使用预定义能力</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="开始使用预定义能力"><a class="header" href="#开始使用预定义能力">开始使用预定义能力</a></h1>
 <p>在这一节中我们来学习如何使用Forge已经提供好的Capability。</p>
 <p>Forge为我们已经预定义好了一下几种Capability，你可通过查看<code>@CapabilityInject</code>注释在原版内容中的使用来找到预定于好的Capability。</p>
 <ul>
@@ -3004,7 +3002,7 @@ public class CommonSetupEventHandler {
 <p>至于方块，物品等注册，请读者自行完成。</p>
 <p>打开游戏试试吧。</p>
 <p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/use_cap">源代码</a></p>
-<h1 id="附加能力提供器"><a class="header" href="#附加能力提供器">附加能力提供器</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="附加能力提供器"><a class="header" href="#附加能力提供器">附加能力提供器</a></h1>
 <p>在之前的章节中，我们已经学习了如何使用能力系统，已经知道了如何从零创建一个能力。在这节中，我们将要来学习，如何为现有的实体、物品等附加能力提供器。</p>
 <p>在这节中，我们会给玩家添加一个新的CapabilityProvider，让玩家可以拥有一套新的等级系统。</p>
 <p>首先我们来创建一个能力，这个能力非常简单。</p>
@@ -3189,7 +3187,7 @@ public static void onPlayerCloned(PlayerEvent.Clone event) {
 <p><img src="capability/attachcapabilityprovider.assets/image-20200929113538390.png" alt="image-20200929113538390" /></p>
 <p>打开游戏，右键相对应的物品，你就能看到等级被显示了。</p>
 <p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/entity_capabilityprovider">源代码</a></p>
-<h1 id="worldsaveddata世界数据保存"><a class="header" href="#worldsaveddata世界数据保存">WorldSavedData(世界数据保存)</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="worldsaveddata世界数据保存"><a class="header" href="#worldsaveddata世界数据保存">WorldSavedData(世界数据保存)</a></h1>
 <p>在这节中，我们将来学习另外一种可以保存数据的方法，这就是World Saved Data。World Saved Data 是Minecraft 提供的一种可以让你保存和共享数据的类。World Saved Data 是在维度级别的，你只能指定某个维度拥有一个WorldSavedData，里面保存的数据是所有玩家通用的，并且用World Saved Data保存的数据与存档数据是分开存放的。</p>
 <p>在这节中，我们创建一个可以远程传输和储存物品的机器。</p>
 <p>首先我们来看<code>ObsidianWorldSavedData</code>:</p>
@@ -3369,9 +3367,9 @@ player.setItemStackToSlot(EquipmentSlotType.MAINHAND, stack);
 <p>这句话也很简单，就是取出物品然后还给玩家而已。</p>
 <p>打开游戏右键你的方块试试吧，现在应该可以不限距离，不限维度传输物品了。</p>
 <p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/wordsaveddata">源代码</a></p>
-<h1 id="gui"><a class="header" href="#gui">Gui</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="gui"><a class="header" href="#gui">Gui</a></h1>
 <p>在这节我们将进入很多人期待已久的章节，GUI（图形界面）。</p>
-<h1 id="第一个gui"><a class="header" href="#第一个gui">第一个Gui</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="第一个gui"><a class="header" href="#第一个gui">第一个Gui</a></h1>
 <p>在这一节中，我们将创建一个自定义的Gui，在开始教程之前，我必须要强调一点，打开Gui等操作只能在客户端执行，不能在服务端执行。</p>
 <p>与GUI相关的最直接的一个类就是<code>Screen</code>类，自然我们要创建一个类并继承<code>Screen</code>。</p>
 <p><code>ObsidianFirstGui.java</code>:</p>
@@ -3536,7 +3534,7 @@ this.sliderBar.render(matrixStack, mouseX, mouseY, partialTicks);
 <p>打开游戏你就可以看见我们的GUI被渲染出来了。</p>
 <p><img src="gui/firstgui.assets/image-20200929121858967.png" alt="image-20200929121858967" /></p>
 <p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/first_gui">源代码</a></p>
-<h1 id="container"><a class="header" href="#container">Container</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="container"><a class="header" href="#container">Container</a></h1>
 <p>在上一节中，我们已经学习了如何创建一个非常简单的GUI，但是那个GUI显然有些功能是实现不了的。在这节中，我们将要来学习GUI中一个非常重要的类，Container。</p>
 <p>在开始之前我们先要回答Container是什么，已经它的存在是为了什么。Container和Screen的关系有点像是，Block和TileEntity的关系，Container本身不会被渲染，它存在的意义就是用来临时的储存数据（Container没法把数据保存到硬盘上）以及数据同步。但是很可惜的是Container所能同步的数据非常有限，不过就是Inventory和IntArray而已，如果你需要更加复杂的数据同步，那只能自己手动发包了。</p>
 <p><img src="gui/container.assets/guistructure.svg" alt="guistructure" /></p>
@@ -3861,7 +3859,7 @@ public class ModBusEventHandler {
 <p><img src="gui/container.assets/image-20200508193516742.png" alt="image-20200508193516742" /></p>
 <p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/container">源代码</a></p>
 <p><a href="https://greyminecraftcoder.blogspot.com/2020/04/containers-1144.html">相关的资料</a></p>
-<h1 id="hud"><a class="header" href="#hud">HUD</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="hud"><a class="header" href="#hud">HUD</a></h1>
 <p>在这节中我们将来学习如何绘制HUD。首先以免读者不清楚，HUD或者又称为inGameGui，指的是你在游戏中看到的类似于经验条、准星之类的东西。</p>
 <p>那我们开始吧。</p>
 <p>Forge给我提供了一个事件让我们可以渲染HUD，这个事件是<code>RenderGameOverlayEvent</code> 。</p>
@@ -3919,7 +3917,7 @@ public class HudClientEvent {
 <p><img src="gui/hud.assets/image-20200509082639854.png" alt="image-20200509082639854" /></p>
 <p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/hud">源代码</a></p>
 <p>另外原版的HUD渲染内容都在<code>IngameGui</code>这个类中。</p>
-<h1 id="流体"><a class="header" href="#流体">流体</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="流体"><a class="header" href="#流体">流体</a></h1>
 <p>在这节我们将来学习如何创建一个简单的流体。</p>
 <p>首先我们要明确流体究竟是什么。你在游戏中接触的流体不外乎于两种形式，一种是装在「桶」里，另一个是在世界里不断流动。</p>
 <p>当流体装在桶中，它属于一个叫做<code>BucketItem。</code>它流体在世界中不断流动，它属于的一种特殊的方块，这个方块和流体关联。（就像是方块和TileEntity关联）。</p>
@@ -4018,14 +4016,14 @@ public class DispenserRegister {
 </code></pre>
 <p>这里的值就是你的流体的两个注册名。</p>
 <p>然后重新启动游戏，你的流体应该就能推动实体了。</p>
-<h1 id="世界生成"><a class="header" href="#世界生成">世界生成</a></h1>
-<h1 id="矿物生成"><a class="header" href="#矿物生成">矿物生成</a></h1>
-<h1 id="结构生成"><a class="header" href="#结构生成">结构生成</a></h1>
-<h1 id="自定义生物群系和世界类型"><a class="header" href="#自定义生物群系和世界类型">自定义生物群系和世界类型</a></h1>
-<h1 id="自定义维度与区块生成器以及生物群系提供器"><a class="header" href="#自定义维度与区块生成器以及生物群系提供器">自定义维度与区块生成器以及生物群系提供器</a></h1>
-<h1 id="数据包"><a class="header" href="#数据包">数据包</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="世界生成"><a class="header" href="#世界生成">世界生成</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="矿物生成"><a class="header" href="#矿物生成">矿物生成</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="结构生成"><a class="header" href="#结构生成">结构生成</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="自定义生物群系和世界类型"><a class="header" href="#自定义生物群系和世界类型">自定义生物群系和世界类型</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="自定义维度与区块生成器以及生物群系提供器"><a class="header" href="#自定义维度与区块生成器以及生物群系提供器">自定义维度与区块生成器以及生物群系提供器</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="数据包"><a class="header" href="#数据包">数据包</a></h1>
 <p>在1.13之后，Mojang推出了Data Pack，将合成表凋落物等都改成了用json文件描述，作为Mod开发者的我们自然也可以利用这点，来编写我们自己的Data Pack。读者在阅读这章之前，请确保自己对Data Pack的制作有所了解，我在这里不会一一涉及每个配方，只会略微的提及要注意的点。</p>
-<h1 id="配方"><a class="header" href="#配方">配方</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="配方"><a class="header" href="#配方">配方</a></h1>
 <p><strong>请注意，在阅读本章节之前，请先学习数据包的制作与使用，不懂的话请阅读WIKI中相关的内容</strong></p>
 <p>在这节中，我们将要来学习如何添加配方，这里我们将以合成配方，和熔炼配方举例。</p>
 <p>正如原版的配方是放在数据包内，我们Mod的配方也应该放在我们的自己的数据包内，首先第一步就是创建我们Mod的数据包。请按照下面的结构性在你的<code>resources</code>文件夹下创建目录。</p>
@@ -4086,7 +4084,7 @@ public class DispenserRegister {
 │           └── obsidian_ingot.json
 └── pack.mcmeta
 </code></pre>
-<h1 id="掉落物配方"><a class="header" href="#掉落物配方">掉落物配方</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="掉落物配方"><a class="header" href="#掉落物配方">掉落物配方</a></h1>
 <p><strong>请注意，在阅读本章节之前，请先学习数据包的制作与使用，不懂的话请阅读WIKI中相关的内容</strong></p>
 <p>同样的，我们先创建目录，这里我们以方块的掉落举例。</p>
 <pre><code>resources
@@ -4127,7 +4125,7 @@ public class DispenserRegister {
 </code></pre>
 <p>同样的，这里你可以通过<code>neutrino:obsidian_block</code>来指定你的物品。</p>
 <p>可能很多读者，对于原版的<code>Loot_table</code>很难理解，这里我可以举个例子，你就把<code>Loot_table</code>当作是在赌场里抽奖，里面配置的信息不过就是奖品是什么，可以抽几次，什么条件下可以抽，什么情况下可以多抽几次。</p>
-<h1 id="data-generator"><a class="header" href="#data-generator">Data Generator</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="data-generator"><a class="header" href="#data-generator">Data Generator</a></h1>
 <p>在这节中，我们将要来学习一个在1.14+之后出现的非常方便开发的功能：Data Generator。</p>
 <p>在之前的开发过程中，你是不已经厌倦了不断写着基本上重复的JSON文件以及自己粗心犯下的错误呢？</p>
 <p>而Data Generator就是一个Minecraft本身提供的功能，能让你通过代码，相对自动的生成这些JSON文件。</p>
@@ -4185,7 +4183,7 @@ public class DataGenEvent {
 <p><img src="datagnerator/intro.assets/image-20201010131702395.png" alt="image-20201010131702395" /></p>
 <p>接下去你可以直接复制使用这些JSON文件，或者在<code>build.gradle</code> 里在<code>sourceSets</code>里添加对应的目录使用，具体这里就不详细展开了。</p>
 <p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/datagen">源代码</a></p>
-<h1 id="命令"><a class="header" href="#命令">命令</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="命令"><a class="header" href="#命令">命令</a></h1>
 <p>在这节中，我们将来学习如何向Minecraft中添加一个命令。首先要明确的是命令是一个服务端只在服务端存在的东西（虽然也有客户端的命令，但是我在写这段时<a href="https://github.com/MinecraftForge/MinecraftForge/pull/6670">还没有实现</a>）。</p>
 <p>接下来开始我们的实现吧。</p>
 <pre><code>/boson test
@@ -4239,8 +4237,8 @@ public class CommandEventHandler {
 <p>至此，我们的命令已经完成。打开游戏输入命令试试吧。</p>
 <p><img src="command/command.assets/image-20200929124416653.png" alt="image-20200929124416653" /></p>
 <p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/command">源代码</a></p>
-<h1 id="进度"><a class="header" href="#进度">进度</a></h1>
-<h1 id="配置文件"><a class="header" href="#配置文件">配置文件</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="进度"><a class="header" href="#进度">进度</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="配置文件"><a class="header" href="#配置文件">配置文件</a></h1>
 <p>在这节中，我们将要来学习配置文件的编写。在1.12之后，Forge将配置文件格式改成Toml。</p>
 <p>现在我们开始吧</p>
 <p>为了理解方便，我先把最后生成出的配置文件格式粘贴出来</p>
@@ -4296,8 +4294,8 @@ public class CommandEventHandler {
 <p><img src="configure/configure.assets/image-20200516101413181.png" alt="image-20200516101413181" /></p>
 <p><img src="configure/configure.assets/image-20200516101637019.png" alt="image-20200516101637019" /></p>
 <p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/configure">源代码</a></p>
-<h1 id="药水"><a class="header" href="#药水">药水</a></h1>
-<h1 id="粒子效果"><a class="header" href="#粒子效果">粒子效果</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="药水"><a class="header" href="#药水">药水</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="粒子效果"><a class="header" href="#粒子效果">粒子效果</a></h1>
 <p>在这节中我们将要来创建一个新的例子效果。</p>
 <p>首先我们来创建例子效果类。</p>
 <pre><code class="language-java">public class ObsidianParticle extends SpriteTexturedParticle {
@@ -4520,7 +4518,7 @@ public class ParticleFactoryRegistry {
 </code></pre>
 <p><img src="paticles/intro.assets/image-20200929125358058.png" alt="image-20200929125358058" /></p>
 <p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/particle">源代码</a></p>
-<h1 id="音效"><a class="header" href="#音效">音效</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="音效"><a class="header" href="#音效">音效</a></h1>
 <p>在这节中，我们讲学习如何向给我的Mod添加音效，非常的简单，就让我开始吧。</p>
 <pre><code class="language-java">public class SoundEventRegistry {
     public static final DeferredRegister&lt;SoundEvent&gt; SOUNDS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, Utils.MOD_ID);
@@ -4593,7 +4591,7 @@ public class ParticleFactoryRegistry {
 </code></pre>
 <p>打开游戏试试吧，我们应该成功添加了音效。</p>
 <p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/sounds">源代码</a></p>
-<h1 id="用户输入"><a class="header" href="#用户输入">用户输入</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="用户输入"><a class="header" href="#用户输入">用户输入</a></h1>
 <p>这一节中我们将来学习如何获取用户输入。这里我们将以快捷键举例。请注意，所有的用户输入都是客户端行为。</p>
 <pre><code class="language-java">@Mod.EventBusSubscriber(value = Dist.CLIENT)
 public class KeyBoardInput {
@@ -4630,9 +4628,9 @@ public class KeybindingRegistry {
 <p><img src="io/intro.assets/image-20200929130502781.png" alt="image-20200929130502781" /></p>
 <p>注：因为我的系统时macOS，所以这里显示的是CMD。</p>
 <p><a href="https://github.com/FledgeXu/BosonSourceCode/tree/master/src/main/java/com/tutorial/boson/input">源代码</a></p>
-<h1 id="与其他mod的兼容"><a class="header" href="#与其他mod的兼容">与其他mod的兼容</a></h1>
-<h1 id="access-transformer"><a class="header" href="#access-transformer">Access Transformer</a></h1>
-<h1 id="coremod"><a class="header" href="#coremod">CoreMod</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="与其他mod的兼容"><a class="header" href="#与其他mod的兼容">与其他mod的兼容</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="access-transformer"><a class="header" href="#access-transformer">Access Transformer</a></h1>
+<div id="chapter_begin" style="break-before: page; page-break-before: always;"></div><h1 id="coremod"><a class="header" href="#coremod">CoreMod</a></h1>
 
                     </main>
 
