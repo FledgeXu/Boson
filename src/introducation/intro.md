@@ -18,6 +18,8 @@ Mod开发需要编程和相当的计算机科学基础，要学好这些并不�
 
 如果你有任何的问题，请去[论坛](https://v2mcdev.com/)上**按照模版**发帖提问。
 
+需要指出的是，本教程示范代码的时候使用的是MCP映射表，如果你用的是官方表的话，会发现很多接口的名字不一样，这不是因为forge更新了，是因为使用的反混淆表不同。如果你执意要用官方映射表的话，就得自己根据函数的参数类型来判断到底是哪个了。比如，MCP里的world参数，在官方表里叫level。
+
 **许可证**
 
 <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License</a>.
