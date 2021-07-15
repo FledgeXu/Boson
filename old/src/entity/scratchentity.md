@@ -307,6 +307,17 @@ public class EntityTypeRegistry {
 
 同样的，这里的注册方式和方块实体基本相同。同样别忘了在构建函数里将实体的注册器添加进入`Mod`总线中。
 
+```java
+    public static void RegisterAll()
+    {
+        IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        //BlockRegistry.BLOCKS.register(eventBus);
+        //ItemRegistry.ITEMS.register(eventBus);
+        EntityRegistry.ENTITY_TYPES.register(eventBus);//这里是新加的
+    }
+```
+
+
 然后是注册我们实体的渲染。
 
 ```java
