@@ -427,8 +427,8 @@ public class MyStaticClientOnlyEventHandler {
 <p>你看，虽然我们没有显式声明变量，但是我们还是在注册时实例化了我们物品的类。</p>
 <p>还差最后一步，我们就可以成功添加物品了。</p>
 <pre><code class="language-java">@Mod(Utils.MOD_ID)
-public class Neutrino {
-    public Neutrino() {
+public class Boson {
+    public Boson() {
         ItemRegistry.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 }
@@ -555,7 +555,7 @@ public class Neutrino {
     public static final RegistryObject&lt;Item&gt; obsidianApple = ITEMS.register(&quot;obsidian_apple&quot;, ObsidianApple::new);
 }
 </code></pre>
-<p>然后添加模型<code>obsdian_ingot.json</code>:</p>
+<p>然后添加模型<code>obsdian_apple.json</code>:</p>
 <pre><code class="language-json">{
   &quot;parent&quot;: &quot;item/generated&quot;,
   &quot;textures&quot;: {
