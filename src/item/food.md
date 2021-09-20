@@ -33,7 +33,7 @@ public class ItemRegistry {
 }
 ```
 
-然后添加模型`obsdian_ingot.json`:
+然后添加模型`obsdian_apple.json`:
 
 ```json
 {

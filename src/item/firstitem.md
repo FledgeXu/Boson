@@ -50,8 +50,8 @@ public static final RegistryObject<Item> obsidianIngot = ITEMS.register("obsidia
 
 ```java
 @Mod(Utils.MOD_ID)
-public class Neutrino {
-    public Neutrino() {
+public class Boson {
+    public Boson() {
         ItemRegistry.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 }
