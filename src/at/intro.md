@@ -15,7 +15,7 @@ public class AMinecraftClass  {
     ...
 }
 ```
-现在有一个需求，如果在没有此变量的Getter时，我需要访问instance变量怎么办？（或在没有此变量的Setter时，我需要修改instance变量怎么办？）
+现在有一个需求，如果在没有此变量的Getter时，需要访问instance变量怎么办？（或在没有此变量的Setter时，需要修改instance变量怎么办？）
 
 能这样吗？
 ```java
