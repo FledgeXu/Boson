@@ -78,7 +78,7 @@ accessTransformer = file('path/file')
 引用类型由类型的完全限定名称（分隔符为'/'）前面加一个'L'并在最后加一个';'表示。
 
 数组在类型前加中括号表示，前面有多少个中括号，数组就有多少维。
-## 实例（来源于Forge）
+## 实例（来源于Forge官网教程）
 ```
 # 使net.minecraft.client.gui.ScreenManager.IScreenFavtory变得public
 public net.minecraft.client.gui.ScreenManager$IScreenFactory
